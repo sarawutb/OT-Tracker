@@ -15,6 +15,9 @@ public sealed class SettingsViewModel : BaseViewModel
     private decimal _baseMonthlySalary = 30000m;
     private int _workingDaysPerMonth = 30;
     private decimal _hoursPerDay = 8m;
+    private TimeSpan _defaultStartTime = new(17, 0, 0);
+    private TimeSpan _defaultEndTime = new(21, 0, 0);
+    private int _defaultBreakMinutes = 30;
     private decimal _regularMultiplier = 1.5m;
     private decimal _weekendMultiplier = 2m;
     private decimal _holidayMultiplier = 3m;
@@ -82,6 +85,24 @@ public sealed class SettingsViewModel : BaseViewModel
         }
     }
 
+    public TimeSpan DefaultStartTime
+    {
+        get => _defaultStartTime;
+        set => SetProperty(ref _defaultStartTime, value);
+    }
+
+    public TimeSpan DefaultEndTime
+    {
+        get => _defaultEndTime;
+        set => SetProperty(ref _defaultEndTime, value);
+    }
+
+    public int DefaultBreakMinutes
+    {
+        get => _defaultBreakMinutes;
+        set => SetProperty(ref _defaultBreakMinutes, value);
+    }
+
     public decimal RegularMultiplier
     {
         get => _regularMultiplier;
@@ -122,6 +143,9 @@ public sealed class SettingsViewModel : BaseViewModel
         BaseMonthlySalary = settings.BaseMonthlySalary;
         WorkingDaysPerMonth = settings.WorkingDaysPerMonth;
         HoursPerDay = settings.HoursPerDay;
+        DefaultStartTime = settings.DefaultStartTime;
+        DefaultEndTime = settings.DefaultEndTime;
+        DefaultBreakMinutes = settings.DefaultBreakMinutes;
         RegularMultiplier = settings.RegularMultiplier;
         WeekendMultiplier = settings.WeekendMultiplier;
         HolidayMultiplier = settings.HolidayMultiplier;
@@ -137,6 +161,18 @@ public sealed class SettingsViewModel : BaseViewModel
             RegularMultiplier <= 0 || WeekendMultiplier <= 0 || HolidayMultiplier <= 0)
         {
             ErrorMessage = "Salary, work time, and multipliers must be greater than 0.";
+            return;
+        }
+
+        if (DefaultBreakMinutes < 0)
+        {
+            ErrorMessage = "Default break minutes must be 0 or greater.";
+            return;
+        }
+
+        if (DefaultEndTime <= DefaultStartTime)
+        {
+            ErrorMessage = "Default end time must be later than default start time.";
             return;
         }
 
@@ -195,6 +231,9 @@ public sealed class SettingsViewModel : BaseViewModel
         BaseMonthlySalary = BaseMonthlySalary,
         WorkingDaysPerMonth = WorkingDaysPerMonth,
         HoursPerDay = HoursPerDay,
+        DefaultStartTime = DefaultStartTime,
+        DefaultEndTime = DefaultEndTime,
+        DefaultBreakMinutes = DefaultBreakMinutes,
         RegularMultiplier = RegularMultiplier,
         WeekendMultiplier = WeekendMultiplier,
         HolidayMultiplier = HolidayMultiplier,

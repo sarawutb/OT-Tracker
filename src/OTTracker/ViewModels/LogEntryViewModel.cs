@@ -145,6 +145,11 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
 
     public async Task LoadAsync()
     {
+        if (_entryId == 0)
+        {
+            await ApplyDefaultEntrySettingsAsync();
+        }
+
         await RecalculateAsync();
     }
 
@@ -204,7 +209,7 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
 
         await _entries.SaveAsync(entry);
         _entryId = 0;
-        ResetForNewEntry();
+        await ResetForNewEntryAsync();
         _events.NotifyEntriesChanged();
         await Shell.Current.GoToAsync("//Dashboard");
     }
@@ -220,13 +225,19 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
         OnPropertyChanged(nameof(MultiplierText));
     }
 
-    private void ResetForNewEntry()
+    private async Task ResetForNewEntryAsync()
     {
         EntryDate = DateTime.Today;
         SelectedDayType = DayType.Regular;
-        StartTime = new TimeSpan(17, 0, 0);
-        EndTime = new TimeSpan(21, 0, 0);
-        BreakMinutes = 30;
+        await ApplyDefaultEntrySettingsAsync();
         Note = string.Empty;
+    }
+
+    private async Task ApplyDefaultEntrySettingsAsync()
+    {
+        var settings = await _settings.GetAsync();
+        StartTime = settings.DefaultStartTime;
+        EndTime = settings.DefaultEndTime;
+        BreakMinutes = settings.DefaultBreakMinutes;
     }
 }

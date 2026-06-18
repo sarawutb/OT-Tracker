@@ -13,6 +13,12 @@ public sealed class AppSettings
 
     public decimal HoursPerDay { get; set; } = 8m;
 
+    public TimeSpan DefaultStartTime { get; set; } = new(17, 0, 0);
+
+    public TimeSpan DefaultEndTime { get; set; } = new(21, 0, 0);
+
+    public int DefaultBreakMinutes { get; set; } = 30;
+
     public decimal RegularMultiplier { get; set; } = 1.5m;
 
     public decimal WeekendMultiplier { get; set; } = 2.0m;

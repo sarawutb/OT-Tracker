@@ -1,3 +1,4 @@
+using Microsoft.Maui.Controls;
 using OTTracker.Services;
 using OTTracker.Views;
 
@@ -38,7 +39,7 @@ public partial class App : Application
     private async Task InitializeAsync()
     {
         var settings = await _settings.GetAsync();
-        if (settings.PinLockEnabled && await _auth.HasPinAsync())
+        if (settings.PinLockEnabled && await _auth.HasPinAsync() || true)
         {
             MainPage = _services.GetRequiredService<PinPage>();
             return;

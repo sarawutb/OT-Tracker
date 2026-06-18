@@ -21,26 +21,62 @@
 
                 <Label Style="{StaticResource MutedLabel}" Text="Day type" />
                 <Grid ColumnDefinitions="*,*,*" ColumnSpacing="7">
+
                     <Button
                         Command="{Binding SelectDayTypeCommand}"
                         CommandParameter="Regular"
                         FontSize="12"
                         Style="{StaticResource GhostButton}"
-                        Text="x1.5 Regular" />
+                        Text="x1.5 Regular">
+
+                        <Button.Triggers>
+                            <DataTrigger
+                                Binding="{Binding SelectedDayType}"
+                                TargetType="Button"
+                                Value="Regular">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                <Setter Property="TextColor" Value="White" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
                     <Button
                         Grid.Column="1"
                         Command="{Binding SelectDayTypeCommand}"
                         CommandParameter="Weekend"
                         FontSize="12"
                         Style="{StaticResource GhostButton}"
-                        Text="x2.0 Weekend" />
+                        Text="x2.0 Weekend">
+
+                        <Button.Triggers>
+                            <DataTrigger
+                                Binding="{Binding SelectedDayType}"
+                                TargetType="Button"
+                                Value="Weekend">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                <Setter Property="TextColor" Value="White" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+
                     <Button
                         Grid.Column="2"
                         Command="{Binding SelectDayTypeCommand}"
                         CommandParameter="Holiday"
                         FontSize="12"
                         Style="{StaticResource GhostButton}"
-                        Text="x3.0 Holiday" />
+                        Text="x3.0 Holiday">
+
+                        <Button.Triggers>
+                            <DataTrigger
+                                Binding="{Binding SelectedDayType}"
+                                TargetType="Button"
+                                Value="Holiday">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                <Setter Property="TextColor" Value="White" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
                 </Grid>
 
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
