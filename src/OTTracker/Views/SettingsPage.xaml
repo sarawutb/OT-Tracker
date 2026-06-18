@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="OTTracker.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Settings">
+    <ScrollView>
+        <VerticalStackLayout Padding="18" Spacing="12">
+            <Label Text="Settings" Style="{StaticResource PageTitle}" />
+
+            <Label Text="SALARY &amp; COMPENSATION" Style="{StaticResource MutedLabel}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,100">
+                        <Label Text="Base monthly salary" TextColor="{StaticResource Ink}" VerticalOptions="Center" />
+                        <Entry Grid.Column="1" Text="{Binding BaseMonthlySalary}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="End" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,100">
+                        <Label Text="Working days/month" TextColor="{StaticResource Ink}" VerticalOptions="Center" />
+                        <Entry Grid.Column="1" Text="{Binding WorkingDaysPerMonth}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="End" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,100">
+                        <Label Text="Hours/day" TextColor="{StaticResource Ink}" VerticalOptions="Center" />
+                        <Entry Grid.Column="1" Text="{Binding HoursPerDay}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="End" />
+                    </Grid>
+                    <Border BackgroundColor="{StaticResource GreenLight}" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="12">
+                        <VerticalStackLayout>
+                            <Label Text="HOURLY RATE" FontSize="10" TextColor="{StaticResource Green}" />
+                            <Label Text="{Binding HourlyRateText}" FontSize="22" FontFamily="OpenSansSemibold" TextColor="{StaticResource Green}" />
+                            <Label Text="{Binding FormulaText}" FontSize="11" TextColor="{StaticResource Green}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="OT MULTIPLIERS" Style="{StaticResource MutedLabel}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,80">
+                        <VerticalStackLayout>
+                            <Label Text="Regular workday" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                            <Label Text="Mon-Fri overtime" Style="{StaticResource MutedLabel}" />
+                        </VerticalStackLayout>
+                        <Entry Grid.Column="1" Text="{Binding RegularMultiplier}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,80">
+                        <VerticalStackLayout>
+                            <Label Text="Weekend" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                            <Label Text="Sat-Sun" Style="{StaticResource MutedLabel}" />
+                        </VerticalStackLayout>
+                        <Entry Grid.Column="1" Text="{Binding WeekendMultiplier}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,80">
+                        <VerticalStackLayout>
+                            <Label Text="Public holiday" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                            <Label Text="National holidays" Style="{StaticResource MutedLabel}" />
+                        </VerticalStackLayout>
+                        <Entry Grid.Column="1" Text="{Binding HolidayMultiplier}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="SECURITY &amp; PRIVACY" Style="{StaticResource MutedLabel}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout>
+                            <Label Text="PIN lock" TextColor="{StaticResource Ink}" />
+                            <Label Text="Require PIN on launch" Style="{StaticResource MutedLabel}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding PinLockEnabled}" />
+                    </Grid>
+                    <Button Text="Change PIN" Command="{Binding ChangePinCommand}" Style="{StaticResource GhostButton}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout>
+                            <Label Text="Biometric unlock" TextColor="{StaticResource Ink}" />
+                            <Label Text="Face ID or fingerprint" Style="{StaticResource MutedLabel}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding BiometricUnlockEnabled}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="DATA" Style="{StaticResource MutedLabel}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Button Text="Export to CSV" Command="{Binding ExportCommand}" Style="{StaticResource GhostButton}" />
+                    <Button Text="Clear all data" Command="{Binding ClearDataCommand}" Style="{StaticResource GhostButton}" TextColor="{StaticResource Red}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Red}" FontSize="12" />
+            <Button Text="Save settings" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

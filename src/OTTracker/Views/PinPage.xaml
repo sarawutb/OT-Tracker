@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="OTTracker.Views.PinPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+    <Grid Padding="24" RowDefinitions="Auto,*,Auto">
+        <VerticalStackLayout Grid.Row="0" Margin="0,52,0,20" HorizontalOptions="Center" Spacing="8">
+            <Border WidthRequest="64" HeightRequest="64" BackgroundColor="{StaticResource AccentLight}" StrokeShape="RoundRectangle 22" StrokeThickness="0">
+                <Label Text="OT" FontSize="20" FontFamily="OpenSansSemibold" TextColor="{StaticResource Accent}" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Label Text="OT Tracker" FontSize="20" FontFamily="OpenSansSemibold" HorizontalTextAlignment="Center" TextColor="{StaticResource Ink}" />
+            <Label Text="Enter your PIN to unlock" Style="{StaticResource MutedLabel}" HorizontalTextAlignment="Center" />
+            <HorizontalStackLayout Margin="0,16,0,0" Spacing="12" HorizontalOptions="Center">
+                <Label Text="{Binding Dot1}" FontSize="22" TextColor="{StaticResource Accent}" />
+                <Label Text="{Binding Dot2}" FontSize="22" TextColor="{StaticResource Accent}" />
+                <Label Text="{Binding Dot3}" FontSize="22" TextColor="{StaticResource Accent}" />
+                <Label Text="{Binding Dot4}" FontSize="22" TextColor="{StaticResource Accent}" />
+            </HorizontalStackLayout>
+            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="{StaticResource Red}" HorizontalTextAlignment="Center" HeightRequest="18" />
+        </VerticalStackLayout>
+
+        <Grid Grid.Row="1" RowDefinitions="*,*,*,*" ColumnDefinitions="*,*,*" RowSpacing="8" ColumnSpacing="8" VerticalOptions="Center">
+            <Button Text="1" Command="{Binding PressCommand}" CommandParameter="1" Grid.Row="0" Grid.Column="0" Style="{StaticResource GhostButton}" FontSize="24" />
+            <Button Text="2 ABC" Command="{Binding PressCommand}" CommandParameter="2" Grid.Row="0" Grid.Column="1" Style="{StaticResource GhostButton}" />
+            <Button Text="3 DEF" Command="{Binding PressCommand}" CommandParameter="3" Grid.Row="0" Grid.Column="2" Style="{StaticResource GhostButton}" />
+            <Button Text="4 GHI" Command="{Binding PressCommand}" CommandParameter="4" Grid.Row="1" Grid.Column="0" Style="{StaticResource GhostButton}" />
+            <Button Text="5 JKL" Command="{Binding PressCommand}" CommandParameter="5" Grid.Row="1" Grid.Column="1" Style="{StaticResource GhostButton}" />
+            <Button Text="6 MNO" Command="{Binding PressCommand}" CommandParameter="6" Grid.Row="1" Grid.Column="2" Style="{StaticResource GhostButton}" />
+            <Button Text="7 PQRS" Command="{Binding PressCommand}" CommandParameter="7" Grid.Row="2" Grid.Column="0" Style="{StaticResource GhostButton}" />
+            <Button Text="8 TUV" Command="{Binding PressCommand}" CommandParameter="8" Grid.Row="2" Grid.Column="1" Style="{StaticResource GhostButton}" />
+            <Button Text="9 WXYZ" Command="{Binding PressCommand}" CommandParameter="9" Grid.Row="2" Grid.Column="2" Style="{StaticResource GhostButton}" />
+            <Button Text="BIO" Command="{Binding UnlockBiometricCommand}" Grid.Row="3" Grid.Column="0" Style="{StaticResource GhostButton}" />
+            <Button Text="0" Command="{Binding PressCommand}" CommandParameter="0" Grid.Row="3" Grid.Column="1" Style="{StaticResource GhostButton}" FontSize="24" />
+            <Button Text="DEL" Command="{Binding BackspaceCommand}" Grid.Row="3" Grid.Column="2" Style="{StaticResource GhostButton}" />
+        </Grid>
+
+        <Label Grid.Row="2" Text="Use Face ID or fingerprint" Style="{StaticResource MutedLabel}" HorizontalTextAlignment="Center" Margin="0,16,0,24" />
+    </Grid>
+</ContentPage>

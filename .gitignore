@@ -1,0 +1,35 @@
+# Build output
+bin/
+obj/
+out/
+
+# User and IDE files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# Logs and local data
+*.log
+*.db
+*.db3
+*.sqlite
+
+# MAUI generated packaging artifacts
+*.apk
+*.aab
+*.ipa
+*.appx
+*.msix
+*.msixbundle
+
+# Test results
+TestResults/
+coverage/
+/.github/copilot-instructions.md

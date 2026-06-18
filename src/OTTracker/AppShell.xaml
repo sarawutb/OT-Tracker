@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="OTTracker.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:OTTracker.Views"
+    BackgroundColor="{StaticResource AppBackground}"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.TabBarBackgroundColor="{StaticResource Surface}"
+    Shell.TabBarForegroundColor="{StaticResource Accent}"
+    Shell.TabBarTitleColor="{StaticResource Accent}"
+    Shell.TabBarUnselectedColor="{StaticResource MutedText}"
+    Title="OT Tracker">
+
+    <TabBar>
+        <ShellContent
+            Title="Home"
+            Route="Dashboard"
+            ContentTemplate="{DataTemplate views:DashboardPage}" />
+        <ShellContent
+            Title="Log OT"
+            Route="Log"
+            ContentTemplate="{DataTemplate views:LogEntryPage}" />
+        <ShellContent
+            Title="History"
+            Route="History"
+            ContentTemplate="{DataTemplate views:HistoryPage}" />
+        <ShellContent
+            Title="Settings"
+            Route="Settings"
+            ContentTemplate="{DataTemplate views:SettingsPage}" />
+    </TabBar>
+</Shell>

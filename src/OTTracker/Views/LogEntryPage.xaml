@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="OTTracker.Views.LogEntryPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Log OT">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="18" Spacing="10">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Style="{StaticResource PageTitle}" Text="Log OT entry" />
+                    <Label
+                        Grid.Column="1"
+                        Style="{StaticResource MutedLabel}"
+                        Text="Draft"
+                        VerticalOptions="Center" />
+                </Grid>
+
+                <Label Style="{StaticResource MutedLabel}" Text="Date" />
+                <DatePicker Date="{Binding EntryDate}" />
+
+                <Label Style="{StaticResource MutedLabel}" Text="Day type" />
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="7">
+                    <Button
+                        Command="{Binding SelectDayTypeCommand}"
+                        CommandParameter="Regular"
+                        FontSize="12"
+                        Style="{StaticResource GhostButton}"
+                        Text="x1.5 Regular" />
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding SelectDayTypeCommand}"
+                        CommandParameter="Weekend"
+                        FontSize="12"
+                        Style="{StaticResource GhostButton}"
+                        Text="x2.0 Weekend" />
+                    <Button
+                        Grid.Column="2"
+                        Command="{Binding SelectDayTypeCommand}"
+                        CommandParameter="Holiday"
+                        FontSize="12"
+                        Style="{StaticResource GhostButton}"
+                        Text="x3.0 Holiday" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource MutedLabel}" Text="Start time" />
+                        <TimePicker Time="{Binding StartTime}" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Style="{StaticResource MutedLabel}" Text="End time" />
+                        <TimePicker Time="{Binding EndTime}" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <Label Style="{StaticResource MutedLabel}" Text="Break minutes" />
+                <Entry
+                    Keyboard="Numeric"
+                    Style="{StaticResource FieldEntry}"
+                    Text="{Binding BreakMinutes}" />
+
+                <Label Style="{StaticResource MutedLabel}" Text="Note" />
+                <Entry
+                    Placeholder="Task or project name..."
+                    Style="{StaticResource FieldEntry}"
+                    Text="{Binding Note}" />
+
+                <Label
+                    FontSize="12"
+                    Text="{Binding ErrorMessage}"
+                    TextColor="{StaticResource Red}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border
+            Grid.Row="1"
+            Padding="18,14"
+            BackgroundColor="{StaticResource Surface}"
+            Stroke="{StaticResource Border}"
+            StrokeThickness="1">
+            <VerticalStackLayout Spacing="8">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Style="{StaticResource MutedLabel}" Text="Net OT hours" />
+                    <Label
+                        Grid.Column="1"
+                        FontFamily="OpenSansSemibold"
+                        Text="{Binding NetHoursText}"
+                        TextColor="{StaticResource Ink}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Style="{StaticResource MutedLabel}" Text="{Binding MultiplierText}" />
+                    <Label
+                        Grid.Column="1"
+                        FontFamily="OpenSansSemibold"
+                        Text="{Binding RateText}"
+                        TextColor="{StaticResource Ink}" />
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Style="{StaticResource MutedLabel}" Text="Estimated earnings" />
+                    <Label
+                        Grid.Column="1"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="22"
+                        Text="{Binding EarningsText}"
+                        TextColor="{StaticResource GreenMid}" />
+                </Grid>
+                <Button
+                    Command="{Binding SaveCommand}"
+                    Style="{StaticResource PrimaryButton}"
+                    Text="Save entry" />
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>
