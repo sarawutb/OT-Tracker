@@ -1,15 +1,30 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using OTTracker.Models;
 
 namespace OTTracker.ViewModels;
 
-public sealed class EntryDisplay
+public sealed class EntryDisplay : ObservableObject
 {
+    private bool _maskEarnings;
+
     public EntryDisplay(OtEntry entry)
     {
         Entry = entry;
     }
 
     public OtEntry Entry { get; }
+
+    public bool MaskEarnings
+    {
+        get => _maskEarnings;
+        set
+        {
+            if (SetProperty(ref _maskEarnings, value))
+            {
+                OnPropertyChanged(nameof(EarningsText));
+            }
+        }
+    }
 
     public string DateText => Entry.EntryDate.ToString("ddd, MMM d");
 
@@ -25,7 +40,7 @@ public sealed class EntryDisplay
 
     public string HoursText => $"{Entry.NetHours:0.##} hrs";
 
-    public string EarningsText => $"+฿{Entry.EstimatedEarnings:N2}";
+    public string EarningsText => MaskEarnings ? "+\u0E3F*,***" : $"+\u0E3F{Entry.EstimatedEarnings:N2}";
 
     public Color AccentColor => Entry.DayType switch
     {

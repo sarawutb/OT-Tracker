@@ -209,9 +209,9 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
 
         await _entries.SaveAsync(entry);
         _entryId = 0;
-        await ResetForNewEntryAsync();
-        _events.NotifyEntriesChanged();
         await Shell.Current.GoToAsync("//Dashboard");
+        _events.NotifyEntriesChanged();
+        await ResetForNewEntryAsync();
     }
 
     private async Task RecalculateAsync()

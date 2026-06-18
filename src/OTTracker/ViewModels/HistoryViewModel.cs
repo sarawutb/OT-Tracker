@@ -98,7 +98,10 @@ public sealed class HistoryViewModel : BaseViewModel
         MonthEarnings = monthEntries.Sum(e => e.EstimatedEarnings);
 
         MonthEntries.Clear();
-        foreach (var display in monthEntries.Select(e => new EntryDisplay(e)))
+        foreach (var display in monthEntries
+            .OrderByDescending(e => e.EntryDate)
+            .ThenByDescending(e => e.StartTime)
+            .Select(e => new EntryDisplay(e)))
         {
             MonthEntries.Add(display);
         }

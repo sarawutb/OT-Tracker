@@ -8,6 +8,7 @@ namespace OTTracker.ViewModels;
 public sealed class DashboardViewModel : BaseViewModel
 {
     private readonly IOtEntryRepository _entries;
+    private readonly SemaphoreSlim _loadGate = new(1, 1);
     private string _monthText = DateTime.Today.ToString("MMMM yyyy");
     private decimal _totalHours;
     private decimal _estimatedEarnings;
@@ -85,40 +86,49 @@ public sealed class DashboardViewModel : BaseViewModel
             if (SetProperty(ref _maskEarnings, value))
             {
                 OnPropertyChanged(nameof(EarningsText));
+                ApplyRecentEntriesMask();
             }
         }
     }
 
-    public string EarningsText => MaskEarnings ? "฿ *,***" : $"฿ {EstimatedEarnings:N2}";
+    public string EarningsText => MaskEarnings ? "\u0E3F *,***" : $"\u0E3F {EstimatedEarnings:N2}";
 
     public string TotalHoursText => $"{TotalHours:0.##}";
 
     public async Task LoadAsync()
     {
-        var today = DateTime.Today;
-        MonthText = today.ToString("MMMM yyyy");
-        var month = await _entries.GetMonthAsync(today.Year, today.Month);
-        TotalHours = month.Sum(e => e.NetHours);
-        EstimatedEarnings = month.Sum(e => e.EstimatedEarnings);
-
-        var weekStart = today.AddDays(-((int)today.DayOfWeek + 6) % 7);
-        var weekEnd = weekStart.AddDays(7);
-        var thisWeek = month.Where(e => e.EntryDate >= weekStart && e.EntryDate < weekEnd).ToList();
-        ThisWeekHours = thisWeek.Sum(e => e.NetHours);
-        ThisWeekEntries = thisWeek.Select(e => e.EntryDate.Date).Distinct().Count();
-
-        RecentEntries.Clear();
-        foreach (var entry in (await _entries.GetRecentAsync(3)).Select(e => new EntryDisplay(e)))
+        await _loadGate.WaitAsync();
+        try
         {
-            RecentEntries.Add(entry);
+            var today = DateTime.Today;
+            MonthText = today.ToString("MMMM yyyy");
+            var month = await _entries.GetMonthAsync(today.Year, today.Month);
+            TotalHours = month.Sum(e => e.NetHours);
+            EstimatedEarnings = month.Sum(e => e.EstimatedEarnings);
+
+            var weekStart = today.AddDays(-((int)today.DayOfWeek + 6) % 7);
+            var weekEnd = weekStart.AddDays(7);
+            var thisWeek = month.Where(e => e.EntryDate >= weekStart && e.EntryDate < weekEnd).ToList();
+            ThisWeekHours = thisWeek.Sum(e => e.NetHours);
+            ThisWeekEntries = thisWeek.Select(e => e.EntryDate.Date).Distinct().Count();
+
+            RecentEntries.Clear();
+            foreach (var entry in (await _entries.GetRecentAsync(3)).Select(e => new EntryDisplay(e) { MaskEarnings = MaskEarnings }))
+            {
+                RecentEntries.Add(entry);
+            }
+
+            WeeklySummaries.Clear();
+            for (var i = 0; i < 7; i++)
+            {
+                var day = weekStart.AddDays(i);
+                var hours = thisWeek.Where(e => e.EntryDate.Date == day.Date).Sum(e => e.NetHours);
+                WeeklySummaries.Add(new WeeklyDaySummary(day.ToString("ddd")[0].ToString(), hours, day.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday));
+            }
         }
-
-        WeeklySummaries.Clear();
-        for (var i = 0; i < 7; i++)
+        finally
         {
-            var day = weekStart.AddDays(i);
-            var hours = thisWeek.Where(e => e.EntryDate.Date == day.Date).Sum(e => e.NetHours);
-            WeeklySummaries.Add(new WeeklyDaySummary(day.ToString("ddd")[0].ToString(), hours, day.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday));
+            _loadGate.Release();
         }
     }
 
@@ -130,5 +140,13 @@ public sealed class DashboardViewModel : BaseViewModel
     private static async Task GoHistoryAsync()
     {
         await Shell.Current.GoToAsync("//History");
+    }
+
+    private void ApplyRecentEntriesMask()
+    {
+        foreach (var entry in RecentEntries)
+        {
+            entry.MaskEarnings = MaskEarnings;
+        }
     }
 }

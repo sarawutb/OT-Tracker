@@ -39,7 +39,7 @@ public partial class App : Application
     private async Task InitializeAsync()
     {
         var settings = await _settings.GetAsync();
-        if (settings.PinLockEnabled && await _auth.HasPinAsync() || true)
+        if (settings.PinLockEnabled && await _auth.HasPinAsync())
         {
             MainPage = _services.GetRequiredService<PinPage>();
             return;
