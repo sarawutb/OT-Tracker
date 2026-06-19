@@ -1,4 +1,8 @@
+using Android.Graphics.Drawables;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Handlers;
+using OTTracker.Controls;
 using OTTracker.Data;
 using OTTracker.Services;
 using OTTracker.ViewModels;
@@ -11,13 +15,48 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
+
+#if ANDROID
+        EntryHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
+        {
+            handler.PlatformView.BackgroundTintList =
+                Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        });
+
+        DatePickerHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
+        {
+            handler.PlatformView.BackgroundTintList =
+                Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        });
+
+        TimePickerHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
+        {
+            handler.PlatformView.BackgroundTintList =
+                Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        });
+
+        DatePickerHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
+        {
+            handler.PlatformView.Background = new ColorDrawable(Android.Graphics.Color.Transparent);
+        });
+
+        DatePickerHandler.Mapper.AppendToMapping(nameof(BorderlessDatePicker), (handler, view) =>
+        {
+            if (view is BorderlessDatePicker)
+            {
+                handler.PlatformView.Background = null;
+            }
+        });
+#endif
+
         builder
             .UseMauiApp<App>()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            });
+            })
+            .UseMauiCommunityToolkit();
 
         builder.Services.AddSingleton<AppDatabase>();
         builder.Services.AddSingleton<AppEvents>();

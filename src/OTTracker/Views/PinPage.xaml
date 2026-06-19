@@ -75,72 +75,63 @@
                 Grid.Column="0"
                 Command="{Binding PressCommand}"
                 CommandParameter="1"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="1" />
             <Button
                 Grid.Row="0"
                 Grid.Column="1"
                 Command="{Binding PressCommand}"
                 CommandParameter="2"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="2" />
             <Button
                 Grid.Row="0"
                 Grid.Column="2"
                 Command="{Binding PressCommand}"
                 CommandParameter="3"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="3" />
             <Button
                 Grid.Row="1"
                 Grid.Column="0"
                 Command="{Binding PressCommand}"
                 CommandParameter="4"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="4" />
             <Button
                 Grid.Row="1"
                 Grid.Column="1"
                 Command="{Binding PressCommand}"
                 CommandParameter="5"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="5" />
             <Button
                 Grid.Row="1"
                 Grid.Column="2"
                 Command="{Binding PressCommand}"
                 CommandParameter="6"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="6" />
             <Button
                 Grid.Row="2"
                 Grid.Column="0"
                 Command="{Binding PressCommand}"
                 CommandParameter="7"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="7" />
             <Button
                 Grid.Row="2"
                 Grid.Column="1"
                 Command="{Binding PressCommand}"
                 CommandParameter="8"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="8" />
             <Button
                 Grid.Row="2"
                 Grid.Column="2"
                 Command="{Binding PressCommand}"
                 CommandParameter="9"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="9" />
             <!--<Button
                 Grid.Row="3"
@@ -154,14 +145,13 @@
                 Grid.Column="1"
                 Command="{Binding PressCommand}"
                 CommandParameter="0"
-                FontSize="20"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="0" />
             <Button
                 Grid.Row="3"
                 Grid.Column="2"
                 Command="{Binding BackspaceCommand}"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource PinKeyButton}"
                 Text="DEL" />
         </Grid>
 

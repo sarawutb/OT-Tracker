@@ -18,10 +18,10 @@
         <Setter Property="Shell.TitleColor" Value="{StaticResource Ink}" />
         <Setter Property="Shell.UnselectedColor" Value="{StaticResource MutedText}" />
         <Setter Property="Shell.NavBarHasShadow" Value="False" />
-        <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource Surface}" />
-        <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource Accent}" />
-        <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource Accent}" />
-        <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource MutedText}" />
+        <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource Accent}" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource Surface}" />
+        <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource Surface}" />
+        <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource AccentLight}" />
     </Style>
 
     <Style TargetType="Label">
@@ -54,16 +54,20 @@
         <Setter Property="FontFamily" Value="OpenSansRegular" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="CornerRadius" Value="12" />
-        <Setter Property="MinimumHeightRequest" Value="44" />
-        <Setter Property="MinimumWidthRequest" Value="44" />
-        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="MinimumHeightRequest" Value="40" />
+        <Setter Property="MinimumWidthRequest" Value="48" />
+        <Setter Property="Padding" Value="16,0" />
     </Style>
 
     <Style x:Key="PrimaryButton" TargetType="Button">
         <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
         <Setter Property="TextColor" Value="{StaticResource White}" />
         <Setter Property="CornerRadius" Value="14" />
-        <Setter Property="HeightRequest" Value="46" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="MinimumHeightRequest" Value="40" />
+        <Setter Property="MinimumWidthRequest" Value="48" />
+        <Setter Property="Padding" Value="16,0" />
         <Setter Property="FontFamily" Value="OpenSansSemibold" />
     </Style>
 
@@ -71,7 +75,17 @@
         <Setter Property="BackgroundColor" Value="{StaticResource Surface2}" />
         <Setter Property="TextColor" Value="{StaticResource Ink}" />
         <Setter Property="CornerRadius" Value="14" />
-        <Setter Property="HeightRequest" Value="46" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="MinimumHeightRequest" Value="40" />
+        <Setter Property="MinimumWidthRequest" Value="48" />
+        <Setter Property="Padding" Value="16,0" />
+    </Style>
+
+    <Style x:Key="PinKeyButton" TargetType="Button" BasedOn="{StaticResource GhostButton}">
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="MinimumHeightRequest" Value="56" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Padding" Value="0" />
     </Style>
 
     <Style TargetType="Border">
@@ -97,28 +111,73 @@
         <Setter Property="BackgroundColor" Value="{StaticResource Surface2}" />
         <Setter Property="TextColor" Value="{StaticResource Ink}" />
         <Setter Property="PlaceholderColor" Value="{StaticResource MutedText}" />
-        <Setter Property="MinimumHeightRequest" Value="44" />
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="MinimumHeightRequest" Value="56" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="VerticalTextAlignment" Value="Center" />
     </Style>
 
     <Style x:Key="FieldEntry" TargetType="Entry">
         <Setter Property="BackgroundColor" Value="{StaticResource Surface2}" />
         <Setter Property="TextColor" Value="{StaticResource Ink}" />
         <Setter Property="PlaceholderColor" Value="{StaticResource MutedText}" />
-        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="MinimumHeightRequest" Value="56" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="VerticalTextAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="OutlinedFieldEntry" TargetType="Entry" BasedOn="{StaticResource FieldEntry}">
+        <Setter Property="BackgroundColor" Value="Transparent" />
     </Style>
 
     <Style TargetType="DatePicker">
         <Setter Property="TextColor" Value="{StaticResource Ink}" />
         <Setter Property="BackgroundColor" Value="{StaticResource Surface2}" />
-        <Setter Property="MinimumHeightRequest" Value="44" />
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="MinimumHeightRequest" Value="56" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="OutlinedFieldBorder" TargetType="Border">
+        <Setter Property="Stroke" Value="{StaticResource Ink2}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape">
+            <Setter.Value>
+                <RoundRectangle CornerRadius="6" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="Padding" Value="10,0" />
+    </Style>
+
+    <Style x:Key="OutlinedDatePicker" TargetType="DatePicker">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Ink}" />
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="MinimumHeightRequest" Value="56" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="VerticalOptions" Value="Center" />
     </Style>
 
     <Style TargetType="TimePicker">
         <Setter Property="TextColor" Value="{StaticResource Ink}" />
         <Setter Property="BackgroundColor" Value="{StaticResource Surface2}" />
-        <Setter Property="MinimumHeightRequest" Value="44" />
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="MinimumHeightRequest" Value="56" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="OutlinedTimePicker" TargetType="TimePicker">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource Ink}" />
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="MinimumHeightRequest" Value="56" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="VerticalOptions" Value="Center" />
     </Style>
 
     <Style TargetType="Switch">

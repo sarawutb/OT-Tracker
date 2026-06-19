@@ -6,28 +6,26 @@
     xmlns:views="clr-namespace:OTTracker.Views"
     BackgroundColor="{StaticResource AppBackground}"
     Shell.FlyoutBehavior="Disabled"
-    Shell.TabBarBackgroundColor="{StaticResource Surface}"
-    Shell.TabBarForegroundColor="{StaticResource Accent}"
-    Shell.TabBarTitleColor="{StaticResource Accent}"
-    Shell.TabBarUnselectedColor="{StaticResource MutedText}"
+    Shell.TabBarBackgroundColor="{StaticResource Accent}"
+    Shell.TabBarForegroundColor="{StaticResource Surface}"
+    Shell.TabBarTitleColor="{StaticResource Surface}"
+    Shell.TabBarUnselectedColor="{StaticResource AccentLight}"
     Title="OT Tracker">
 
-    <TabBar>
-        <ShellContent
-            Title="Home"
-            Route="Dashboard"
-            ContentTemplate="{DataTemplate views:DashboardPage}" />
-        <ShellContent
-            Title="Log OT"
-            Route="Log"
-            ContentTemplate="{DataTemplate views:LogEntryPage}" />
-        <ShellContent
-            Title="History"
-            Route="History"
-            ContentTemplate="{DataTemplate views:HistoryPage}" />
-        <ShellContent
-            Title="Settings"
-            Route="Settings"
-            ContentTemplate="{DataTemplate views:SettingsPage}" />
-    </TabBar>
+    <ShellContent
+        Title="Home"
+        Route="Dashboard"
+        ContentTemplate="{DataTemplate views:DashboardPage}" />
+    <ShellContent
+        Title="Log OT"
+        Route="Log"
+        ContentTemplate="{DataTemplate views:LogEntryPage}" />
+    <ShellContent
+        Title="History"
+        Route="History"
+        ContentTemplate="{DataTemplate views:HistoryPage}" />
+    <ShellContent
+        Title="Settings"
+        Route="Settings"
+        ContentTemplate="{DataTemplate views:SettingsPage}" />
 </Shell>
