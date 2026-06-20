@@ -28,6 +28,7 @@ Desktop.ini
 *.appx
 *.msix
 *.msixbundle
+releases/
 
 # Test results
 TestResults/
