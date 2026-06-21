@@ -51,6 +51,9 @@ public static class MauiProgram
 
         builder
             .UseMauiApp<App>()
+#if DEBUG
+            .EnableHotReload()
+#endif
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -82,7 +85,6 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-
         return builder.Build();
     }
 }
