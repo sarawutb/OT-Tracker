@@ -3,19 +3,4 @@
     <color name="colorPrimary">#5B4FE8</color>
     <color name="colorPrimaryDark">#AFA9EC</color>
     <color name="colorAccent">#5B4FE8</color>
-
-    <!--<style name="MainTheme" parent="Maui.MainTheme">
-        <item name="android:datePickerDialogTheme">@style/AppDatePickerDialogTheme</item>
-    </style>
-
-    <style name="AppDatePickerDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
-        <item name="android:windowIsTranslucent">false</item>
-        <item name="android:windowBackground">#FFFFFF</item>
-        <item name="android:colorAccent">#5B4FE8</item>
-        <item name="colorAccent">#5B4FE8</item>
-        <item name="colorPrimary">#5B4FE8</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorSurface">#FFFFFF</item>
-        <item name="colorOnSurface">#1E1B2E</item>
-    </style>-->
 </resources>
