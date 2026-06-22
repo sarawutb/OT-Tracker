@@ -20,13 +20,6 @@
                     WidthRequest="100"
                     Source="ot_tracker.png"
                     Aspect="AspectFit" />
-                <!--<Label
-                    FontFamily="OpenSansSemibold"
-                    FontSize="20"
-                    HorizontalOptions="Center"
-                    Text="OT"
-                    TextColor="{StaticResource Accent}"
-                    VerticalOptions="Center" />-->
             </Border>
             <Label
                 FontFamily="OpenSansSemibold"
@@ -139,11 +132,10 @@
                 Text="9" />
             <ImageButton
                 Grid.Row="3"
-                HeightRequest="60"
                 Grid.Column="0"
                 Command="{Binding UnlockBiometricCommand}"
                 Source="fingerprint.png"
-                Style="{StaticResource GhostButton}"
+                Style="{StaticResource GhostImageButton}"
               />
             <Button
                 Grid.Row="3"
@@ -177,5 +169,3 @@
         </VerticalStackLayout>
     </Grid>
 </ContentPage>
-
-
