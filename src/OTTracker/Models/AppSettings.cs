@@ -1,4 +1,4 @@
-using SQLite;
+﻿using SQLite;
 
 namespace OTTracker.Models;
 
@@ -28,6 +28,8 @@ public sealed class AppSettings
     public bool PinLockEnabled { get; set; }
 
     public bool BiometricUnlockEnabled { get; set; }
+
+    public bool MaskEarnings { get; set; }
 
     public string CurrencyCode { get; set; } = "THB";
 

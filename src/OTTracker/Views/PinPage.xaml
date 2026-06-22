@@ -16,13 +16,17 @@
                 StrokeShape="RoundRectangle 22"
                 StrokeThickness="0"
                 WidthRequest="64">
-                <Label
+                <Image
+                    WidthRequest="100"
+                    Source="ot_tracker.png"
+                    Aspect="AspectFit" />
+                <!--<Label
                     FontFamily="OpenSansSemibold"
                     FontSize="20"
                     HorizontalOptions="Center"
                     Text="OT"
                     TextColor="{StaticResource Accent}"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center" />-->
             </Border>
             <Label
                 FontFamily="OpenSansSemibold"
@@ -39,19 +43,19 @@
                 HorizontalOptions="Center"
                 Spacing="12">
                 <Label
-                    FontSize="22"
+                    FontSize="40"
                     Text="{Binding Dot1}"
                     TextColor="{StaticResource Accent}" />
                 <Label
-                    FontSize="22"
+                    FontSize="40"
                     Text="{Binding Dot2}"
                     TextColor="{StaticResource Accent}" />
                 <Label
-                    FontSize="22"
+                    FontSize="40"
                     Text="{Binding Dot3}"
                     TextColor="{StaticResource Accent}" />
                 <Label
-                    FontSize="22"
+                    FontSize="40"
                     Text="{Binding Dot4}"
                     TextColor="{StaticResource Accent}" />
             </HorizontalStackLayout>
@@ -133,13 +137,14 @@
                 CommandParameter="9"
                 Style="{StaticResource PinKeyButton}"
                 Text="9" />
-            <!--<Button
+            <ImageButton
                 Grid.Row="3"
+                HeightRequest="60"
                 Grid.Column="0"
-                Command="{Binding PressCommand}"
-                FontSize="20"
+                Command="{Binding UnlockBiometricCommand}"
+                Source="fingerprint.png"
                 Style="{StaticResource GhostButton}"
-                Text="#" />-->
+              />
             <Button
                 Grid.Row="3"
                 Grid.Column="1"
@@ -155,11 +160,22 @@
                 Text="DEL" />
         </Grid>
 
-        <Label
+        <VerticalStackLayout
             Grid.Row="2"
             Margin="0,16,0,24"
-            HorizontalTextAlignment="Center"
-            Style="{StaticResource MutedLabel}"
-            Text="Use Face ID or fingerprint" />
+            HorizontalOptions="Center"
+            Spacing="4">
+            <Label
+                HorizontalTextAlignment="Center"
+                Style="{StaticResource MutedLabel}"
+                Text="{Binding BiometricHint}" />
+            <Label
+                x:Name="AppVersionLabel"
+                FontSize="11"
+                HorizontalTextAlignment="Center"
+                TextColor="{StaticResource MutedText}" />
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>
+
+

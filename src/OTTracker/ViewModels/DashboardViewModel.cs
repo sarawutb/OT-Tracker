@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
 using OTTracker.Models;
@@ -9,6 +9,7 @@ namespace OTTracker.ViewModels;
 public sealed class DashboardViewModel : BaseViewModel
 {
     private readonly IOtEntryRepository _entries;
+    private readonly ISettingsService _settings;
     private readonly SemaphoreSlim _loadGate = new(1, 1);
     private string _monthText = DateTime.Today.ToString("MMMM yyyy");
     private decimal _totalHours;
@@ -16,10 +17,12 @@ public sealed class DashboardViewModel : BaseViewModel
     private decimal _thisWeekHours;
     private int _thisWeekEntries;
     private bool _maskEarnings;
+    private bool _suppressMaskSave;
 
     public DashboardViewModel(IOtEntryRepository entries, ISettingsService settings, AppEvents events)
     {
         _entries = entries;
+        _settings = settings;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         GoLogTodayCommand = new AsyncRelayCommand(GoLogTodayAsync);
         GoHistoryCommand = new AsyncRelayCommand(GoHistoryAsync);
@@ -88,6 +91,10 @@ public sealed class DashboardViewModel : BaseViewModel
             {
                 OnPropertyChanged(nameof(EarningsText));
                 ApplyRecentEntriesMask();
+                if (!_suppressMaskSave)
+                {
+                    _ = SaveMaskEarningsAsync(value);
+                }
             }
         }
     }
@@ -101,6 +108,11 @@ public sealed class DashboardViewModel : BaseViewModel
         await _loadGate.WaitAsync();
         try
         {
+            var settings = await _settings.GetAsync();
+            _suppressMaskSave = true;
+            MaskEarnings = settings.MaskEarnings;
+            _suppressMaskSave = false;
+
             var today = DateTime.Today;
             MonthText = today.ToString("MMMM yyyy");
             var month = await _entries.GetMonthAsync(today.Year, today.Month);
@@ -146,6 +158,20 @@ public sealed class DashboardViewModel : BaseViewModel
         await Shell.Current.GoToAsync("//History");
     }
 
+    private async Task SaveMaskEarningsAsync(bool maskEarnings)
+    {
+        try
+        {
+            var settings = await _settings.GetAsync();
+            settings.MaskEarnings = maskEarnings;
+            await _settings.SaveAsync(settings);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Unable to save earnings privacy: {ex.Message}";
+        }
+    }
+
     private void ApplyRecentEntriesMask()
     {
         foreach (var entry in RecentEntries)
@@ -154,3 +180,4 @@ public sealed class DashboardViewModel : BaseViewModel
         }
     }
 }
+

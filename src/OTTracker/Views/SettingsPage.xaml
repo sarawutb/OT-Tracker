@@ -78,11 +78,11 @@
                         </VerticalStackLayout>
                         <Switch Grid.Column="1" IsToggled="{Binding PinLockEnabled}" />
                     </Grid>
-                    <Button Text="Change PIN" Command="{Binding ChangePinCommand}" Style="{StaticResource GhostButton}" />
+                    <Button Text="Change PIN" Command="{Binding ChangePinCommand}" />
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout>
                             <Label Text="Biometric unlock" TextColor="{StaticResource Ink}" />
-                            <Label Text="Face ID or fingerprint" Style="{StaticResource MutedLabel}" />
+                            <Label Text="Requires PIN lock and device fingerprint setup" Style="{StaticResource MutedLabel}" />
                         </VerticalStackLayout>
                         <Switch Grid.Column="1" IsToggled="{Binding BiometricUnlockEnabled}" />
                     </Grid>
@@ -104,3 +104,4 @@
     <controls:AppTabBar Grid.Row="1" ActiveRoute="Settings" />
     </Grid>
 </ContentPage>
+

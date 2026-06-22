@@ -64,11 +64,11 @@
                         <Border
                             x:Name="LogIconFrame"
                             BackgroundColor="Transparent"
-                            HeightRequest="40"
+                            HeightRequest="50"
                             Stroke="White"
                             StrokeThickness="2"
-                            StrokeShape="RoundRectangle 20"
-                            WidthRequest="40">
+                            StrokeShape="RoundRectangle 30"
+                            WidthRequest="50">
                             <Path
                                 x:Name="LogIcon"
                                 Aspect="Uniform"
@@ -82,13 +82,15 @@
                                 WidthRequest="16" />
                         </Border>
                         <Label
+                            IsVisible="False"
                             x:Name="LogLabel"
                             FontFamily="OpenSansSemibold"
                             FontSize="10"
                             HorizontalTextAlignment="Center"
                             Text="Add OT"
                             VerticalTextAlignment="Center" />
-                        <Ellipse
+                        <Ellipse 
+                            IsVisible="False"
                             x:Name="LogDot"
                             HeightRequest="4"
                             HorizontalOptions="Center"

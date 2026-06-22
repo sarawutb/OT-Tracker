@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using OTTracker.Models;
 using OTTracker.Services;
 
@@ -124,7 +124,13 @@ public sealed class SettingsViewModel : BaseViewModel
     public bool PinLockEnabled
     {
         get => _pinLockEnabled;
-        set => SetProperty(ref _pinLockEnabled, value);
+        set
+        {
+            if (SetProperty(ref _pinLockEnabled, value) && !value)
+            {
+                BiometricUnlockEnabled = false;
+            }
+        }
     }
 
     public bool BiometricUnlockEnabled
@@ -173,6 +179,12 @@ public sealed class SettingsViewModel : BaseViewModel
         if (DefaultEndTime <= DefaultStartTime)
         {
             ErrorMessage = "Default end time must be later than default start time.";
+            return;
+        }
+
+        if (BiometricUnlockEnabled && (!PinLockEnabled || !await _auth.HasPinAsync()))
+        {
+            ErrorMessage = "Set a 4-digit PIN before enabling fingerprint unlock.";
             return;
         }
 
@@ -247,3 +259,4 @@ public sealed class SettingsViewModel : BaseViewModel
         OnPropertyChanged(nameof(FormulaText));
     }
 }
+

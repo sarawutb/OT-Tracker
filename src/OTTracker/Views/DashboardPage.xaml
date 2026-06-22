@@ -9,15 +9,23 @@
     <Grid RowDefinitions="*,Auto">
     <ScrollView Grid.Row="0">
         <VerticalStackLayout Padding="18,18,18,24" Spacing="12">
-            <Grid ColumnDefinitions="*,44" RowDefinitions="Auto,Auto">
+            <Grid ColumnDefinitions="*,Auto,44" RowDefinitions="Auto,Auto">
                 <Label Style="{StaticResource MutedLabel}" Text="Good evening" />
                 <Label
                     Grid.Row="1"
                     Style="{StaticResource PageTitle}"
                     Text="{Binding MonthText}" />
+                <Label
+                    x:Name="HeaderVersionLabel"
+                    Grid.Column="1"
+                    Grid.RowSpan="2"
+                    Margin="0,0,10,0"
+                    FontSize="11"
+                    TextColor="{StaticResource MutedText}"
+                    VerticalOptions="Center" />
                 <Border
                     Grid.RowSpan="2"
-                    Grid.Column="1"
+                    Grid.Column="2"
                     BackgroundColor="{StaticResource AccentLight}"
                     HeightRequest="42"
                     StrokeShape="RoundRectangle 21"

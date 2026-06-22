@@ -1,4 +1,4 @@
-using OTTracker.Models;
+﻿using OTTracker.Models;
 using SQLite;
 
 namespace OTTracker.Data;
@@ -40,6 +40,11 @@ public sealed class AppDatabase
         if (!existing.Contains(nameof(AppSettings.DefaultBreakMinutes)))
         {
             await connection.ExecuteAsync("ALTER TABLE AppSettings ADD COLUMN DefaultBreakMinutes INTEGER NOT NULL DEFAULT 30");
+        }
+
+        if (!existing.Contains(nameof(AppSettings.MaskEarnings)))
+        {
+            await connection.ExecuteAsync("ALTER TABLE AppSettings ADD COLUMN MaskEarnings INTEGER NOT NULL DEFAULT 0");
         }
     }
 
