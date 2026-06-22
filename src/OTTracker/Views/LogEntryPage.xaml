@@ -4,6 +4,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:OTTracker.Controls"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     Title="Log OT"
     Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="*,Auto,Auto">
@@ -19,15 +21,15 @@
                 </Grid>
 
                 <Label Style="{StaticResource MutedLabel}" Text="Date" />
-                <Border Style="{StaticResource OutlinedFieldBorder}">
-                    <DatePicker
-                        Date="{Binding EntryDate}"
-                        Style="{StaticResource OutlinedDatePicker}" />
-                </Border>
+                <material:DatePickerField
+                    Icon="{FontImageSource FontFamily=MaterialOutlined,
+                                           Glyph={x:Static m:MaterialOutlined.Calendar_month}}"
+                    Date="{Binding EntryDate, Mode=TwoWay}"
+                    AllowClear="False" />
 
                 <Label Style="{StaticResource MutedLabel}" Text="Day type" />
                 <Grid ColumnDefinitions="*,*,*" ColumnSpacing="7">
-
+                    
                     <Button
                         Command="{Binding SelectDayTypeCommand}"
                         CommandParameter="Regular"
@@ -88,34 +90,22 @@
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                     <VerticalStackLayout>
                         <Label Style="{StaticResource MutedLabel}" Text="Start time" />
-                        <Border Style="{StaticResource OutlinedFieldBorder}">
-                            <TimePicker
-                                Style="{StaticResource OutlinedTimePicker}"
-                                Time="{Binding StartTime}" />
-                        </Border>
+                        <material:TimePickerField Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Calendar_clock}}" Time="{Binding StartTime}" AllowClear="False"/>
                     </VerticalStackLayout>
                     <VerticalStackLayout Grid.Column="1">
                         <Label Style="{StaticResource MutedLabel}" Text="End time" />
-                        <Border Style="{StaticResource OutlinedFieldBorder}">
-                            <TimePicker
-                                Style="{StaticResource OutlinedTimePicker}"
-                                Time="{Binding EndTime}" />
-                        </Border>
+                        <material:TimePickerField Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Calendar_clock}}" Time="{Binding EndTime}" AllowClear="False"/>
                     </VerticalStackLayout>
                 </Grid>
 
                 <Label Style="{StaticResource MutedLabel}" Text="Break minutes" />
-                    <Entry
+                <material:TextField
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Clock_loader_10}}"
                         Keyboard="Numeric"
-                        Style="{StaticResource OutlinedFieldEntry}"
                         Text="{Binding BreakMinutes}" />
 
                     <Label Style="{StaticResource MutedLabel}" Text="Note" />
-                <Entry
-                     Placeholder="Task or project name..."
-                     Style="{StaticResource OutlinedFieldEntry}"
-                     Text="{Binding Note}" />
-
+                <material:EditorField Title="Task or project name..." Text="{Binding Note}"/>
                 <Label
                     FontSize="12"
                     Text="{Binding ErrorMessage}"

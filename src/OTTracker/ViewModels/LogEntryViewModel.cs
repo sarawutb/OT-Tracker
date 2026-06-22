@@ -161,7 +161,10 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
             if (entry is not null)
             {
                 _entryId = entry.Id;
-                EntryDate = entry.EntryDate;
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    EntryDate = entry.EntryDate;
+                });
                 SelectedDayType = entry.DayType;
                 StartTime = entry.StartTime;
                 EndTime = entry.EndTime;
@@ -169,7 +172,6 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
                 Note = entry.Note;
             }
         }
-
         await RecalculateAsync();
     }
 

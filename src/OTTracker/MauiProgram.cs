@@ -1,3 +1,4 @@
+using Android.Content.Res;
 using Android.Graphics.Drawables;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,7 @@ using OTTracker.Data;
 using OTTracker.Services;
 using OTTracker.ViewModels;
 using OTTracker.Views;
+using UraniumUI;
 
 namespace OTTracker;
 
@@ -15,49 +17,20 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
-
-#if ANDROID
-        EntryHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
-        {
-            handler.PlatformView.BackgroundTintList =
-                Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-        });
-
-        DatePickerHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
-        {
-            handler.PlatformView.BackgroundTintList =
-                Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-        });
-
-        TimePickerHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
-        {
-            handler.PlatformView.BackgroundTintList =
-                Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-        });
-
-        DatePickerHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
-        {
-            handler.PlatformView.Background = new ColorDrawable(Android.Graphics.Color.Transparent);
-        });
-
-        DatePickerHandler.Mapper.AppendToMapping(nameof(BorderlessDatePicker), (handler, view) =>
-        {
-            if (view is BorderlessDatePicker)
-            {
-                handler.PlatformView.Background = null;
-            }
-        });
-#endif
-
         builder
             .UseMauiApp<App>()
+            .UseUraniumUI()
+            .UseUraniumUIMaterial()
+
 #if DEBUG
-            .EnableHotReload()
+            //.EnableHotReload()
 #endif
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                fonts.AddMaterialIconFonts();
+                fonts.AddMaterialSymbolsFonts();
             })
             .UseMauiCommunityToolkit();
 
@@ -85,6 +58,68 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
+
+#if ANDROID
+        //EntryHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
+        //{
+        //    handler.PlatformView.BackgroundTintList =
+        //        Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        //});
+
+        //DatePickerHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
+        //{
+        //    handler.PlatformView.BackgroundTintList =
+        //        Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        //});
+
+        //TimePickerHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
+        //{
+        //    handler.PlatformView.BackgroundTintList =
+        //        Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+        //});
+
+        //DatePickerHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
+        //{
+        //    handler.PlatformView.Background = null;
+        //    handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
+        //    handler.PlatformView.BackgroundTintList =
+        //        ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+
+        //    handler.PlatformView.SetPadding(0, 0, 0, 0);
+        //});
+
+        //DatePickerHandler.Mapper.AppendToMapping(nameof(BorderlessDatePicker), (handler, view) =>
+        //{
+        //    if (view is BorderlessDatePicker)
+        //    {
+        //        handler.PlatformView.Background = null;
+        //    }
+        //});
+
+        //DatePickerHandler.Mapper.AppendToMapping(nameof(DatePicker), (handler, view) =>
+        //{
+        //    handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
+        //    handler.PlatformView.BackgroundTintList =
+        //        Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+
+        //    handler.PlatformView.SetPadding(0, 0, 0, 0);
+        //});
+
+        //DatePickerHandler.Mapper.ModifyMapping(nameof(IDatePicker.Background), (handler, view, action) =>
+        //{
+        //    action?.Invoke(handler, view);
+
+        //    handler.PlatformView.Post(() =>
+        //    {
+        //        handler.PlatformView.Background = null;
+        //        handler.PlatformView.BackgroundTintList =
+        //            ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+
+        //        handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
+        //    });
+        //});
+#endif
+
         return builder.Build();
     }
 }

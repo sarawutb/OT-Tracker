@@ -227,7 +227,7 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Grid ColumnDefinitions="*,56" ColumnSpacing="8">
+            <Grid ColumnDefinitions="*,100" ColumnSpacing="8">
                 <Button
                     Command="{Binding GoLogTodayCommand}"
                     Style="{StaticResource PrimaryButton}"
@@ -236,7 +236,7 @@
                     Grid.Column="1"
                     Command="{Binding GoHistoryCommand}"
                     Style="{StaticResource GhostButton}"
-                    Text="Cal" />
+                    Text="History" />
             </Grid>
         </VerticalStackLayout>
     </ScrollView>
