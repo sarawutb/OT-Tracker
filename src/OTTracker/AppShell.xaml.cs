@@ -9,6 +9,16 @@ public partial class AppShell : Shell
 
     protected override bool OnBackButtonPressed()
     {
+        if (CurrentPage is OTTracker.Views.HistoryPage)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await GoToAsync("//Dashboard");
+            });
+
+            return true;
+        }
+
         MainThread.BeginInvokeOnMainThread(async () =>
         {
             bool confirm = await DisplayAlert(

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
 using OTTracker.Models;
 using OTTracker.Services;
@@ -123,7 +124,10 @@ public sealed class DashboardViewModel : BaseViewModel
             {
                 var day = weekStart.AddDays(i);
                 var hours = thisWeek.Where(e => e.EntryDate.Date == day.Date).Sum(e => e.NetHours);
-                WeeklySummaries.Add(new WeeklyDaySummary(day.ToString("ddd")[0].ToString(), hours, day.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday));
+                string dayTH = day.DayOfWeek == DayOfWeek.Sunday
+                            ? "อา."
+                            : day.ToString("ddd");
+                WeeklySummaries.Add(new WeeklyDaySummary(dayTH, hours, day.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday));
             }
         }
         finally

@@ -32,7 +32,6 @@ public partial class AppTabBar : ContentView
     {
         SetTabState(DashboardIcon, DashboardLabel, DashboardDot, ActiveRoute == "Dashboard");
         SetTabState(LogIcon, LogLabel, LogDot, ActiveRoute == "Log");
-        SetTabState(HistoryIcon, HistoryLabel, HistoryDot, ActiveRoute == "History");
         SetTabState(SettingsIcon, SettingsLabel, SettingsDot, ActiveRoute == "Settings");
     }
 
@@ -63,11 +62,6 @@ public partial class AppTabBar : ContentView
     private async void LogTapped(object sender, TappedEventArgs e)
     {
         await Shell.Current.GoToAsync("//Log");
-    }
-
-    private async void HistoryTapped(object sender, TappedEventArgs e)
-    {
-        await Shell.Current.GoToAsync("//History");
     }
 
     private async void SettingsTapped(object sender, TappedEventArgs e)

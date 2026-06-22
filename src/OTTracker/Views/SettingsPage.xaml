@@ -4,7 +4,9 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:OTTracker.Controls"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     Title="Settings"
+    Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="*,Auto">
     <ScrollView Grid.Row="0">
@@ -14,39 +16,30 @@
             <Label Text="SALARY &amp; COMPENSATION" Style="{StaticResource MutedLabel}" />
             <Border Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="10">
-                    <Grid ColumnDefinitions="*,112">
-                        <Label Text="Base monthly salary" TextColor="{StaticResource Ink}" VerticalOptions="Center" />
-                        <Entry Grid.Column="1" Text="{Binding BaseMonthlySalary}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="End" />
-                    </Grid>
-                    <Grid ColumnDefinitions="*,112">
-                        <Label Text="Working days/month" TextColor="{StaticResource Ink}" VerticalOptions="Center" />
-                        <Entry Grid.Column="1" Text="{Binding WorkingDaysPerMonth}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="End" />
-                    </Grid>
-                    <Grid ColumnDefinitions="*,112">
-                        <Label Text="Hours/day" TextColor="{StaticResource Ink}" VerticalOptions="Center" />
-                        <Entry Grid.Column="1" Text="{Binding HoursPerDay}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="End" />
-                    </Grid>
-                    <Grid ColumnDefinitions="*,112">
-                        <VerticalStackLayout>
-                            <Label Text="Default start time" TextColor="{StaticResource Ink}" />
-                            <Label Text="New OT entries" Style="{StaticResource MutedLabel}" />
-                        </VerticalStackLayout>
-                        <TimePicker Grid.Column="1" Time="{Binding DefaultStartTime}" />
-                    </Grid>
-                    <Grid ColumnDefinitions="*,112">
-                        <VerticalStackLayout>
-                            <Label Text="Default end time" TextColor="{StaticResource Ink}" />
-                            <Label Text="New OT entries" Style="{StaticResource MutedLabel}" />
-                        </VerticalStackLayout>
-                        <TimePicker Grid.Column="1" Time="{Binding DefaultEndTime}" />
-                    </Grid>
-                    <Grid ColumnDefinitions="*,112">
-                        <VerticalStackLayout>
-                            <Label Text="Default break minutes" TextColor="{StaticResource Ink}" />
-                            <Label Text="New OT entries" Style="{StaticResource MutedLabel}" />
-                        </VerticalStackLayout>
-                        <Entry Grid.Column="1" Text="{Binding DefaultBreakMinutes}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="End" />
-                    </Grid>
+                    <material:TextField
+                        Title="Base monthly salary"
+                        Keyboard="Numeric"
+                        Text="{Binding BaseMonthlySalary}" />
+                    <material:TextField
+                        Title="Working days/month"
+                        Keyboard="Numeric"
+                        Text="{Binding WorkingDaysPerMonth}" />
+                    <material:TextField
+                        Title="Hours/day"
+                        Keyboard="Numeric"
+                        Text="{Binding HoursPerDay}" />
+                    <material:TimePickerField
+                        Title="Default start time"
+                        AllowClear="False"
+                        Time="{Binding DefaultStartTime}" />
+                    <material:TimePickerField
+                        Title="Default end time"
+                        AllowClear="False"
+                        Time="{Binding DefaultEndTime}" />
+                    <material:TextField
+                        Title="Default break minutes"
+                        Keyboard="Numeric"
+                        Text="{Binding DefaultBreakMinutes}" />
                     <Border BackgroundColor="{StaticResource GreenLight}" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="12">
                         <VerticalStackLayout>
                             <Label Text="HOURLY RATE" FontSize="10" TextColor="{StaticResource Green}" />
@@ -60,27 +53,18 @@
             <Label Text="OT MULTIPLIERS" Style="{StaticResource MutedLabel}" />
             <Border Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="10">
-                    <Grid ColumnDefinitions="*,96">
-                        <VerticalStackLayout>
-                            <Label Text="Regular workday" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
-                            <Label Text="Mon-Fri overtime" Style="{StaticResource MutedLabel}" />
-                        </VerticalStackLayout>
-                        <Entry Grid.Column="1" Text="{Binding RegularMultiplier}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="Center" />
-                    </Grid>
-                    <Grid ColumnDefinitions="*,96">
-                        <VerticalStackLayout>
-                            <Label Text="Weekend" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
-                            <Label Text="Sat-Sun" Style="{StaticResource MutedLabel}" />
-                        </VerticalStackLayout>
-                        <Entry Grid.Column="1" Text="{Binding WeekendMultiplier}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="Center" />
-                    </Grid>
-                    <Grid ColumnDefinitions="*,96">
-                        <VerticalStackLayout>
-                            <Label Text="Public holiday" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
-                            <Label Text="National holidays" Style="{StaticResource MutedLabel}" />
-                        </VerticalStackLayout>
-                        <Entry Grid.Column="1" Text="{Binding HolidayMultiplier}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" HorizontalTextAlignment="Center" />
-                    </Grid>
+                    <material:TextField
+                        Title="Regular workday"
+                        Keyboard="Numeric"
+                        Text="{Binding RegularMultiplier}" />
+                    <material:TextField
+                        Title="Weekend"
+                        Keyboard="Numeric"
+                        Text="{Binding WeekendMultiplier}" />
+                    <material:TextField
+                        Title="Public holiday"
+                        Keyboard="Numeric"
+                        Text="{Binding HolidayMultiplier}" />
                 </VerticalStackLayout>
             </Border>
 

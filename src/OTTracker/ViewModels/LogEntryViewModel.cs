@@ -161,10 +161,7 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
             if (entry is not null)
             {
                 _entryId = entry.Id;
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    EntryDate = entry.EntryDate;
-                });
+                EntryDate = entry.EntryDate;
                 SelectedDayType = entry.DayType;
                 StartTime = entry.StartTime;
                 EndTime = entry.EndTime;
@@ -229,7 +226,7 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
 
     private async Task ResetForNewEntryAsync()
     {
-        EntryDate = DateTime.Today;
+        ResetEntryDate();
         SelectedDayType = DayType.Regular;
         await ApplyDefaultEntrySettingsAsync();
         Note = string.Empty;
@@ -241,5 +238,18 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
         StartTime = settings.DefaultStartTime;
         EndTime = settings.DefaultEndTime;
         BreakMinutes = settings.DefaultBreakMinutes;
+        ResetEntryDate();
+    }
+
+    private void ResetEntryDate()
+    {
+        var date = DateTime.Now.AddDays(-1);
+
+        if (date.DayOfWeek == DayOfWeek.Sunday)
+        {
+            date = date.AddDays(-1);
+        }
+
+        EntryDate = date;
     }
 }

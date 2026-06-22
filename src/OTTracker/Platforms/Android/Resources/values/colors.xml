@@ -4,40 +4,18 @@
     <color name="colorPrimaryDark">#AFA9EC</color>
     <color name="colorAccent">#5B4FE8</color>
 
-	<style name="MyDatePickerDialogTheme"
-	   parent="Theme.Material3.DayNight.Dialog.Alert">
-		<item name="android:windowIsTranslucent">false</item>
-		<item name="android:windowBackground">?android:colorBackground</item>
-	</style>
+    <!--<style name="MainTheme" parent="Maui.MainTheme">
+        <item name="android:datePickerDialogTheme">@style/AppDatePickerDialogTheme</item>
+    </style>
 
-	<style name="MainTheme" parent="Maui.MainTheme">
-		<item name="android:datePickerDialogTheme">
-			@style/MyDatePickerDialogTheme
-		</item>
-	</style>
-
-	<!--<style name="MainTheme" parent="Maui.SplashTheme">
-		<item name="android:datePickerDialogTheme">@style/AppDatePickerDialogTheme</item>
-
-		--><!--<item name="android:datePickerDialogTheme">@style/MyDatePickerDialog</item>
-		<item name="android:colorAccent">#5B4FE8</item>--><!--
-	</style>-->
-
-	<!--<style name="AppDatePickerDialogTheme" parent="@style/Theme.Material3.DayNight.Dialog.Alert">
-		<item name="android:windowIsTranslucent">false</item>
-		<item name="android:windowBackground">?android:colorBackground</item>
-		<item name="android:colorAccent">#5B4FE8</item>
-	</style>-->
-
-	<!--<style name="AppDatePickerDialogTheme" parent="@android:style/Theme.Material.Light.Dialog.Alert">
-		<item name="android:windowIsTranslucent">false</item>
-		<item name="android:windowBackground">#FFFFFF</item>
-		<item name="android:colorAccent">#5B4FE8</item>
-	</style>-->
-	
-	<!--<style name="MyDatePickerDialog" parent="@android:style/Theme.Material.Light.Dialog.Alert">
-		<item name="android:windowBackground">#FFFFFF</item>
-		<item name="android:colorAccent">#5B4FE8</item>
-		<item name="android:windowIsTranslucent">false</item>
-	</style>-->
+    <style name="AppDatePickerDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowBackground">#FFFFFF</item>
+        <item name="android:colorAccent">#5B4FE8</item>
+        <item name="colorAccent">#5B4FE8</item>
+        <item name="colorPrimary">#5B4FE8</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#1E1B2E</item>
+    </style>-->
 </resources>

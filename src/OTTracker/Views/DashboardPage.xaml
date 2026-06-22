@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:OTTracker.Controls"
-    Title="Home"
+    Title="OT Dashboard"
     Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="*,Auto">
     <ScrollView Grid.Row="0">
@@ -124,7 +124,7 @@
                     </Grid>
                     <CollectionView HeightRequest="96" ItemsSource="{Binding WeeklySummaries}">
                         <CollectionView.ItemsLayout>
-                            <LinearItemsLayout ItemSpacing="6" Orientation="Horizontal" />
+                            <LinearItemsLayout ItemSpacing="4" Orientation="Horizontal" />
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
@@ -141,7 +141,7 @@
                                         HeightRequest="{Binding Hours}"
                                         VerticalOptions="End"
                                         WidthRequest="26"
-                                        Color="{StaticResource Accent}" />
+                                        Color="{StaticResource GreenMid}" />
                                     <Label
                                         FontSize="10"
                                         HorizontalTextAlignment="Center"
@@ -155,7 +155,7 @@
                         <Label
                             FontSize="11"
                             Text="Weekday"
-                            TextColor="{StaticResource Accent}" />
+                            TextColor="{StaticResource GreenMid}" />
                         <Label
                             FontSize="11"
                             Text="Weekend"

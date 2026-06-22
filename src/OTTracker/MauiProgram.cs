@@ -1,3 +1,4 @@
+using System.Globalization;
 using Android.Content.Res;
 using Android.Graphics.Drawables;
 using CommunityToolkit.Maui;
@@ -59,66 +60,16 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-#if ANDROID
-        //EntryHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
-        //{
-        //    handler.PlatformView.BackgroundTintList =
-        //        Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-        //});
 
-        //DatePickerHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
-        //{
-        //    handler.PlatformView.BackgroundTintList =
-        //        Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-        //});
+        var culture = CultureInfo.CurrentCulture;
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-        //TimePickerHandler.Mapper.AppendToMapping("HideUnderline", (handler, view) =>
-        //{
-        //    handler.PlatformView.BackgroundTintList =
-        //        Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-        //});
+        System.Diagnostics.Debug.WriteLine(
+            $"CurrentCulture: {CultureInfo.CurrentCulture.Name}");
 
-        //DatePickerHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
-        //{
-        //    handler.PlatformView.Background = null;
-        //    handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
-        //    handler.PlatformView.BackgroundTintList =
-        //        ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-
-        //    handler.PlatformView.SetPadding(0, 0, 0, 0);
-        //});
-
-        //DatePickerHandler.Mapper.AppendToMapping(nameof(BorderlessDatePicker), (handler, view) =>
-        //{
-        //    if (view is BorderlessDatePicker)
-        //    {
-        //        handler.PlatformView.Background = null;
-        //    }
-        //});
-
-        //DatePickerHandler.Mapper.AppendToMapping(nameof(DatePicker), (handler, view) =>
-        //{
-        //    handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
-        //    handler.PlatformView.BackgroundTintList =
-        //        Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-
-        //    handler.PlatformView.SetPadding(0, 0, 0, 0);
-        //});
-
-        //DatePickerHandler.Mapper.ModifyMapping(nameof(IDatePicker.Background), (handler, view, action) =>
-        //{
-        //    action?.Invoke(handler, view);
-
-        //    handler.PlatformView.Post(() =>
-        //    {
-        //        handler.PlatformView.Background = null;
-        //        handler.PlatformView.BackgroundTintList =
-        //            ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
-
-        //        handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
-        //    });
-        //});
-#endif
+        System.Diagnostics.Debug.WriteLine(
+            $"CurrentUICulture: {CultureInfo.CurrentUICulture.Name}");
 
         return builder.Build();
     }

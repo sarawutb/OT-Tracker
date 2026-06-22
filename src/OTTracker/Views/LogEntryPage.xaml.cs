@@ -13,9 +13,9 @@ public partial class LogEntryPage : ContentPage
         BindingContext = viewModel;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.LoadAsync();
+        _viewModel.LoadAsync();
     }
 }

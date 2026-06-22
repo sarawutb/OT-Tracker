@@ -7,6 +7,7 @@
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     Title="Log OT"
+    Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="*,Auto,Auto">
         <ScrollView>
@@ -148,7 +149,7 @@
                 <Button
                     Command="{Binding SaveCommand}"
                     Style="{StaticResource PrimaryButton}"
-                    Text="Save entry" />
+                    Text="Save" />
             </VerticalStackLayout>
         </Border>
         <controls:AppTabBar Grid.Row="2" ActiveRoute="Log" />
