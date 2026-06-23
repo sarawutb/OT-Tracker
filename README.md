@@ -38,5 +38,3 @@ Calculation test runner:
 ```powershell
 dotnet run --project "tests\OTTracker.Tests\OTTracker.Tests.csproj"
 ```
-
-Checklist verification is documented in `docs/Checklist Verification.md`.
