@@ -83,7 +83,7 @@
         <Setter Property="Padding" Value="16,0" />
     </Style>
 
-      <Style x:Key="GhostImageButton" TargetType="ImageButton">
+    <Style x:Key="GhostImageButton" TargetType="ImageButton">
         <Setter Property="BackgroundColor" Value="{StaticResource White}" />
         <Setter Property="BorderColor" Value="{StaticResource Surface}" />
         <Setter Property="CornerRadius" Value="14" />
@@ -200,15 +200,17 @@
     <Style TargetType="material:TextField">
         <Setter Property="AccentColor" Value="{StaticResource Primary}" />
         <Setter Property="TextColor" Value="{StaticResource Ink}" />
-        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="InputBackgroundColor" Value="{StaticResource White}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="6" />
     </Style>
-    
+
     <Style TargetType="material:EditorField">
         <Setter Property="AccentColor" Value="{StaticResource Primary}" />
         <Setter Property="TextColor" Value="{StaticResource Ink}" />
-        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="InputBackgroundColor" Value="{StaticResource White}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="6" />
     </Style>
@@ -217,7 +219,18 @@
         <Setter Property="AccentColor" Value="{StaticResource Primary}" />
         <Setter Property="TextColor" Value="{StaticResource Ink}" />
         <Setter Property="TitleColor" Value="{StaticResource Ink}" />
-        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="InputBackgroundColor" Value="{StaticResource White}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="6" />
+    </Style>
+
+    <Style TargetType="material:DatePickerField">
+        <Setter Property="AccentColor" Value="{StaticResource Primary}" />
+        <Setter Property="TextColor" Value="{StaticResource Ink}" />
+        <Setter Property="TitleColor" Value="{StaticResource Ink}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="InputBackgroundColor" Value="{StaticResource White}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="6" />
     </Style>

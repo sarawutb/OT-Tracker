@@ -94,14 +94,24 @@
 
 	<ItemGroup>
 
+		<PackageReference Include="AathifMahir.Maui.MauiIcons.FontAwesome" Version="6.0.0" />
+
 		<PackageReference Include="CommunityToolkit.Maui" Version="14.2.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.71" />
+		<PackageReference Include="UraniumUI.Dialogs.CommunityToolkit" Version="3.0.0" />
+		<PackageReference Include="UraniumUI.Dialogs.Mopups" Version="3.0.0" />
 		<PackageReference Include="UraniumUI.Icons.MaterialIcons" Version="3.0.0" />
 		<PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="3.0.0" />
 		<PackageReference Include="UraniumUI.Material" Version="2.16.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="Controls\AnimatedPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>

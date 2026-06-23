@@ -13,7 +13,7 @@
         <ScrollView>
             <VerticalStackLayout Padding="18" Spacing="10">
                 <Grid ColumnDefinitions="*,Auto">
-                    <Label Style="{StaticResource PageTitle}" Text="Log OT entry" />
+                    <Label Style="{StaticResource PageTitle}" Text="Add OT" />
                     <Label
                         Grid.Column="1"
                         Style="{StaticResource MutedLabel}"
@@ -152,6 +152,6 @@
                     Text="Save" />
             </VerticalStackLayout>
         </Border>
-        <controls:AppTabBar Grid.Row="2" ActiveRoute="Log" />
+        <!--<controls:AppTabBar Grid.Row="2" ActiveRoute="Log" />-->
     </Grid>
 </ContentPage>

@@ -1,10 +1,8 @@
 using System.Globalization;
-using Android.Content.Res;
-using Android.Graphics.Drawables;
 using CommunityToolkit.Maui;
+using MauiIcons.FontAwesome;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Handlers;
-using OTTracker.Controls;
+using Mopups.Hosting;
 using OTTracker.Data;
 using OTTracker.Services;
 using OTTracker.ViewModels;
@@ -22,7 +20,7 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .UseUraniumUI()
             .UseUraniumUIMaterial()
-
+            .UseFontAwesomeMauiIcons()
 #if DEBUG
             //.EnableHotReload()
 #endif
@@ -45,13 +43,13 @@ public static class MauiProgram
         builder.Services.AddSingleton<ICsvExportService, CsvExportService>();
 
         builder.Services.AddTransient<PinViewModel>();
-        builder.Services.AddTransient<DashboardViewModel>();
+        builder.Services.AddScoped<DashboardViewModel>();
         builder.Services.AddTransient<LogEntryViewModel>();
         builder.Services.AddTransient<HistoryViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
 
         builder.Services.AddTransient<PinPage>();
-        builder.Services.AddTransient<DashboardPage>();
+        builder.Services.AddScoped<DashboardPage>();
         builder.Services.AddTransient<LogEntryPage>();
         builder.Services.AddTransient<HistoryPage>();
         builder.Services.AddTransient<SettingsPage>();
@@ -59,17 +57,9 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-
-
         var culture = CultureInfo.CurrentCulture;
         CultureInfo.DefaultThreadCurrentCulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
-
-        System.Diagnostics.Debug.WriteLine(
-            $"CurrentCulture: {CultureInfo.CurrentCulture.Name}");
-
-        System.Diagnostics.Debug.WriteLine(
-            $"CurrentUICulture: {CultureInfo.CurrentUICulture.Name}");
 
         return builder.Build();
     }

@@ -18,6 +18,15 @@ public partial class AppShell : Shell
 
             return true;
         }
+        else if (CurrentPage is OTTracker.Views.LogEntryPage)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await GoToAsync("//Dashboard");
+            });
+
+            return true;
+        }
 
         MainThread.BeginInvokeOnMainThread(async () =>
         {

@@ -16,11 +16,11 @@ public partial class PinPage : ContentPage
         SetVersionText();
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
         SetVersionText();
-        _viewModel.LoadAsync();
+        await _viewModel.LoadAsync();
     }
 
     private void SetVersionText()
