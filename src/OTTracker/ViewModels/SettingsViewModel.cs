@@ -12,6 +12,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private readonly IOtEntryRepository _entries;
     private readonly ICsvExportService _csv;
     private readonly AppEvents _events;
+    private bool _maskEarnings;
+
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string userName = "Username";
 
@@ -38,6 +40,18 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private int defaultBreakMinutes = 30;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private int periodStartDay = 16;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private int periodEndDay = 15;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private DateTime periodStartDate = new(DateTime.Today.Year, DateTime.Today.Month, 16);
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private DateTime periodEndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16).AddMonths(1).AddDays(-1);
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private decimal regularMultiplier = 1.5m;
@@ -97,11 +111,16 @@ public sealed partial class SettingsViewModel : BaseViewModel
         DefaultStartTime = settings.DefaultStartTime;
         DefaultEndTime = settings.DefaultEndTime;
         DefaultBreakMinutes = settings.DefaultBreakMinutes;
+        PeriodStartDay = settings.PeriodStartDay;
+        PeriodEndDay = settings.PeriodEndDay;
+        PeriodStartDate = settings.PeriodStartDate.Date;
+        PeriodEndDate = settings.PeriodEndDate.Date;
         RegularMultiplier = settings.RegularMultiplier;
         WeekendMultiplier = settings.WeekendMultiplier;
         HolidayMultiplier = settings.HolidayMultiplier;
         PinLockEnabled = settings.PinLockEnabled;
         BiometricUnlockEnabled = settings.BiometricUnlockEnabled;
+        _maskEarnings = settings.MaskEarnings;
         RefreshCalculated();
         IsBusy = false;
     }
@@ -121,6 +140,18 @@ public sealed partial class SettingsViewModel : BaseViewModel
         if (DefaultBreakMinutes < 0)
         {
             ErrorMessage = "Default break minutes must be 0 or greater.";
+            return;
+        }
+
+        if (PeriodStartDay is < 1 or > 31 || PeriodEndDay is < 1 or > 31)
+        {
+            ErrorMessage = "OT period start and end days must be between 1 and 31.";
+            return;
+        }
+
+        if (PeriodEndDate.Date < PeriodStartDate.Date)
+        {
+            ErrorMessage = "OT period end date must be on or after start date.";
             return;
         }
 
@@ -226,11 +257,16 @@ public sealed partial class SettingsViewModel : BaseViewModel
         DefaultStartTime = DefaultStartTime,
         DefaultEndTime = DefaultEndTime,
         DefaultBreakMinutes = DefaultBreakMinutes,
+        PeriodStartDay = PeriodStartDay,
+        PeriodEndDay = PeriodEndDay,
+        PeriodStartDate = PeriodStartDate.Date,
+        PeriodEndDate = PeriodEndDate.Date,
         RegularMultiplier = RegularMultiplier,
         WeekendMultiplier = WeekendMultiplier,
         HolidayMultiplier = HolidayMultiplier,
         PinLockEnabled = PinLockEnabled,
-        BiometricUnlockEnabled = BiometricUnlockEnabled
+        BiometricUnlockEnabled = BiometricUnlockEnabled,
+        MaskEarnings = _maskEarnings
     };
 
     private void RefreshCalculated()

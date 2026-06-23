@@ -80,6 +80,18 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
         await RecalculateAsync();
     }
 
+    public async Task OnBackAsync()
+    {
+        if (_entryId == 0)
+        {
+            await Shell.Current.GoToAsync("//Dashboard");
+        }
+        else
+        {
+            await Shell.Current.GoToAsync("//History");
+        }
+    }
+
     public async void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         if (query.TryGetValue("id", out var value) && int.TryParse(value?.ToString(), out var id))

@@ -1,4 +1,7 @@
-﻿namespace OTTracker;
+﻿using AndroidX.Lifecycle;
+using OTTracker.ViewModels;
+
+namespace OTTracker;
 
 public partial class AppShell : Shell
 {
@@ -9,7 +12,7 @@ public partial class AppShell : Shell
 
     protected override bool OnBackButtonPressed()
     {
-        if (CurrentPage is OTTracker.Views.HistoryPage)
+        if (CurrentPage is Views.HistoryPage)
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
@@ -18,11 +21,12 @@ public partial class AppShell : Shell
 
             return true;
         }
-        else if (CurrentPage is OTTracker.Views.LogEntryPage)
+        else if (CurrentPage is Views.LogEntryPage)
         {
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                await GoToAsync("//Dashboard");
+                var _bindingContext = CurrentPage.BindingContext as LogEntryViewModel;
+                _bindingContext?.OnBackAsync();
             });
 
             return true;

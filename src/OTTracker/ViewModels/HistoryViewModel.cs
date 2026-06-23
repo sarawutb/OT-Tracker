@@ -8,10 +8,14 @@ namespace OTTracker.ViewModels;
 public sealed partial class HistoryViewModel : BaseViewModel
 {
     private readonly IOtEntryRepository _entries;
+    private readonly ISettingsService _settings;
     private readonly AppEvents _events;
+    private OtPeriod _settingsPeriod = new(new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16), new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16).AddMonths(1).AddDays(-1));
+    private bool _periodInitialized;
+
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(MonthText))]
-    private DateTime selectedMonth = new(DateTime.Today.Year, DateTime.Today.Month, 1);
+    private DateTime selectedMonth = DateTime.Today;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private DateTime selectedDate = DateTime.Today;
@@ -24,9 +28,10 @@ public sealed partial class HistoryViewModel : BaseViewModel
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(MonthEarningsText))]
     private decimal monthEarnings;
 
-    public HistoryViewModel(IOtEntryRepository entries, AppEvents events)
+    public HistoryViewModel(IOtEntryRepository entries, ISettingsService settings, AppEvents events)
     {
         _entries = entries;
+        _settings = settings;
         _events = events;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         PreviousMonthCommand = new AsyncRelayCommand(PreviousMonthAsync);
@@ -35,6 +40,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
         EditCommand = new AsyncRelayCommand<EntryDisplay>(EditAsync);
         DeleteCommand = new AsyncRelayCommand<EntryDisplay>(DeleteAsync);
         _events.EntriesChanged += async (_, _) => await LoadAsync();
+        _events.SettingsChanged += async (_, _) => await LoadAsync();
     }
 
     public IAsyncRelayCommand LoadCommand { get; }
@@ -53,7 +59,14 @@ public sealed partial class HistoryViewModel : BaseViewModel
 
     public ObservableCollection<EntryDisplay> MonthEntries { get; } = [];
 
-    public string MonthText => SelectedMonth.ToString("MMMM yyyy");
+    public string MonthText
+    {
+        get
+        {
+            var period = GetOtPeriod(SelectedMonth);
+            return period.DisplayText;
+        }
+    }
 
     public string MonthHoursText => $"{MonthHours:0.##} hrs";
 
@@ -61,7 +74,18 @@ public sealed partial class HistoryViewModel : BaseViewModel
 
     public async Task LoadAsync()
     {
-        var monthEntries = await _entries.GetMonthAsync(SelectedMonth.Year, SelectedMonth.Month);
+        var settings = await _settings.GetAsync();
+        _settingsPeriod = new OtPeriod(settings.PeriodStartDate.Date, settings.PeriodEndDate.Date);
+        if (!_periodInitialized)
+        {
+            SelectedMonth = _settingsPeriod.Start;
+            SelectedDate = _settingsPeriod.Start;
+            _periodInitialized = true;
+        }
+        OnPropertyChanged(nameof(MonthText));
+
+        var period = GetOtPeriod(SelectedMonth);
+        var monthEntries = await _entries.GetPeriodAsync(period.Start, period.End);
         MonthHours = monthEntries.Sum(e => e.NetHours);
         MonthEarnings = monthEntries.Sum(e => e.EstimatedEarnings);
 
@@ -75,17 +99,15 @@ public sealed partial class HistoryViewModel : BaseViewModel
         }
 
         CalendarDays.Clear();
-        var blanks = (int)new DateTime(SelectedMonth.Year, SelectedMonth.Month, 1).DayOfWeek;
+        var blanks = (int)period.Start.DayOfWeek;
         for (var i = 0; i < blanks; i++)
         {
             CalendarDays.Add(new CalendarDay());
         }
 
-        var daysInMonth = DateTime.DaysInMonth(SelectedMonth.Year, SelectedMonth.Month);
         var entryDates = monthEntries.Select(e => e.EntryDate.Date).ToHashSet();
-        for (var day = 1; day <= daysInMonth; day++)
+        for (var date = period.Start; date <= period.End; date = date.AddDays(1))
         {
-            var date = new DateTime(SelectedMonth.Year, SelectedMonth.Month, day);
             CalendarDays.Add(new CalendarDay
             {
                 Date = date,
@@ -99,14 +121,14 @@ public sealed partial class HistoryViewModel : BaseViewModel
     private async Task PreviousMonthAsync()
     {
         SelectedMonth = SelectedMonth.AddMonths(-1);
-        SelectedDate = SelectedMonth;
+        SelectedDate = GetOtPeriod(SelectedMonth).Start;
         await LoadAsync();
     }
 
     private async Task NextMonthAsync()
     {
         SelectedMonth = SelectedMonth.AddMonths(1);
-        SelectedDate = SelectedMonth;
+        SelectedDate = GetOtPeriod(SelectedMonth).Start;
         await LoadAsync();
     }
 
@@ -145,5 +167,11 @@ public sealed partial class HistoryViewModel : BaseViewModel
         await _entries.DeleteAsync(display.Entry);
         _events.NotifyEntriesChanged();
         await LoadAsync();
+    }
+
+    private OtPeriod GetOtPeriod(DateTime date)
+    {
+        var offset = ((date.Year - _settingsPeriod.Start.Year) * 12) + date.Month - _settingsPeriod.Start.Month;
+        return _settingsPeriod.AddMonths(offset);
     }
 }

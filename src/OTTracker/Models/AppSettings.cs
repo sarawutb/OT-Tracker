@@ -19,6 +19,14 @@ public sealed class AppSettings
 
     public int DefaultBreakMinutes { get; set; } = 30;
 
+    public int PeriodStartDay { get; set; } = 16;
+
+    public int PeriodEndDay { get; set; } = 15;
+
+    public DateTime PeriodStartDate { get; set; } = new(DateTime.Today.Year, DateTime.Today.Month, 16);
+
+    public DateTime PeriodEndDate { get; set; } = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16).AddMonths(1).AddDays(-1);
+
     public decimal RegularMultiplier { get; set; } = 1.5m;
 
     public decimal WeekendMultiplier { get; set; } = 2.0m;

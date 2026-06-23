@@ -51,7 +51,7 @@
                     <VerticalStackLayout Spacing="8">
                         <Label
                         FontSize="11"
-                        Text="TOTAL OT THIS MONTH"
+                        Text="TOTAL OT THIS PERIOD"
                         TextColor="#CCFFFFFF" />
                         <HorizontalStackLayout Spacing="6">
                             <Label

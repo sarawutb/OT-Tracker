@@ -8,6 +8,8 @@ public interface IOtEntryRepository
 
     Task<IReadOnlyList<OtEntry>> GetMonthAsync(int year, int month);
 
+    Task<IReadOnlyList<OtEntry>> GetPeriodAsync(DateTime start, DateTime end);
+
     Task<IReadOnlyList<OtEntry>> GetRecentAsync(int count);
 
     Task<OtEntry?> GetByIdAsync(int id);

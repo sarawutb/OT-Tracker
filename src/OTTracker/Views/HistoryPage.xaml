@@ -50,7 +50,7 @@
             <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                 <Border Style="{StaticResource CompactCard}">
                     <VerticalStackLayout>
-                        <Label Text="Month total" Style="{StaticResource MutedLabel}" />
+                        <Label Text="Period total" Style="{StaticResource MutedLabel}" />
                         <Label Text="{Binding MonthHoursText}" FontSize="18" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
                     </VerticalStackLayout>
                 </Border>
@@ -67,7 +67,7 @@
                     <Label Text="All entries" Style="{StaticResource SectionTitle}" Margin="0" />
                     <CollectionView ItemsSource="{Binding MonthEntries}">
                         <CollectionView.EmptyView>
-                            <Label Text="No entries in this month." Style="{StaticResource MutedLabel}" />
+                            <Label Text="No entries in this period." Style="{StaticResource MutedLabel}" />
                         </CollectionView.EmptyView>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>

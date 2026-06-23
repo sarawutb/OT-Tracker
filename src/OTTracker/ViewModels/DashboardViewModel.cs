@@ -13,7 +13,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
     private readonly ISettingsService _settings;
     private readonly SemaphoreSlim _loadGate = new(1, 1);
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private string monthText = DateTime.Today.ToString("MMMM yyyy");
+    private string monthText = OtPeriod.FromDate(DateTime.Today, 16, 15).DisplayText;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string userName = "Username";
@@ -74,8 +74,9 @@ public sealed partial class DashboardViewModel : BaseViewModel
             _suppressMaskSave = false;
 
             var today = DateTime.Today;
-            MonthText = today.ToString("MMMM yyyy");
-            var month = await _entries.GetMonthAsync(today.Year, today.Month);
+            var period = new OtPeriod(settings.PeriodStartDate.Date, settings.PeriodEndDate.Date);
+            MonthText = period.DisplayText;
+            var month = await _entries.GetPeriodAsync(period.Start, period.End);
             TotalHours = month.Sum(e => e.NetHours);
             EstimatedEarnings = month.Sum(e => e.EstimatedEarnings);
 
@@ -148,5 +149,6 @@ public sealed partial class DashboardViewModel : BaseViewModel
             entry.MaskEarnings = MaskEarnings;
         }
     }
+
 }
 

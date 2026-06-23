@@ -18,4 +18,10 @@ public partial class LogEntryPage : ContentPage
         base.OnAppearing();
         _viewModel.LoadAsync();
     }
+
+    protected override bool OnBackButtonPressed()
+    {
+        _viewModel.OnBackAsync();
+        return true;
+    }
 }
