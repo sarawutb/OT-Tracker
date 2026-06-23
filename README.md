@@ -1,6 +1,6 @@
 # OT Tracker
 
-OT Tracker is a .NET MAUI 8 mobile overtime tracking app for Android and iOS, with a Windows debug build target.
+OT Tracker is a .NET MAUI 10 mobile overtime tracking app for Android and iOS, with a Windows debug build target.
 
 ## Features
 
@@ -10,20 +10,6 @@ OT Tracker is a .NET MAUI 8 mobile overtime tracking app for Android and iOS, wi
 - History calendar with month totals, entry edit, and delete confirmation.
 - Settings for salary assumptions, OT multipliers, security, CSV export, and clear data.
 - Offline-first SQLite persistence.
-
-## Project Structure
-
-```text
-src/OTTracker/
-  Data/
-  Models/
-  Services/
-  ViewModels/
-  Views/
-  Resources/
-tests/OTTracker.Tests/
-docs/
-```
 
 ## Verification
 
