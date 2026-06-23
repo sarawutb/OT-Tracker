@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AndroidX.Lifecycle;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OTTracker.Models;
 using OTTracker.Services;
@@ -10,7 +11,6 @@ public sealed partial class PinViewModel : BaseViewModel
     private readonly IAuthService _authService;
     private readonly IBiometricService _biometricService;
     private readonly ISettingsService _settingsService;
-    private string _enteredPin = string.Empty;
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(BiometricHint))]
     private bool isBiometricVisible;
@@ -38,31 +38,76 @@ public sealed partial class PinViewModel : BaseViewModel
 
     public string BiometricHint => IsBiometricVisible ? "Use Face ID or fingerprint" : "Enter your PIN to unlock";
 
-    public string Dot1 => _enteredPin.Length >= 1 ? "●" : "○";
+    public string Dot1 => EnteredPin.Length >= 1 ? "●" : "○";
 
-    public string Dot2 => _enteredPin.Length >= 2 ? "●" : "○";
+    public string Dot2 => EnteredPin.Length >= 2 ? "●" : "○";
 
-    public string Dot3 => _enteredPin.Length >= 3 ? "●" : "○";
+    public string Dot3 => EnteredPin.Length >= 3 ? "●" : "○";
 
-    public string Dot4 => _enteredPin.Length >= 4 ? "●" : "○";
+    public string Dot4 => EnteredPin.Length >= 4 ? "●" : "○";
+    public Label AnimeDot1 { get; set; }
 
-    private async Task PressAsync(string? digit)
+    public Label AnimeDot2 { get; set; }
+
+    public Label AnimeDot3 { get; set; }
+
+    public Label AnimeDot4 { get; set; }
+
+    private string _enteredPin = string.Empty;
+    public string EnteredPin
     {
-        if (_enteredPin.Length >= 4 || string.IsNullOrWhiteSpace(digit))
+        get => _enteredPin;
+        set
+        {
+            _enteredPin = value;
+            _ = SetEnteredPinAnime();
+        }
+    }
+
+    private async Task SetEnteredPinAnime()
+    {
+        if (EnteredPin.Length == 1)
+        {
+            await DotAnimatedAsync(AnimeDot1);
+        }
+        else if (EnteredPin.Length == 2)
+        {
+            await DotAnimatedAsync(AnimeDot2);
+        }
+        else if (EnteredPin.Length == 3)
+        {
+            await DotAnimatedAsync(AnimeDot3);
+        }
+        else if (EnteredPin.Length == 4)
+        {
+            await DotAnimatedAsync(AnimeDot4);
+        }
+    }
+
+    private async Task DotAnimatedAsync(Label dot)
+    {
+        if (dot == null) return; 
+        await dot.TranslateTo(0, 25, 100);
+        await dot.TranslateTo(0, 0, 100);
+    }
+
+    public async Task PressAsync(string? digit)
+    {
+        if (EnteredPin.Length >= 4 || string.IsNullOrWhiteSpace(digit))
         {
             return;
         }
 
         ErrorMessage = string.Empty;
-        _enteredPin += digit;
+        EnteredPin += digit;
         RefreshDots();
 
-        if (_enteredPin.Length != 4)
+        if (EnteredPin.Length != 4)
         {
             return;
         }
 
-        if (await _authService.VerifyPinAsync(_enteredPin))
+        if (await _authService.VerifyPinAsync(EnteredPin))
         {
             if (Unlocked is not null)
             {
@@ -73,18 +118,18 @@ public sealed partial class PinViewModel : BaseViewModel
 
         ErrorMessage = "Incorrect PIN - try again";
         await Task.Delay(550);
-        _enteredPin = string.Empty;
+        EnteredPin = string.Empty;
         RefreshDots();
     }
 
     private void Backspace()
     {
-        if (_enteredPin.Length == 0)
+        if (EnteredPin.Length == 0)
         {
             return;
         }
 
-        _enteredPin = _enteredPin[..^1];
+        EnteredPin = EnteredPin[..^1];
         RefreshDots();
     }
 

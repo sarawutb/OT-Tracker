@@ -14,6 +14,10 @@ public partial class PinPage : ContentPage
         viewModel.Unlocked = App.ShowMainAsync;
         BindingContext = viewModel;
         SetVersionText();
+        _viewModel.AnimeDot1 = Dot1;
+        _viewModel.AnimeDot2 = Dot2;
+        _viewModel.AnimeDot3 = Dot3;
+        _viewModel.AnimeDot4 = Dot4;
     }
 
     protected override async void OnAppearing()

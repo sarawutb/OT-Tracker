@@ -12,7 +12,7 @@
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="18,18,18,24" Spacing="12">
                 <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
-                    <Label Style="{StaticResource MutedLabel}" FontSize="20" Text="Good evening" />
+                    <Label Style="{StaticResource MutedLabel}" FontSize="20" Text="{Binding GreetingText}" />
                     <Label
                     Grid.Row="1"
                     FontSize="15"

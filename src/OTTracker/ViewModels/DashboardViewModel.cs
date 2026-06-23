@@ -12,6 +12,10 @@ public sealed partial class DashboardViewModel : BaseViewModel
     private readonly IOtEntryRepository _entries;
     private readonly ISettingsService _settings;
     private readonly SemaphoreSlim _loadGate = new(1, 1);
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string greetingText = GetGreeting(DateTime.Now);
+
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string monthText = OtPeriod.FromDate(DateTime.Today, 16, 15).DisplayText;
 
@@ -68,6 +72,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
         try
         {
             var settings = await _settings.GetAsync();
+            GreetingText = GetGreeting(DateTime.Now);
             UserName = string.IsNullOrWhiteSpace(settings.UserName) ? "Username" : settings.UserName.Trim();
             _suppressMaskSave = true;
             MaskEarnings = settings.MaskEarnings;
@@ -117,6 +122,23 @@ public sealed partial class DashboardViewModel : BaseViewModel
     private static async Task GoHistoryAsync()
     {
         await Shell.Current.GoToAsync("//History");
+    }
+
+    private static string GetGreeting(DateTime dateTime) => GetGreeting(dateTime.TimeOfDay);
+
+    private static string GetGreeting(TimeSpan time)
+    {
+        if (time >= new TimeSpan(6, 0, 0) && time < new TimeSpan(12, 0, 0))
+        {
+            return "Good morning";
+        }
+
+        if (time >= new TimeSpan(12, 0, 0) && time < new TimeSpan(17, 0, 0))
+        {
+            return "Good afternoon";
+        }
+
+        return "Good evening";
     }
 
     private async Task SaveMaskEarningsAsync(bool maskEarnings)

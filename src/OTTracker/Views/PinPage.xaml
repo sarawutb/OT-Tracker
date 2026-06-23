@@ -12,12 +12,11 @@
             Spacing="8">
             <Border
                 BackgroundColor="{StaticResource AccentLight}"
-                HeightRequest="64"
+                HeightRequest="80"
                 StrokeShape="RoundRectangle 22"
                 StrokeThickness="0"
-                WidthRequest="64">
+                WidthRequest="80">
                 <Image
-                    WidthRequest="100"
                     Source="ot_tracker.png"
                     Aspect="AspectFit" />
             </Border>
@@ -36,21 +35,25 @@
                 HorizontalOptions="Center"
                 Spacing="12">
                 <Label
-                    FontSize="40"
+                    x:Name="Dot1"
+                    FontSize="55"
                     Text="{Binding Dot1}"
-                    TextColor="{StaticResource Accent}" />
+                    TextColor="{StaticResource Ink}" />
                 <Label
-                    FontSize="40"
+                    x:Name="Dot2"
+                    FontSize="55"
                     Text="{Binding Dot2}"
-                    TextColor="{StaticResource Accent}" />
+                    TextColor="{StaticResource Ink}" />
                 <Label
-                    FontSize="40"
+                    x:Name="Dot3"
+                    FontSize="55"
                     Text="{Binding Dot3}"
-                    TextColor="{StaticResource Accent}" />
+                    TextColor="{StaticResource Ink}" />
                 <Label
-                    FontSize="40"
+                    x:Name="Dot4"
+                    FontSize="55"
                     Text="{Binding Dot4}"
-                    TextColor="{StaticResource Accent}" />
+                    TextColor="{StaticResource Ink}" />
             </HorizontalStackLayout>
             <Label
                 FontSize="12"
@@ -135,6 +138,7 @@
                 Grid.Column="0"
                 Command="{Binding UnlockBiometricCommand}"
                 Source="fingerprint.png"
+                Aspect="AspectFit"
                 Style="{StaticResource GhostImageButton}"
               />
             <Button
