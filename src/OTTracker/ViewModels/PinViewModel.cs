@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using OTTracker.Models;
 using OTTracker.Services;
 
 namespace OTTracker.ViewModels;
@@ -10,6 +11,7 @@ public sealed class PinViewModel : BaseViewModel
     private readonly ISettingsService _settingsService;
     private string _enteredPin = string.Empty;
     private bool _isBiometricVisible;
+    private AppSettings _appSettings;
 
     public PinViewModel(IAuthService authService, IBiometricService biometricService, ISettingsService settingsService)
     {
@@ -37,6 +39,18 @@ public sealed class PinViewModel : BaseViewModel
             if (SetProperty(ref _isBiometricVisible, value))
             {
                 OnPropertyChanged(nameof(BiometricHint));
+            }
+        }
+    }
+
+    public AppSettings AppSetting
+    {
+        get => _appSettings;
+        private set
+        {
+            if (SetProperty(ref _appSettings, value))
+            {
+                OnPropertyChanged(nameof(AppSetting));
             }
         }
     }
@@ -95,17 +109,8 @@ public sealed class PinViewModel : BaseViewModel
 
     private async Task UnlockBiometricAsync()
     {
-        ErrorMessage = string.Empty;
-
-        var settings = await _settingsService.GetAsync();
-        var hasPin = await _authService.HasPinAsync();
-        var canOfferBiometric = settings.PinLockEnabled && settings.BiometricUnlockEnabled && hasPin;
-        var biometricAvailable = canOfferBiometric && await _biometricService.IsAvailableAsync();
-
-        IsBiometricVisible = biometricAvailable;
-        if (canOfferBiometric && !biometricAvailable)
+        if (!IsBiometricVisible)
         {
-            //ErrorMessage = _biometricService.LastError ?? "Fingerprint unlock is not available. Use your PIN.";
             await App.Current.MainPage.DisplayAlert("Fingerprint alert", "Fingerprint unlock is not available. Use your PIN.", "OK");
             return;
         }
@@ -118,9 +123,6 @@ public sealed class PinViewModel : BaseViewModel
             }
             return;
         }
-        string errorMessage = _biometricService.LastError ?? "Fingerprint unlock was cancelled. Use your PIN.";
-        await App.Current.MainPage.DisplayAlert("Fingerprint alert", errorMessage, "OK");
-
     }
 
     private void RefreshDots()
@@ -129,6 +131,16 @@ public sealed class PinViewModel : BaseViewModel
         OnPropertyChanged(nameof(Dot2));
         OnPropertyChanged(nameof(Dot3));
         OnPropertyChanged(nameof(Dot4));
+    }
+
+    public async Task LoadAsync()
+    {
+        AppSetting = await _settingsService.GetAsync();
+        var hasPin = await _authService.HasPinAsync();
+        var canOfferBiometric = AppSetting.PinLockEnabled && AppSetting.BiometricUnlockEnabled && hasPin;
+        IsBiometricVisible = canOfferBiometric && await _biometricService.IsAvailableAsync();
+        if (AppSetting.BiometricUnlockEnabled)
+            await UnlockBiometricAsync();
     }
 }
 

@@ -20,6 +20,7 @@ public partial class PinPage : ContentPage
     {
         base.OnAppearing();
         SetVersionText();
+        _viewModel.LoadAsync();
     }
 
     private void SetVersionText()

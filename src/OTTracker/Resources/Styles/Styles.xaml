@@ -217,7 +217,6 @@
         <Setter Property="AccentColor" Value="{StaticResource Primary}" />
         <Setter Property="TextColor" Value="{StaticResource Ink}" />
         <Setter Property="TitleColor" Value="{StaticResource Ink}" />
-        <Setter Property="InputBackgroundColor" Value="{StaticResource White}" />
         <Setter Property="BackgroundColor" Value="{StaticResource White}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="6" />
