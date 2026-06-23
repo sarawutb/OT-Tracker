@@ -93,6 +93,7 @@
             <Border Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="10">
                     <Button Text="Export to CSV" Command="{Binding ExportCommand}" Style="{StaticResource GhostButton}" />
+                    <Button Text="Import from CSV" Command="{Binding ImportCommand}" Style="{StaticResource GhostButton}" />
                     <Button Text="Clear all data" Command="{Binding ClearDataCommand}" Style="{StaticResource GhostButton}" TextColor="{StaticResource Red}" />
                 </VerticalStackLayout>
             </Border>
@@ -104,4 +105,3 @@
     <controls:AppTabBar Grid.Row="1" ActiveRoute="Settings" />
     </Grid>
 </ContentPage>
-

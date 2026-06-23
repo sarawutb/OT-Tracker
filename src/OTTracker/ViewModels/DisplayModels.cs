@@ -3,9 +3,11 @@ using OTTracker.Models;
 
 namespace OTTracker.ViewModels;
 
-public sealed class EntryDisplay : ObservableObject
+public sealed partial class EntryDisplay : ObservableObject
 {
-    private bool _maskEarnings;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(EarningsText))]
+    private bool maskEarnings;
 
     public EntryDisplay(OtEntry entry)
     {
@@ -13,18 +15,6 @@ public sealed class EntryDisplay : ObservableObject
     }
 
     public OtEntry Entry { get; }
-
-    public bool MaskEarnings
-    {
-        get => _maskEarnings;
-        set
-        {
-            if (SetProperty(ref _maskEarnings, value))
-            {
-                OnPropertyChanged(nameof(EarningsText));
-            }
-        }
-    }
 
     public string DateText => Entry.EntryDate.ToString("ddd, MMM d");
 

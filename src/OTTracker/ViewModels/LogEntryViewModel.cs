@@ -4,23 +4,46 @@ using OTTracker.Services;
 
 namespace OTTracker.ViewModels;
 
-public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
+public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributable
 {
     private readonly IOtEntryRepository _entries;
     private readonly ISettingsService _settings;
     private readonly IOtCalculationService _calculator;
     private readonly AppEvents _events;
     private int _entryId;
-    private DateTime _entryDate = DateTime.Today;
-    private DayType _selectedDayType = DayType.Regular;
-    private TimeSpan _startTime = new(17, 0, 0);
-    private TimeSpan _endTime = new(21, 0, 0);
-    private int _breakMinutes = 30;
-    private string _note = string.Empty;
-    private decimal _hourlyRate;
-    private decimal _multiplier;
-    private decimal _netHours;
-    private decimal _estimatedEarnings;
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private DateTime entryDate = DateTime.Today;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private DayType selectedDayType = DayType.Regular;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private TimeSpan startTime = new(17, 0, 0);
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private TimeSpan endTime = new(21, 0, 0);
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private int breakMinutes = 30;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string note = string.Empty;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(RateText))]
+    private decimal hourlyRate;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(MultiplierText))]
+    private decimal multiplier;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(NetHoursText))]
+    private decimal netHours;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(EarningsText))]
+    private decimal estimatedEarnings;
 
     public LogEntryViewModel(IOtEntryRepository entries, ISettingsService settings, IOtCalculationService calculator, AppEvents events)
     {
@@ -38,102 +61,6 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
     public IAsyncRelayCommand<string> SelectDayTypeCommand { get; }
 
     public IAsyncRelayCommand SaveCommand { get; }
-
-    public DateTime EntryDate
-    {
-        get => _entryDate;
-        set => SetProperty(ref _entryDate, value);
-    }
-
-    public DayType SelectedDayType
-    {
-        get => _selectedDayType;
-        set
-        {
-            if (SetProperty(ref _selectedDayType, value))
-            {
-                _ = RecalculateAsync();
-            }
-        }
-    }
-
-    public TimeSpan StartTime
-    {
-        get => _startTime;
-        set
-        {
-            if (SetProperty(ref _startTime, value))
-            {
-                _ = RecalculateAsync();
-            }
-        }
-    }
-
-    public TimeSpan EndTime
-    {
-        get => _endTime;
-        set
-        {
-            if (SetProperty(ref _endTime, value))
-            {
-                _ = RecalculateAsync();
-            }
-        }
-    }
-
-    public int BreakMinutes
-    {
-        get => _breakMinutes;
-        set
-        {
-            if (SetProperty(ref _breakMinutes, value))
-            {
-                _ = RecalculateAsync();
-            }
-        }
-    }
-
-    public string Note
-    {
-        get => _note;
-        set => SetProperty(ref _note, value);
-    }
-
-    public decimal HourlyRate
-    {
-        get => _hourlyRate;
-        set => SetProperty(ref _hourlyRate, value);
-    }
-
-    public decimal Multiplier
-    {
-        get => _multiplier;
-        set => SetProperty(ref _multiplier, value);
-    }
-
-    public decimal NetHours
-    {
-        get => _netHours;
-        set
-        {
-            if (SetProperty(ref _netHours, value))
-            {
-                OnPropertyChanged(nameof(NetHoursText));
-            }
-        }
-    }
-
-    public decimal EstimatedEarnings
-    {
-        get => _estimatedEarnings;
-        set
-        {
-            if (SetProperty(ref _estimatedEarnings, value))
-            {
-                OnPropertyChanged(nameof(EarningsText));
-            }
-        }
-    }
 
     public string NetHoursText => $"{NetHours:0.##} hrs";
 
@@ -172,13 +99,14 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
         await RecalculateAsync();
     }
 
-    private async Task SelectDayTypeAsync(string? dayType)
+    private Task SelectDayTypeAsync(string? dayType)
     {
         if (Enum.TryParse<DayType>(dayType, out var parsed))
         {
             SelectedDayType = parsed;
-            await RecalculateAsync();
         }
+
+        return Task.CompletedTask;
     }
 
     private async Task SaveAsync()
@@ -251,5 +179,25 @@ public sealed class LogEntryViewModel : BaseViewModel, IQueryAttributable
         }
 
         EntryDate = date;
+    }
+
+    partial void OnSelectedDayTypeChanged(DayType value)
+    {
+        _ = RecalculateAsync();
+    }
+
+    partial void OnStartTimeChanged(TimeSpan value)
+    {
+        _ = RecalculateAsync();
+    }
+
+    partial void OnEndTimeChanged(TimeSpan value)
+    {
+        _ = RecalculateAsync();
+    }
+
+    partial void OnBreakMinutesChanged(int value)
+    {
+        _ = RecalculateAsync();
     }
 }

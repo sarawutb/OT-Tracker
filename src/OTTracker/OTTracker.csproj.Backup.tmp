@@ -28,8 +28,8 @@
 		<ApplicationId>com.company.ottracker</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0.3</ApplicationDisplayVersion>
-		<ApplicationVersion>3</ApplicationVersion>
+		<ApplicationDisplayVersion>1.0.2</ApplicationDisplayVersion>
+		<ApplicationVersion>2</ApplicationVersion>
 
 		<UseMaterial3>true</UseMaterial3>
 
@@ -46,27 +46,25 @@
 		<DebugType>portable</DebugType>
 		<AndroidIncludeDebugSymbols>true</AndroidIncludeDebugSymbols>
 	</PropertyGroup>
-	
-	<PropertyGroup Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-		<DebugSymbols>false</DebugSymbols>
-		<DebugType>none</DebugType>
+	<!--<PropertyGroup Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
 		<AndroidLinkMode>SdkOnly</AndroidLinkMode>
-		<RunAOTCompilation>false</RunAOTCompilation>
-	</PropertyGroup>
-
-	<!--<PropertyGroup Condition="'$(Configuration)'=='Release'">
-		<AndroidLinkMode>SdkOnly</AndroidLinkMode>
+		--><!--<RunAOTCompilation>false</RunAOTCompilation>
+		<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>--><!--
 		<DebugSymbols>false</DebugSymbols>
+		--><!--<DebugSymbols>true</DebugSymbols>
+		<DebugType>portable</DebugType>
+		<AndroidIncludeDebugSymbols>true</AndroidIncludeDebugSymbols>
+		<EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>--><!--
 	</PropertyGroup>-->
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<AndroidLinkMode>SdkOnly</AndroidLinkMode>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android36.1|AnyCPU'">
 	  <AndroidPackageFormat>apk</AndroidPackageFormat>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="bin\**\*.cs" />
-		<Compile Remove="obj\**\*.cs" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<!-- App Icon -->
@@ -116,12 +114,11 @@
 	  </MauiXaml>
 	</ItemGroup>
 
-	<Target Name="RemoveDuplicateCommunityToolkitMvvmAnalyzers" AfterTargets="ResolvePackageDependenciesForBuild;ResolveNuGetPackageAssets">
-		<ItemGroup>
-			<Analyzer Remove="@(Analyzer)"
-					  Condition="'%(Analyzer.NuGetPackageId)' == 'CommunityToolkit.Mvvm' and !$([System.String]::Concat('', '%(Analyzer.FullPath)').Contains('roslyn4.12'))" />
-		</ItemGroup>
-	</Target>
+	<ItemGroup>
+	  <None Update="Controls\AnimatedPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </None>
+	</ItemGroup>
 
 </Project>
 

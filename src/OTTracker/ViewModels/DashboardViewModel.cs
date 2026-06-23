@@ -7,17 +7,31 @@ using UraniumUI.Dialogs;
 
 namespace OTTracker.ViewModels;
 
-public sealed class DashboardViewModel : BaseViewModel
+public sealed partial class DashboardViewModel : BaseViewModel
 {
     private readonly IOtEntryRepository _entries;
     private readonly ISettingsService _settings;
     private readonly SemaphoreSlim _loadGate = new(1, 1);
-    private string _monthText = DateTime.Today.ToString("MMMM yyyy");
-    private decimal _totalHours;
-    private decimal _estimatedEarnings;
-    private decimal _thisWeekHours;
-    private int _thisWeekEntries;
-    private bool _maskEarnings;
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string monthText = DateTime.Today.ToString("MMMM yyyy");
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(TotalHoursText))]
+    private decimal totalHours;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(EarningsText))]
+    private decimal estimatedEarnings;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal thisWeekHours;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private int thisWeekEntries;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(EarningsText))]
+    private bool maskEarnings;
     private bool _suppressMaskSave;
 
     public DashboardViewModel(IOtEntryRepository entries, ISettingsService settings, AppEvents events)
@@ -40,65 +54,6 @@ public sealed class DashboardViewModel : BaseViewModel
     public ObservableCollection<EntryDisplay> RecentEntries { get; } = [];
 
     public ObservableCollection<WeeklyDaySummary> WeeklySummaries { get; } = [];
-
-    public string MonthText
-    {
-        get => _monthText;
-        set => SetProperty(ref _monthText, value);
-    }
-
-    public decimal TotalHours
-    {
-        get => _totalHours;
-        set
-        {
-            if (SetProperty(ref _totalHours, value))
-            {
-                OnPropertyChanged(nameof(TotalHoursText));
-            }
-        }
-    }
-
-    public decimal EstimatedEarnings
-    {
-        get => _estimatedEarnings;
-        set
-        {
-            if (SetProperty(ref _estimatedEarnings, value))
-            {
-                OnPropertyChanged(nameof(EarningsText));
-            }
-        }
-    }
-
-    public decimal ThisWeekHours
-    {
-        get => _thisWeekHours;
-        set => SetProperty(ref _thisWeekHours, value);
-    }
-
-    public int ThisWeekEntries
-    {
-        get => _thisWeekEntries;
-        set => SetProperty(ref _thisWeekEntries, value);
-    }
-
-    public bool MaskEarnings
-    {
-        get => _maskEarnings;
-        set
-        {
-            if (SetProperty(ref _maskEarnings, value))
-            {
-                OnPropertyChanged(nameof(EarningsText));
-                ApplyRecentEntriesMask();
-                if (!_suppressMaskSave)
-                {
-                    _ = SaveMaskEarningsAsync(value);
-                }
-            }
-        }
-    }
 
     public string EarningsText => MaskEarnings ? "\u0E3F *,***" : $"\u0E3F {EstimatedEarnings:N2}";
 
@@ -170,6 +125,15 @@ public sealed class DashboardViewModel : BaseViewModel
         catch (Exception ex)
         {
             ErrorMessage = $"Unable to save earnings privacy: {ex.Message}";
+        }
+    }
+
+    partial void OnMaskEarningsChanged(bool value)
+    {
+        ApplyRecentEntriesMask();
+        if (!_suppressMaskSave)
+        {
+            _ = SaveMaskEarningsAsync(value);
         }
     }
 

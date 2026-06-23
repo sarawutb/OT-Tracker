@@ -5,4 +5,6 @@ namespace OTTracker.Services;
 public interface ICsvExportService
 {
     Task<string> ExportAsync(IEnumerable<OtEntry> entries);
+
+    Task<IReadOnlyList<OtEntry>> ImportAsync();
 }

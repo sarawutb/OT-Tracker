@@ -5,14 +5,24 @@ using OTTracker.Services;
 
 namespace OTTracker.ViewModels;
 
-public sealed class HistoryViewModel : BaseViewModel
+public sealed partial class HistoryViewModel : BaseViewModel
 {
     private readonly IOtEntryRepository _entries;
     private readonly AppEvents _events;
-    private DateTime _selectedMonth = new(DateTime.Today.Year, DateTime.Today.Month, 1);
-    private DateTime _selectedDate = DateTime.Today;
-    private decimal _monthHours;
-    private decimal _monthEarnings;
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(MonthText))]
+    private DateTime selectedMonth = new(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private DateTime selectedDate = DateTime.Today;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(MonthHoursText))]
+    private decimal monthHours;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(MonthEarningsText))]
+    private decimal monthEarnings;
 
     public HistoryViewModel(IOtEntryRepository entries, AppEvents events)
     {
@@ -42,48 +52,6 @@ public sealed class HistoryViewModel : BaseViewModel
     public ObservableCollection<CalendarDay> CalendarDays { get; } = [];
 
     public ObservableCollection<EntryDisplay> MonthEntries { get; } = [];
-
-    public DateTime SelectedMonth
-    {
-        get => _selectedMonth;
-        set
-        {
-            if (SetProperty(ref _selectedMonth, value))
-            {
-                OnPropertyChanged(nameof(MonthText));
-            }
-        }
-    }
-
-    public DateTime SelectedDate
-    {
-        get => _selectedDate;
-        set => SetProperty(ref _selectedDate, value);
-    }
-
-    public decimal MonthHours
-    {
-        get => _monthHours;
-        set
-        {
-            if (SetProperty(ref _monthHours, value))
-            {
-                OnPropertyChanged(nameof(MonthHoursText));
-            }
-        }
-    }
-
-    public decimal MonthEarnings
-    {
-        get => _monthEarnings;
-        set
-        {
-            if (SetProperty(ref _monthEarnings, value))
-            {
-                OnPropertyChanged(nameof(MonthEarningsText));
-            }
-        }
-    }
 
     public string MonthText => SelectedMonth.ToString("MMMM yyyy");
 

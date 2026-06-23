@@ -1,17 +1,22 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using OTTracker.Models;
 using OTTracker.Services;
 
 namespace OTTracker.ViewModels;
 
-public sealed class PinViewModel : BaseViewModel
+public sealed partial class PinViewModel : BaseViewModel
 {
     private readonly IAuthService _authService;
     private readonly IBiometricService _biometricService;
     private readonly ISettingsService _settingsService;
     private string _enteredPin = string.Empty;
-    private bool _isBiometricVisible;
-    private AppSettings _appSettings;
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(BiometricHint))]
+    private bool isBiometricVisible;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private AppSettings appSetting = new();
 
     public PinViewModel(IAuthService authService, IBiometricService biometricService, ISettingsService settingsService)
     {
@@ -30,30 +35,6 @@ public sealed class PinViewModel : BaseViewModel
     public IAsyncRelayCommand UnlockBiometricCommand { get; }
 
     public Func<Task>? Unlocked { get; set; }
-
-    public bool IsBiometricVisible
-    {
-        get => _isBiometricVisible;
-        private set
-        {
-            if (SetProperty(ref _isBiometricVisible, value))
-            {
-                OnPropertyChanged(nameof(BiometricHint));
-            }
-        }
-    }
-
-    public AppSettings AppSetting
-    {
-        get => _appSettings;
-        private set
-        {
-            if (SetProperty(ref _appSettings, value))
-            {
-                OnPropertyChanged(nameof(AppSetting));
-            }
-        }
-    }
 
     public string BiometricHint => IsBiometricVisible ? "Use Face ID or fingerprint" : "Enter your PIN to unlock";
 

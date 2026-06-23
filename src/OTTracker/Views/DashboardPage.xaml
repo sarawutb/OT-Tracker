@@ -4,7 +4,6 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-    xmlns:mi="http://www.aathifmahir.com/dotnet/2022/maui/icons"
     xmlns:controls="clr-namespace:OTTracker.Controls"
     Title="OT Dashboard"
     Shell.NavBarIsVisible="False"
@@ -240,23 +239,15 @@
 
                 <Grid ColumnDefinitions="*,100" ColumnSpacing="8">
                     <Button
-                    Command="{Binding GoLogTodayCommand}"
-                    Style="{StaticResource PrimaryButton}"
-                    Text="Log today's OT" />
-                    <material:ButtonView 
-                    Grid.Column="1"
-                        StrokeShape="10"
-                           TappedCommand="{Binding GoHistoryCommand}" BackgroundColor="{StaticResource AccentLight}">
-                        <HorizontalStackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                            <mi:MauiIcon Icon="{mi:FontAwesome Icon=Clock}" IconSize="15" Padding="5,0" IconColor="{StaticResource PrimaryDarkText}"/>
-                            <Label Text="History" FontAttributes="Bold"  TextColor="{StaticResource PrimaryDarkText}"/>
-                        </HorizontalStackLayout>
-                    </material:ButtonView>
-                    <!--<Button
-                    Grid.Column="1"
-                    Command="{Binding GoHistoryCommand}"
-                    
-                    Text="History" />-->
+                        Command="{Binding GoLogTodayCommand}"
+                        Style="{StaticResource PrimaryButton}"
+                        Text="Log today's OT" />
+                    <Button
+                        Grid.Column="1"
+                        BackgroundColor="{StaticResource AccentLight}"
+                        TextColor="{StaticResource PrimaryDarkText}"
+                        Command="{Binding GoHistoryCommand}"
+                    Text="History" />
                 </Grid>
             </VerticalStackLayout>
         </ScrollView>

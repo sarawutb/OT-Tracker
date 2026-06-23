@@ -1,10 +1,10 @@
-﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Input;
 using OTTracker.Models;
 using OTTracker.Services;
 
 namespace OTTracker.ViewModels;
 
-public sealed class SettingsViewModel : BaseViewModel
+public sealed partial class SettingsViewModel : BaseViewModel
 {
     private readonly ISettingsService _settingsService;
     private readonly IOtCalculationService _calculator;
@@ -12,17 +12,44 @@ public sealed class SettingsViewModel : BaseViewModel
     private readonly IOtEntryRepository _entries;
     private readonly ICsvExportService _csv;
     private readonly AppEvents _events;
-    private decimal _baseMonthlySalary = 30000m;
-    private int _workingDaysPerMonth = 30;
-    private decimal _hoursPerDay = 8m;
-    private TimeSpan _defaultStartTime = new(17, 0, 0);
-    private TimeSpan _defaultEndTime = new(21, 0, 0);
-    private int _defaultBreakMinutes = 30;
-    private decimal _regularMultiplier = 1.5m;
-    private decimal _weekendMultiplier = 2m;
-    private decimal _holidayMultiplier = 3m;
-    private bool _pinLockEnabled;
-    private bool _biometricUnlockEnabled;
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(HourlyRateText))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(FormulaText))]
+    private decimal baseMonthlySalary = 30000m;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(HourlyRateText))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(FormulaText))]
+    private int workingDaysPerMonth = 30;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(HourlyRateText))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(FormulaText))]
+    private decimal hoursPerDay = 8m;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private TimeSpan defaultStartTime = new(17, 0, 0);
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private TimeSpan defaultEndTime = new(21, 0, 0);
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private int defaultBreakMinutes = 30;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal regularMultiplier = 1.5m;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal weekendMultiplier = 2m;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal holidayMultiplier = 3m;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool pinLockEnabled;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool biometricUnlockEnabled;
 
     public SettingsViewModel(ISettingsService settingsService, IOtCalculationService calculator, IAuthService auth, IOtEntryRepository entries, ICsvExportService csv, AppEvents events)
     {
@@ -36,6 +63,7 @@ public sealed class SettingsViewModel : BaseViewModel
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         ChangePinCommand = new AsyncRelayCommand(ChangePinAsync);
         ExportCommand = new AsyncRelayCommand(ExportAsync);
+        ImportCommand = new AsyncRelayCommand(ImportAsync);
         ClearDataCommand = new AsyncRelayCommand(ClearDataAsync);
     }
 
@@ -47,97 +75,9 @@ public sealed class SettingsViewModel : BaseViewModel
 
     public IAsyncRelayCommand ExportCommand { get; }
 
+    public IAsyncRelayCommand ImportCommand { get; }
+
     public IAsyncRelayCommand ClearDataCommand { get; }
-
-    public decimal BaseMonthlySalary
-    {
-        get => _baseMonthlySalary;
-        set
-        {
-            if (SetProperty(ref _baseMonthlySalary, value))
-            {
-                RefreshCalculated();
-            }
-        }
-    }
-
-    public int WorkingDaysPerMonth
-    {
-        get => _workingDaysPerMonth;
-        set
-        {
-            if (SetProperty(ref _workingDaysPerMonth, value))
-            {
-                RefreshCalculated();
-            }
-        }
-    }
-
-    public decimal HoursPerDay
-    {
-        get => _hoursPerDay;
-        set
-        {
-            if (SetProperty(ref _hoursPerDay, value))
-            {
-                RefreshCalculated();
-            }
-        }
-    }
-
-    public TimeSpan DefaultStartTime
-    {
-        get => _defaultStartTime;
-        set => SetProperty(ref _defaultStartTime, value);
-    }
-
-    public TimeSpan DefaultEndTime
-    {
-        get => _defaultEndTime;
-        set => SetProperty(ref _defaultEndTime, value);
-    }
-
-    public int DefaultBreakMinutes
-    {
-        get => _defaultBreakMinutes;
-        set => SetProperty(ref _defaultBreakMinutes, value);
-    }
-
-    public decimal RegularMultiplier
-    {
-        get => _regularMultiplier;
-        set => SetProperty(ref _regularMultiplier, value);
-    }
-
-    public decimal WeekendMultiplier
-    {
-        get => _weekendMultiplier;
-        set => SetProperty(ref _weekendMultiplier, value);
-    }
-
-    public decimal HolidayMultiplier
-    {
-        get => _holidayMultiplier;
-        set => SetProperty(ref _holidayMultiplier, value);
-    }
-
-    public bool PinLockEnabled
-    {
-        get => _pinLockEnabled;
-        set
-        {
-            if (SetProperty(ref _pinLockEnabled, value) && !value)
-            {
-                BiometricUnlockEnabled = false;
-            }
-        }
-    }
-
-    public bool BiometricUnlockEnabled
-    {
-        get => _biometricUnlockEnabled;
-        set => SetProperty(ref _biometricUnlockEnabled, value);
-    }
 
     public string HourlyRateText => $"฿{_calculator.GetHourlyRate(ToSettings()):N2} / hr";
 
@@ -226,6 +166,37 @@ public sealed class SettingsViewModel : BaseViewModel
         await _csv.ExportAsync(all);
     }
 
+    private async Task ImportAsync()
+    {
+        var confirm = await Shell.Current.DisplayAlert("Import CSV", "Import OT records from a CSV file and add them to this device?", "Import", "Cancel");
+        if (!confirm)
+        {
+            return;
+        }
+
+        try
+        {
+            var imported = await _csv.ImportAsync();
+            if (imported.Count == 0)
+            {
+                await Shell.Current.DisplayAlert("No records imported", "No CSV records were imported.", "OK");
+                return;
+            }
+
+            foreach (var entry in imported)
+            {
+                await _entries.SaveAsync(entry);
+            }
+
+            _events.NotifyEntriesChanged();
+            await Shell.Current.DisplayAlert("Import complete", $"{imported.Count} OT record(s) imported.", "OK");
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Import failed", ex.Message, "OK");
+        }
+    }
+
     private async Task ClearDataAsync()
     {
         var confirm = await Shell.Current.DisplayAlert("Clear all data", "Delete every OT entry from this device?", "Clear", "Cancel");
@@ -258,5 +229,12 @@ public sealed class SettingsViewModel : BaseViewModel
         OnPropertyChanged(nameof(HourlyRateText));
         OnPropertyChanged(nameof(FormulaText));
     }
-}
 
+    partial void OnPinLockEnabledChanged(bool value)
+    {
+        if (!value)
+        {
+            BiometricUnlockEnabled = false;
+        }
+    }
+}
