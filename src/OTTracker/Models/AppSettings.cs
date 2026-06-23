@@ -23,10 +23,6 @@ public sealed class AppSettings
 
     public int PeriodEndDay { get; set; } = 15;
 
-    public DateTime PeriodStartDate { get; set; } = new(DateTime.Today.Year, DateTime.Today.Month, 16);
-
-    public DateTime PeriodEndDate { get; set; } = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16).AddMonths(1).AddDays(-1);
-
     public decimal RegularMultiplier { get; set; } = 1.5m;
 
     public decimal WeekendMultiplier { get; set; } = 2.0m;
@@ -41,7 +37,7 @@ public sealed class AppSettings
 
     public string CurrencyCode { get; set; } = "THB";
 
-    public string UserName { get; set; } = "Username";
+    public string UserName { get; set; } = "Say HI";
 
     public DateTime ReviseDate { get; set; } = DateTime.Now;
 }

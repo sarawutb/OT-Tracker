@@ -63,15 +63,15 @@
                 <Border Style="{StaticResource Card}">
                     <VerticalStackLayout Spacing="10">
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                            <material:DatePickerField
-                            Title="Start date"
-                            AllowClear="False"
-                            Date="{Binding PeriodStartDate}" />
-                            <material:DatePickerField
+                            <material:TextField
+                            Title="Start day"
+                            Keyboard="Numeric"
+                            Text="{Binding PeriodStartDay}" />
+                            <material:TextField
                             Grid.Column="1"
-                            Title="End date"
-                            AllowClear="False"
-                            Date="{Binding PeriodEndDate}" />
+                            Title="End day"
+                            Keyboard="Numeric"
+                            Text="{Binding PeriodEndDay}" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>

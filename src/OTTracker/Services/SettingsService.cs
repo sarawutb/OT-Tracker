@@ -43,8 +43,6 @@ public sealed class SettingsService(AppDatabase database) : ISettingsService
             DefaultBreakMinutes = settings.DefaultBreakMinutes,
             PeriodStartDay = settings.PeriodStartDay,
             PeriodEndDay = settings.PeriodEndDay,
-            PeriodStartDate = settings.PeriodStartDate.Date,
-            PeriodEndDate = settings.PeriodEndDate.Date,
             RegularMultiplier = settings.RegularMultiplier,
             WeekendMultiplier = settings.WeekendMultiplier,
             HolidayMultiplier = settings.HolidayMultiplier,

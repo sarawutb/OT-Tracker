@@ -6,6 +6,12 @@ public readonly record struct OtPeriod(DateTime Start, DateTime End)
 
     public OtPeriod AddMonths(int months) => new(Start.AddMonths(months), End.AddMonths(months));
 
+    public static OtPeriod LastCompleted(DateTime date, int startDay, int endDay)
+    {
+        var period = FromDate(date, startDay, endDay);
+        return date.Date >= period.End ? period : period.AddMonths(-1);
+    }
+
     public static OtPeriod FromDate(DateTime date, int startDay, int endDay)
     {
         var target = date.Date;

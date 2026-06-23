@@ -52,18 +52,6 @@ public sealed class AppDatabase
             await connection.ExecuteAsync("ALTER TABLE AppSettings ADD COLUMN PeriodEndDay INTEGER NOT NULL DEFAULT 15");
         }
 
-        if (!existing.Contains(nameof(AppSettings.PeriodStartDate)))
-        {
-            var defaultStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16).Ticks;
-            await connection.ExecuteAsync($"ALTER TABLE AppSettings ADD COLUMN PeriodStartDate INTEGER NOT NULL DEFAULT {defaultStart}");
-        }
-
-        if (!existing.Contains(nameof(AppSettings.PeriodEndDate)))
-        {
-            var defaultEnd = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16).AddMonths(1).AddDays(-1).Ticks;
-            await connection.ExecuteAsync($"ALTER TABLE AppSettings ADD COLUMN PeriodEndDate INTEGER NOT NULL DEFAULT {defaultEnd}");
-        }
-
         if (!existing.Contains(nameof(AppSettings.MaskEarnings)))
         {
             await connection.ExecuteAsync("ALTER TABLE AppSettings ADD COLUMN MaskEarnings INTEGER NOT NULL DEFAULT 0");

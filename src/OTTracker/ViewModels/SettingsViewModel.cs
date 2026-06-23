@@ -48,12 +48,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private int periodEndDay = 15;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private DateTime periodStartDate = new(DateTime.Today.Year, DateTime.Today.Month, 16);
-
-    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private DateTime periodEndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16).AddMonths(1).AddDays(-1);
-
-    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private decimal regularMultiplier = 1.5m;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
@@ -113,8 +107,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
         DefaultBreakMinutes = settings.DefaultBreakMinutes;
         PeriodStartDay = settings.PeriodStartDay;
         PeriodEndDay = settings.PeriodEndDay;
-        PeriodStartDate = settings.PeriodStartDate.Date;
-        PeriodEndDate = settings.PeriodEndDate.Date;
         RegularMultiplier = settings.RegularMultiplier;
         WeekendMultiplier = settings.WeekendMultiplier;
         HolidayMultiplier = settings.HolidayMultiplier;
@@ -146,12 +138,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
         if (PeriodStartDay is < 1 or > 31 || PeriodEndDay is < 1 or > 31)
         {
             ErrorMessage = "OT period start and end days must be between 1 and 31.";
-            return;
-        }
-
-        if (PeriodEndDate.Date < PeriodStartDate.Date)
-        {
-            ErrorMessage = "OT period end date must be on or after start date.";
             return;
         }
 
@@ -259,8 +245,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
         DefaultBreakMinutes = DefaultBreakMinutes,
         PeriodStartDay = PeriodStartDay,
         PeriodEndDay = PeriodEndDay,
-        PeriodStartDate = PeriodStartDate.Date,
-        PeriodEndDate = PeriodEndDate.Date,
         RegularMultiplier = RegularMultiplier,
         WeekendMultiplier = WeekendMultiplier,
         HolidayMultiplier = HolidayMultiplier,

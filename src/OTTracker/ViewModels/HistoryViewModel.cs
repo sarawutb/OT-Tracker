@@ -10,7 +10,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
     private readonly IOtEntryRepository _entries;
     private readonly ISettingsService _settings;
     private readonly AppEvents _events;
-    private OtPeriod _settingsPeriod = new(new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16), new DateTime(DateTime.Today.Year, DateTime.Today.Month, 16).AddMonths(1).AddDays(-1));
+    private OtPeriod _settingsPeriod = OtPeriod.FromDate(DateTime.Today, 16, 15);
     private bool _periodInitialized;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
@@ -75,7 +75,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
     public async Task LoadAsync()
     {
         var settings = await _settings.GetAsync();
-        _settingsPeriod = new OtPeriod(settings.PeriodStartDate.Date, settings.PeriodEndDate.Date);
+        _settingsPeriod = OtPeriod.FromDate(DateTime.Today, settings.PeriodStartDay, settings.PeriodEndDay);
         if (!_periodInitialized)
         {
             SelectedMonth = _settingsPeriod.Start;

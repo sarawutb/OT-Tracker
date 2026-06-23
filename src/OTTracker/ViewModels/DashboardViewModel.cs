@@ -74,7 +74,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
             _suppressMaskSave = false;
 
             var today = DateTime.Today;
-            var period = new OtPeriod(settings.PeriodStartDate.Date, settings.PeriodEndDate.Date);
+            var period = OtPeriod.FromDate(today, settings.PeriodStartDay, settings.PeriodEndDay);
             MonthText = period.DisplayText;
             var month = await _entries.GetPeriodAsync(period.Start, period.End);
             TotalHours = month.Sum(e => e.NetHours);
