@@ -73,7 +73,7 @@
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\ot_tracker.svg" Color="#FFFFFF" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" BaseSize="128,128" Color="Transparent" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" BaseSize="128,128" Color="White" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />

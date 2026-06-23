@@ -46,6 +46,11 @@ public sealed class AppDatabase
         {
             await connection.ExecuteAsync("ALTER TABLE AppSettings ADD COLUMN MaskEarnings INTEGER NOT NULL DEFAULT 0");
         }
+
+        if (!existing.Contains(nameof(AppSettings.UserName)))
+        {
+            await connection.ExecuteAsync("ALTER TABLE AppSettings ADD COLUMN UserName TEXT DEFAULT 'Username'");
+        }
     }
 
     private sealed class TableInfo

@@ -13,6 +13,15 @@
             <VerticalStackLayout Padding="18" Spacing="12">
                 <Label Text="Settings" Style="{StaticResource PageTitle}" />
 
+                <Label Text="PROFILE" Style="{StaticResource MutedLabel}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <material:TextField
+                        Title="Username"
+                        Text="{Binding UserName}" />
+                    </VerticalStackLayout>
+                </Border>
+
                 <Label Text="SALARY &amp; COMPENSATION" Style="{StaticResource MutedLabel}" />
                 <Border Style="{StaticResource Card}">
                     <VerticalStackLayout Spacing="10">

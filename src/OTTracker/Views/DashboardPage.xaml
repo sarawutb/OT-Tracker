@@ -11,7 +11,7 @@
     <Grid RowDefinitions="*,Auto">
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="18,18,18,24" Spacing="12">
-                <Grid ColumnDefinitions="*,Auto,44" RowDefinitions="Auto,Auto">
+                <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
                     <Label Style="{StaticResource MutedLabel}" Text="Good evening" />
                     <Label
                     Grid.Row="1"
@@ -28,15 +28,16 @@
                     <Border
                     Grid.RowSpan="2"
                     Grid.Column="2"
+                    Padding="12,0"
                     BackgroundColor="{StaticResource AccentLight}"
                     HeightRequest="42"
                     StrokeShape="RoundRectangle 21"
                     StrokeThickness="0"
-                    WidthRequest="42">
+                    MinimumWidthRequest="42">
                         <Label
                         FontFamily="OpenSansSemibold"
                         HorizontalOptions="Center"
-                        Text="Rang"
+                        Text="{Binding UserName}"
                         TextColor="{StaticResource Accent}"
                         VerticalOptions="Center" />
                     </Border>
@@ -132,22 +133,31 @@
                                 TextColor="{StaticResource Accent}" />
                             </Border>
                         </Grid>
-                        <CollectionView HeightRequest="96" ItemsSource="{Binding WeeklySummaries}">
+                        <CollectionView
+                        HeightRequest="96"
+                        HorizontalOptions="Fill"
+                        HorizontalScrollBarVisibility="Never"
+                        ItemsSource="{Binding WeeklySummaries}">
                             <CollectionView.ItemsLayout>
-                                <LinearItemsLayout ItemSpacing="4" Orientation="Horizontal" />
+                                <GridItemsLayout
+                                HorizontalItemSpacing="4"
+                                Orientation="Vertical"
+                                Span="7"
+                                VerticalItemSpacing="0" />
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <VerticalStackLayout
+                                    HorizontalOptions="Fill"
                                     Spacing="4"
-                                    VerticalOptions="End"
-                                    WidthRequest="38">
+                                    VerticalOptions="End">
                                         <Label
                                         FontSize="10"
                                         HorizontalTextAlignment="Center"
                                         Text="{Binding Hours, StringFormat='{0:0.#}'}"
                                         TextColor="{StaticResource Ink2}" />
                                         <BoxView
+                                        HorizontalOptions="Center"
                                         HeightRequest="{Binding Hours}"
                                         VerticalOptions="End"
                                         WidthRequest="26"

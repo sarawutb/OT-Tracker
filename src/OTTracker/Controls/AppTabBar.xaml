@@ -67,20 +67,20 @@
                             BackgroundColor="Transparent"
                             HeightRequest="50"
                             Stroke="White"
-                            StrokeThickness="2"
+                            StrokeThickness="3"
                             StrokeShape="RoundRectangle 30"
                             WidthRequest="50">
                             <Path
                                 x:Name="LogIcon"
                                 Aspect="Uniform"
                                 Data="M12 5 V19 M5 12 H19"
-                                HeightRequest="16"
+                                HeightRequest="20"
                                 HorizontalOptions="Center"
-                                StrokeLineCap="Round"
-                                StrokeLineJoin="Round"
-                                StrokeThickness="2.4"
+                                StrokeLineCap="Square"
+                                StrokeLineJoin="Bevel"
+                                StrokeThickness="4"
                                 VerticalOptions="Center"
-                                WidthRequest="16" />
+                                WidthRequest="20" />
                         </Border>
                         <Label
                             IsVisible="False"

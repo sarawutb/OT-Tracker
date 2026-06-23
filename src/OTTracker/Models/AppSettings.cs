@@ -33,5 +33,7 @@ public sealed class AppSettings
 
     public string CurrencyCode { get; set; } = "THB";
 
+    public string UserName { get; set; } = "Username";
+
     public DateTime ReviseDate { get; set; } = DateTime.Now;
 }

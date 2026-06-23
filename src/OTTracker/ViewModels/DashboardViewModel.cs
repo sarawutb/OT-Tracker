@@ -16,6 +16,9 @@ public sealed partial class DashboardViewModel : BaseViewModel
     private string monthText = DateTime.Today.ToString("MMMM yyyy");
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string userName = "Username";
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(TotalHoursText))]
     private decimal totalHours;
 
@@ -31,7 +34,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(EarningsText))]
-    private bool maskEarnings;
+    private bool maskEarnings = true;
     private bool _suppressMaskSave;
 
     public DashboardViewModel(IOtEntryRepository entries, ISettingsService settings, AppEvents events)
@@ -65,6 +68,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
         try
         {
             var settings = await _settings.GetAsync();
+            UserName = string.IsNullOrWhiteSpace(settings.UserName) ? "Username" : settings.UserName.Trim();
             _suppressMaskSave = true;
             MaskEarnings = settings.MaskEarnings;
             _suppressMaskSave = false;

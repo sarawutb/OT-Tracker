@@ -48,6 +48,7 @@ public sealed class SettingsService(AppDatabase database) : ISettingsService
             BiometricUnlockEnabled = false,
             MaskEarnings = settings.MaskEarnings,
             CurrencyCode = settings.CurrencyCode,
+            UserName = settings.UserName,
             ReviseDate = settings.ReviseDate
         };
 

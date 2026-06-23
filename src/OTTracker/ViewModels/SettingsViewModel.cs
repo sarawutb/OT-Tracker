@@ -13,6 +13,9 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private readonly ICsvExportService _csv;
     private readonly AppEvents _events;
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string userName = "Username";
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(HourlyRateText))]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(FormulaText))]
     private decimal baseMonthlySalary = 10000m;
@@ -87,6 +90,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     public async Task LoadAsync()
     {
         var settings = await _settingsService.GetAsync();
+        UserName = string.IsNullOrWhiteSpace(settings.UserName) ? "Username" : settings.UserName.Trim();
         BaseMonthlySalary = settings.BaseMonthlySalary;
         WorkingDaysPerMonth = settings.WorkingDaysPerMonth;
         HoursPerDay = settings.HoursPerDay;
@@ -105,6 +109,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private async Task SaveAsync()
     {
         ErrorMessage = string.Empty;
+        UserName = string.IsNullOrWhiteSpace(UserName) ? "Username" : UserName.Trim();
+
         if (BaseMonthlySalary <= 0 || WorkingDaysPerMonth <= 0 || HoursPerDay <= 0 ||
             RegularMultiplier <= 0 || WeekendMultiplier <= 0 || HolidayMultiplier <= 0)
         {
@@ -213,6 +219,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     private AppSettings ToSettings() => new()
     {
+        UserName = string.IsNullOrWhiteSpace(UserName) ? "Username" : UserName.Trim(),
         BaseMonthlySalary = BaseMonthlySalary,
         WorkingDaysPerMonth = WorkingDaysPerMonth,
         HoursPerDay = HoursPerDay,

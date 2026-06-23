@@ -21,8 +21,8 @@ public partial class AppTabBar : ContentView
     [Obsolete]
     private async void AppTabBar_Loaded(object? sender, EventArgs e)
     {
+        await AnimatedContainer.TranslateTo(0, 100, 100);
         await AnimatedContainer.TranslateTo(0, 50, 100);
-        await AnimatedContainer.TranslateTo(0, 25, 100);
         await AnimatedContainer.TranslateTo(0, 0, 100);
     }
 
