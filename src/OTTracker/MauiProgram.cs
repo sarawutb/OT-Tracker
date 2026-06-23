@@ -49,7 +49,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsViewModel>();
 
         builder.Services.AddTransient<PinPage>();
-        builder.Services.AddScoped<DashboardPage>();
+        builder.Services.AddTransient<DashboardPage>();
         builder.Services.AddTransient<LogEntryPage>();
         builder.Services.AddTransient<HistoryPage>();
         builder.Services.AddTransient<SettingsPage>();

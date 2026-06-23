@@ -15,7 +15,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(HourlyRateText))]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(FormulaText))]
-    private decimal baseMonthlySalary = 30000m;
+    private decimal baseMonthlySalary = 10000m;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(HourlyRateText))]
@@ -53,6 +53,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     public SettingsViewModel(ISettingsService settingsService, IOtCalculationService calculator, IAuthService auth, IOtEntryRepository entries, ICsvExportService csv, AppEvents events)
     {
+        IsBusy = true;
         _settingsService = settingsService;
         _calculator = calculator;
         _auth = auth;
@@ -98,6 +99,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         PinLockEnabled = settings.PinLockEnabled;
         BiometricUnlockEnabled = settings.BiometricUnlockEnabled;
         RefreshCalculated();
+        IsBusy = false;
     }
 
     private async Task SaveAsync()

@@ -245,6 +245,7 @@
                     <Button
                         Grid.Column="1"
                         BackgroundColor="{StaticResource AccentLight}"
+                        FontAttributes="Bold"
                         TextColor="{StaticResource PrimaryDarkText}"
                         Command="{Binding GoHistoryCommand}"
                     Text="History" />

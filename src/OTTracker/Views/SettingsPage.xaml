@@ -9,99 +9,99 @@
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="*,Auto">
-    <ScrollView Grid.Row="0">
-        <VerticalStackLayout Padding="18" Spacing="12">
-            <Label Text="Settings" Style="{StaticResource PageTitle}" />
+        <ScrollView Grid.Row="0" IsVisible="{Binding IsBusy,Converter={StaticResource InverseBooleanConverter }}">
+            <VerticalStackLayout Padding="18" Spacing="12">
+                <Label Text="Settings" Style="{StaticResource PageTitle}" />
 
-            <Label Text="SALARY &amp; COMPENSATION" Style="{StaticResource MutedLabel}" />
-            <Border Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="10">
-                    <material:TextField
+                <Label Text="SALARY &amp; COMPENSATION" Style="{StaticResource MutedLabel}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <material:TextField
                         Title="Base monthly salary"
                         Keyboard="Numeric"
                         Text="{Binding BaseMonthlySalary}" />
-                    <material:TextField
+                        <material:TextField
                         Title="Working days/month"
                         Keyboard="Numeric"
                         Text="{Binding WorkingDaysPerMonth}" />
-                    <material:TextField
+                        <material:TextField
                         Title="Hours/day"
                         Keyboard="Numeric"
                         Text="{Binding HoursPerDay}" />
-                    <material:TimePickerField
+                        <material:TimePickerField
                         Title="Default start time"
                         AllowClear="False"
                         Time="{Binding DefaultStartTime}" />
-                    <material:TimePickerField
+                        <material:TimePickerField
                         Title="Default end time"
                         AllowClear="False"
                         Time="{Binding DefaultEndTime}" />
-                    <material:TextField
+                        <material:TextField
                         Title="Default break minutes"
                         Keyboard="Numeric"
                         Text="{Binding DefaultBreakMinutes}" />
-                    <Border BackgroundColor="{StaticResource GreenLight}" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="12">
-                        <VerticalStackLayout>
-                            <Label Text="HOURLY RATE" FontSize="10" TextColor="{StaticResource Green}" />
-                            <Label Text="{Binding HourlyRateText}" FontSize="22" FontFamily="OpenSansSemibold" TextColor="{StaticResource Green}" />
-                            <Label Text="{Binding FormulaText}" FontSize="11" TextColor="{StaticResource Green}" />
-                        </VerticalStackLayout>
-                    </Border>
-                </VerticalStackLayout>
-            </Border>
+                        <Border BackgroundColor="{StaticResource GreenLight}" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="12">
+                            <VerticalStackLayout>
+                                <Label Text="HOURLY RATE" FontSize="10" TextColor="{StaticResource Green}" />
+                                <Label Text="{Binding HourlyRateText}" FontSize="22" FontFamily="OpenSansSemibold" TextColor="{StaticResource Green}" />
+                                <Label Text="{Binding FormulaText}" FontSize="11" TextColor="{StaticResource Green}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
 
-            <Label Text="OT MULTIPLIERS" Style="{StaticResource MutedLabel}" />
-            <Border Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="10">
-                    <material:TextField
+                <Label Text="OT MULTIPLIERS" Style="{StaticResource MutedLabel}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <material:TextField
                         Title="Regular workday"
                         Keyboard="Numeric"
                         Text="{Binding RegularMultiplier}" />
-                    <material:TextField
+                        <material:TextField
                         Title="Weekend"
                         Keyboard="Numeric"
                         Text="{Binding WeekendMultiplier}" />
-                    <material:TextField
+                        <material:TextField
                         Title="Public holiday"
                         Keyboard="Numeric"
                         Text="{Binding HolidayMultiplier}" />
-                </VerticalStackLayout>
-            </Border>
+                    </VerticalStackLayout>
+                </Border>
 
-            <Label Text="SECURITY &amp; PRIVACY" Style="{StaticResource MutedLabel}" />
-            <Border Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="10">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <VerticalStackLayout>
-                            <Label Text="PIN lock" TextColor="{StaticResource Ink}" />
-                            <Label Text="Require PIN on launch" Style="{StaticResource MutedLabel}" />
-                        </VerticalStackLayout>
-                        <Switch Grid.Column="1" IsToggled="{Binding PinLockEnabled}" />
-                    </Grid>
-                    <Button Text="Change PIN" Command="{Binding ChangePinCommand}" />
-                    <Grid ColumnDefinitions="*,Auto">
-                        <VerticalStackLayout>
-                            <Label Text="Biometric unlock" TextColor="{StaticResource Ink}" />
-                            <Label Text="Requires PIN lock and device fingerprint setup" Style="{StaticResource MutedLabel}" />
-                        </VerticalStackLayout>
-                        <Switch Grid.Column="1" IsToggled="{Binding BiometricUnlockEnabled}" />
-                    </Grid>
-                </VerticalStackLayout>
-            </Border>
+                <Label Text="SECURITY &amp; PRIVACY" Style="{StaticResource MutedLabel}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout>
+                                <Label Text="PIN lock" TextColor="{StaticResource Ink}" />
+                                <Label Text="Require PIN on launch" Style="{StaticResource MutedLabel}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding PinLockEnabled}" />
+                        </Grid>
+                        <Button Text="Change PIN" Command="{Binding ChangePinCommand}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout>
+                                <Label Text="Biometric unlock" TextColor="{StaticResource Ink}" />
+                                <Label Text="Requires PIN lock and device fingerprint setup" Style="{StaticResource MutedLabel}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding BiometricUnlockEnabled}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
 
-            <Label Text="DATA" Style="{StaticResource MutedLabel}" />
-            <Border Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="10">
-                    <Button Text="Export to CSV" Command="{Binding ExportCommand}" Style="{StaticResource GhostButton}" />
-                    <Button Text="Import from CSV" Command="{Binding ImportCommand}" Style="{StaticResource GhostButton}" />
-                    <Button Text="Clear all data" Command="{Binding ClearDataCommand}" Style="{StaticResource GhostButton}" TextColor="{StaticResource Red}" />
-                </VerticalStackLayout>
-            </Border>
+                <Label Text="DATA" Style="{StaticResource MutedLabel}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Button Text="Export to CSV" Command="{Binding ExportCommand}" Style="{StaticResource GhostButton}" />
+                        <Button Text="Import from CSV" Command="{Binding ImportCommand}" Style="{StaticResource GhostButton}" />
+                        <Button Text="Clear all data" Command="{Binding ClearDataCommand}" Style="{StaticResource GhostButton}" TextColor="{StaticResource Red}" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Red}" FontSize="12" />
-            <Button Text="Save settings" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" />
-        </VerticalStackLayout>
-    </ScrollView>
-    <controls:AppTabBar Grid.Row="1" ActiveRoute="Settings" />
+                <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Red}" FontSize="12" />
+                <Button Text="Save settings" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" />
+            </VerticalStackLayout>
+        </ScrollView>
+        <controls:AppTabBar Grid.Row="1" ActiveRoute="Settings" />
     </Grid>
 </ContentPage>
