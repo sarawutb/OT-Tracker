@@ -1,5 +1,4 @@
-﻿using AndroidX.Lifecycle;
-using OTTracker.ViewModels;
+﻿using OTTracker.ViewModels;
 
 namespace OTTracker;
 

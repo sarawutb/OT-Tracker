@@ -1,5 +1,4 @@
-﻿using AndroidX.Lifecycle;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OTTracker.Models;
 using OTTracker.Services;
@@ -169,5 +168,4 @@ public sealed partial class PinViewModel : BaseViewModel
             await UnlockBiometricAsync();
     }
 }
-
 
