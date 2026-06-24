@@ -1,8 +1,8 @@
 using System.Globalization;
 using CommunityToolkit.Maui;
+using DotNet.Meteor.HotReload.Plugin;
 using MauiIcons.FontAwesome;
 using Microsoft.Extensions.Logging;
-using Mopups.Hosting;
 using OTTracker.Data;
 using OTTracker.Services;
 using OTTracker.ViewModels;
@@ -22,7 +22,7 @@ public static class MauiProgram
             .UseUraniumUIMaterial()
             .UseFontAwesomeMauiIcons()
 #if DEBUG
-            //.EnableHotReload()
+            .EnableHotReload()
 #endif
             .ConfigureFonts(fonts =>
             {
