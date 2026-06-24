@@ -9,7 +9,6 @@ public partial class DashboardPage : ContentPage
     public DashboardPage(DashboardViewModel viewModel)
     {
         InitializeComponent();
-        HeaderVersionLabel.Text = GetVersionText();
         _viewModel = viewModel;
         BindingContext = viewModel;
     }
@@ -17,6 +16,7 @@ public partial class DashboardPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        HeaderVersionLabel.Text = GetVersionText();
         await _viewModel.LoadAsync();
     }
 

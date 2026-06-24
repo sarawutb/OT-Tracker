@@ -130,15 +130,15 @@ public sealed partial class DashboardViewModel : BaseViewModel
     {
         if (time >= new TimeSpan(6, 0, 0) && time < new TimeSpan(12, 0, 0))
         {
-            return "Good morning";
+            return "Good Morning";
         }
 
         if (time >= new TimeSpan(12, 0, 0) && time < new TimeSpan(17, 0, 0))
         {
-            return "Good afternoon";
+            return "Good Afternoon";
         }
 
-        return "Good evening";
+        return "Good Evening";
     }
 
     private async Task SaveMaskEarningsAsync(bool maskEarnings)

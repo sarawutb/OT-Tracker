@@ -74,6 +74,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
 
     public async Task LoadAsync()
     {
+        IsBusy = true;
         var settings = await _settings.GetAsync();
         _settingsPeriod = OtPeriod.FromDate(DateTime.Today, settings.PeriodStartDay, settings.PeriodEndDay);
         if (!_periodInitialized)
@@ -116,6 +117,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
                 IsToday = date == DateTime.Today
             });
         }
+        IsBusy = false;
     }
 
     private async Task PreviousMonthAsync()

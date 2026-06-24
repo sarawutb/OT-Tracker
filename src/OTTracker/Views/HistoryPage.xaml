@@ -7,91 +7,93 @@
     Title="History"
     Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="*,Auto">
-    <ScrollView Grid.Row="0">
-        <VerticalStackLayout Padding="18" Spacing="12">
+        <StackLayout Grid.Row="0" VerticalOptions="Fill">
             <Grid ColumnDefinitions="44,*,44">
                 <Button Text="‹" Command="{Binding PreviousMonthCommand}" Style="{StaticResource GhostButton}" FontSize="22" />
                 <Label Grid.Column="1" Text="{Binding MonthText}" Style="{StaticResource PageTitle}" HorizontalTextAlignment="Center" VerticalOptions="Center" />
                 <Button Grid.Column="2" Text="›" Command="{Binding NextMonthCommand}" Style="{StaticResource GhostButton}" FontSize="22" />
             </Grid>
+            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="True" VerticalOptions="CenterAndExpand"/>
+            <ScrollView VerticalOptions="FillAndExpand" IsVisible="{Binding IsBusy,Converter={StaticResource InverseBooleanConverter}}">
+                <VerticalStackLayout VerticalOptions="FillAndExpand" Padding="18" Spacing="12">
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*,*,*,*,*,*,*">
+                                <Label Text="Su" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="1" Text="Mo" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="2" Text="Tu" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="3" Text="We" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="4" Text="Th" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="5" Text="Fr" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
+                                <Label Grid.Column="6" Text="Sa" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
+                            </Grid>
+                            <CollectionView ItemsSource="{Binding CalendarDays}" SelectionMode="None">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" Span="7" HorizontalItemSpacing="3" VerticalItemSpacing="3" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border HeightRequest="38" StrokeThickness="0" BackgroundColor="{StaticResource Surface2}" StrokeShape="RoundRectangle 9">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Grid RowDefinitions="*,6">
+                                                <Label Text="{Binding DayText}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{StaticResource Ink2}" />
+                                                <BoxView Grid.Row="1" WidthRequest="4" HeightRequest="4" CornerRadius="2" Color="{StaticResource GreenMid}" IsVisible="{Binding HasEntries}" HorizontalOptions="Center" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
 
-            <Border Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="8">
-                    <Grid ColumnDefinitions="*,*,*,*,*,*,*">
-                        <Label Text="Su" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
-                        <Label Grid.Column="1" Text="Mo" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
-                        <Label Grid.Column="2" Text="Tu" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
-                        <Label Grid.Column="3" Text="We" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
-                        <Label Grid.Column="4" Text="Th" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
-                        <Label Grid.Column="5" Text="Fr" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
-                        <Label Grid.Column="6" Text="Sa" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                        <Border Style="{StaticResource CompactCard}">
+                            <VerticalStackLayout>
+                                <Label Text="Period total" Style="{StaticResource MutedLabel}" />
+                                <Label Text="{Binding MonthHoursText}" FontSize="18" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource CompactCard}">
+                            <VerticalStackLayout>
+                                <Label Text="Earned" Style="{StaticResource MutedLabel}" />
+                                <Label Text="{Binding MonthEarningsText}" FontSize="18" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                            </VerticalStackLayout>
+                        </Border>
                     </Grid>
-                    <CollectionView ItemsSource="{Binding CalendarDays}" SelectionMode="None">
-                        <CollectionView.ItemsLayout>
-                            <GridItemsLayout Orientation="Vertical" Span="7" HorizontalItemSpacing="3" VerticalItemSpacing="3" />
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Border HeightRequest="38" StrokeThickness="0" BackgroundColor="{StaticResource Surface2}" StrokeShape="RoundRectangle 9">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding .}" />
-                                    </Border.GestureRecognizers>
-                                    <Grid RowDefinitions="*,6">
-                                        <Label Text="{Binding DayText}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{StaticResource Ink2}" />
-                                        <BoxView Grid.Row="1" WidthRequest="4" HeightRequest="4" CornerRadius="2" Color="{StaticResource GreenMid}" IsVisible="{Binding HasEntries}" HorizontalOptions="Center" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
-            </Border>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                <Border Style="{StaticResource CompactCard}">
-                    <VerticalStackLayout>
-                        <Label Text="Period total" Style="{StaticResource MutedLabel}" />
-                        <Label Text="{Binding MonthHoursText}" FontSize="18" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
-                    </VerticalStackLayout>
-                </Border>
-                <Border Grid.Column="1" Style="{StaticResource CompactCard}">
-                    <VerticalStackLayout>
-                        <Label Text="Earned" Style="{StaticResource MutedLabel}" />
-                        <Label Text="{Binding MonthEarningsText}" FontSize="18" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
-                    </VerticalStackLayout>
-                </Border>
-            </Grid>
-
-            <Border Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="All entries" Style="{StaticResource SectionTitle}" Margin="0" />
-                    <CollectionView ItemsSource="{Binding MonthEntries}">
-                        <CollectionView.EmptyView>
-                            <Label Text="No entries in this period." Style="{StaticResource MutedLabel}" />
-                        </CollectionView.EmptyView>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Padding="0,8" ColumnDefinitions="46,*,34,34" ColumnSpacing="8">
-                                    <Border WidthRequest="42" HeightRequest="42" BackgroundColor="{StaticResource Surface2}" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 12">
-                                        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="0">
-                                            <Label Text="{Binding DayBox}" FontSize="16" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" HorizontalTextAlignment="Center" />
-                                            <Label Text="{Binding MonthBox}" FontSize="9" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
-                                        </VerticalStackLayout>
-                                    </Border>
-                                    <VerticalStackLayout Grid.Column="1" Spacing="1">
-                                        <Label Text="{Binding TypeText}" FontSize="11" TextColor="{StaticResource MutedText}" />
-                                        <Label Text="{Binding HoursText}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
-                                        <Label Text="{Binding EarningsText}" FontSize="11" TextColor="{StaticResource GreenMid}" />
-                                    </VerticalStackLayout>
-                                    <Button Grid.Column="2" Text="Edit" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCommand}" CommandParameter="{Binding .}" Style="{StaticResource GhostButton}" Padding="0" FontSize="10" />
-                                    <Button Grid.Column="3" Text="Del" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding .}" Style="{StaticResource GhostButton}" Padding="0" TextColor="{StaticResource Red}" FontSize="10" />
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                    <Border Style="{StaticResource Card}" MaximumHeightRequest="500">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="All entries" Style="{StaticResource SectionTitle}" Margin="0" />
+                            <CollectionView ItemsSource="{Binding MonthEntries}">
+                                <CollectionView.EmptyView>
+                                    <Label Text="No entries in this period." Style="{StaticResource MutedLabel}" />
+                                </CollectionView.EmptyView>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="0,8" ColumnDefinitions="46,*,34,34" ColumnSpacing="8">
+                                            <Border WidthRequest="44" HeightRequest="44" BackgroundColor="{StaticResource Surface2}" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 12">
+                                                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="0">
+                                                    <Label Text="{Binding DayBox}" FontSize="14" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" HorizontalTextAlignment="Center" />
+                                                    <Label Text="{Binding MonthBox}" FontSize="9" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
+                                                </VerticalStackLayout>
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                                <Label Text="{Binding TypeText}" FontSize="11" TextColor="{StaticResource MutedText}" />
+                                                <Label Text="{Binding HoursText}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                                <Label Text="{Binding EarningsText}" FontSize="11" TextColor="{StaticResource GreenMid}" />
+                                            </VerticalStackLayout>
+                                            <Button Grid.Column="2" Text="Edit" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCommand}" CommandParameter="{Binding .}" Style="{StaticResource GhostButton}" Padding="0" FontSize="10" />
+                                            <Button Grid.Column="3" Text="Del" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding .}" Style="{StaticResource GhostButton}" Padding="0" TextColor="{StaticResource Red}" FontSize="10" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
                 </VerticalStackLayout>
-            </Border>
-        </VerticalStackLayout>
-    </ScrollView>
+            </ScrollView>
+        </StackLayout>
     </Grid>
 </ContentPage>

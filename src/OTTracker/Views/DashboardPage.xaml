@@ -12,36 +12,36 @@
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="18,18,18,24" Spacing="12">
                 <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
-                    <Label FontAttributes="Bold" Style="{StaticResource MutedLabel}" FontSize="25" Text="{Binding GreetingText}" />
+                    <Label FontAttributes="Bold" Style="{StaticResource MutedLabel}" FontSize="20" Text="{Binding GreetingText}" />
                     <Label
                     Grid.Row="1"
                     FontSize="15"
                     Style="{StaticResource PageTitle}"
                     Text="{Binding MonthText}" />
-                    <Label
-                    x:Name="HeaderVersionLabel"
-                    Grid.Column="1"
-                    Grid.RowSpan="2"
-                    Margin="0,0,10,0"
-                    FontSize="11"
-                    TextColor="{StaticResource MutedLabel}"
+                    <VerticalStackLayout
+                            Grid.RowSpan="2"
+                            Grid.Column="2">
+                        <Label HorizontalTextAlignment="End"
+                               x:Name="HeaderVersionLabel"
+                               Margin="0,0,10,3"
+                               FontSize="11"
+                               TextColor="{StaticResource MutedLabel}"
                     VerticalOptions="Center" />
-                    <Border
-                    Grid.RowSpan="2"
-                    Grid.Column="2"
-                    Padding="12,0"
-                    BackgroundColor="{StaticResource AccentLight}"
-                    HeightRequest="42"
-                    StrokeShape="RoundRectangle 21"
-                    StrokeThickness="0"
-                    MinimumWidthRequest="42">
-                        <Label
-                        FontFamily="OpenSansSemibold"
-                        HorizontalOptions="Center"
-                        Text="{Binding UserName}"
-                        TextColor="{StaticResource Accent}"
-                        VerticalOptions="Center" />
-                    </Border>
+                        <Border
+                            Padding="12,0"
+                            BackgroundColor="{StaticResource AccentLight}"
+                            HeightRequest="42"
+                            StrokeShape="RoundRectangle 21"
+                            StrokeThickness="0"
+                            MinimumWidthRequest="42">
+                                                        <Label
+                                FontFamily="OpenSansSemibold"
+                                HorizontalOptions="Center"
+                                Text="{Binding UserName}"
+                                TextColor="{StaticResource Accent}"
+                                VerticalOptions="Center" />
+                        </Border>
+                    </VerticalStackLayout>
                 </Grid>
 
                 <Border
