@@ -6,16 +6,20 @@
     xmlns:controls="clr-namespace:OTTracker.Controls"
     Title="History"
     Shell.TabBarIsVisible="False">
-    <Grid RowDefinitions="*,Auto">
-        <StackLayout Grid.Row="0" VerticalOptions="Fill">
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0" Grid.RowSpan="2" RowDefinitions="Auto,*">
             <Grid ColumnDefinitions="44,*,44">
                 <Button Text="‹" Command="{Binding PreviousMonthCommand}" Style="{StaticResource GhostButton}" FontSize="22" />
                 <Label Grid.Column="1" Text="{Binding MonthText}" Style="{StaticResource PageTitle}" HorizontalTextAlignment="Center" VerticalOptions="Center" />
                 <Button Grid.Column="2" Text="›" Command="{Binding NextMonthCommand}" Style="{StaticResource GhostButton}" FontSize="22" />
             </Grid>
-            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="True" VerticalOptions="CenterAndExpand"/>
-            <ScrollView VerticalOptions="FillAndExpand" IsVisible="{Binding IsBusy,Converter={StaticResource InverseBooleanConverter}}">
-                <VerticalStackLayout VerticalOptions="FillAndExpand" Padding="18" Spacing="12">
+            <ActivityIndicator Grid.Row="1" IsVisible="{Binding IsBusy}" BackgroundColor="Transparent" Color="#5B4FE8" IsRunning="True" VerticalOptions="Center"/>
+            <Grid
+                Grid.Row="1"
+                Padding="18"
+                RowDefinitions="Auto,Auto,*"
+                RowSpacing="12"
+                IsVisible="{Binding IsBusy,Converter={StaticResource InverseBooleanConverter}}">
                     <Border Style="{StaticResource Card}">
                         <VerticalStackLayout Spacing="8">
                             <Grid ColumnDefinitions="*,*,*,*,*,*,*">
@@ -27,6 +31,7 @@
                                 <Label Grid.Column="5" Text="Fr" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
                                 <Label Grid.Column="6" Text="Sa" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" />
                             </Grid>
+                        <StackLayout VerticalOptions="FillAndExpand">
                             <CollectionView ItemsSource="{Binding CalendarDays}" SelectionMode="None">
                                 <CollectionView.ItemsLayout>
                                     <GridItemsLayout Orientation="Vertical" Span="7" HorizontalItemSpacing="3" VerticalItemSpacing="3" />
@@ -34,9 +39,6 @@
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <Border HeightRequest="38" StrokeThickness="0" BackgroundColor="{StaticResource Surface2}" StrokeShape="RoundRectangle 9">
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding .}" />
-                                            </Border.GestureRecognizers>
                                             <Grid RowDefinitions="*,6">
                                                 <Label Text="{Binding DayText}" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="{StaticResource Ink2}" />
                                                 <BoxView Grid.Row="1" WidthRequest="4" HeightRequest="4" CornerRadius="2" Color="{StaticResource GreenMid}" IsVisible="{Binding HasEntries}" HorizontalOptions="Center" />
@@ -45,10 +47,11 @@
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
+                        </StackLayout>
                         </VerticalStackLayout>
                     </Border>
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="8">
                         <Border Style="{StaticResource CompactCard}">
                             <VerticalStackLayout>
                                 <Label Text="Period total" Style="{StaticResource MutedLabel}" />
@@ -63,10 +66,10 @@
                         </Border>
                     </Grid>
 
-                    <Border Style="{StaticResource Card}" MaximumHeightRequest="500">
-                        <VerticalStackLayout Spacing="8">
+                    <Border Grid.Row="2" Style="{StaticResource Card}">
+                        <Grid RowDefinitions="Auto,*" RowSpacing="8">
                             <Label Text="All entries" Style="{StaticResource SectionTitle}" Margin="0" />
-                            <CollectionView ItemsSource="{Binding MonthEntries}">
+                            <CollectionView Grid.Row="1" ItemsSource="{Binding MonthEntries}" VerticalOptions="Fill">
                                 <CollectionView.EmptyView>
                                     <Label Text="No entries in this period." Style="{StaticResource MutedLabel}" />
                                 </CollectionView.EmptyView>
@@ -90,10 +93,9 @@
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
-                        </VerticalStackLayout>
+                        </Grid>
                     </Border>
-                </VerticalStackLayout>
-            </ScrollView>
-        </StackLayout>
+            </Grid>
+        </Grid>
     </Grid>
 </ContentPage>

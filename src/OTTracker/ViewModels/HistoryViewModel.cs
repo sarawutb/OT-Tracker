@@ -36,7 +36,6 @@ public sealed partial class HistoryViewModel : BaseViewModel
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         PreviousMonthCommand = new AsyncRelayCommand(PreviousMonthAsync);
         NextMonthCommand = new AsyncRelayCommand(NextMonthAsync);
-        SelectDateCommand = new AsyncRelayCommand<CalendarDay>(SelectDateAsync);
         EditCommand = new AsyncRelayCommand<EntryDisplay>(EditAsync);
         DeleteCommand = new AsyncRelayCommand<EntryDisplay>(DeleteAsync);
         _events.EntriesChanged += async (_, _) => await LoadAsync();
@@ -48,8 +47,6 @@ public sealed partial class HistoryViewModel : BaseViewModel
     public IAsyncRelayCommand PreviousMonthCommand { get; }
 
     public IAsyncRelayCommand NextMonthCommand { get; }
-
-    public IAsyncRelayCommand<CalendarDay> SelectDateCommand { get; }
 
     public IAsyncRelayCommand<EntryDisplay> EditCommand { get; }
 
@@ -131,17 +128,6 @@ public sealed partial class HistoryViewModel : BaseViewModel
     {
         SelectedMonth = SelectedMonth.AddMonths(1);
         SelectedDate = GetOtPeriod(SelectedMonth).Start;
-        await LoadAsync();
-    }
-
-    private async Task SelectDateAsync(CalendarDay? day)
-    {
-        if (day?.Date is null)
-        {
-            return;
-        }
-
-        SelectedDate = day.Date.Value;
         await LoadAsync();
     }
 
