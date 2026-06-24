@@ -211,7 +211,7 @@
                 FontSize="12"
                 FontAttributes="Bold"
                 HorizontalTextAlignment="Center"
-                TextColor="{StaticResource MutedLabel}" />
+                TextColor="{StaticResource Ink2}" />
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

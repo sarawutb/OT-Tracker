@@ -16,7 +16,7 @@
             <Grid
                 ColumnDefinitions="*,*,*"
                 ColumnSpacing="4"
-                HeightRequest="54">
+                HeightRequest="65">
                 <Grid
                     x:Name="DashboardTab"
                     Grid.Column="0"
@@ -89,7 +89,6 @@
                             FontFamily="OpenSansSemibold"
                             FontSize="10"
                             HorizontalTextAlignment="Center"
-                            Text="Add OT"
                             VerticalTextAlignment="Center" />
                         <Ellipse 
                             IsVisible="False"
