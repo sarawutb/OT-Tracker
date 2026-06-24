@@ -12,7 +12,7 @@
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="18,18,18,24" Spacing="12">
                 <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
-                    <Label Style="{StaticResource MutedLabel}" FontSize="20" Text="{Binding GreetingText}" />
+                    <Label FontAttributes="Bold" Style="{StaticResource MutedLabel}" FontSize="25" Text="{Binding GreetingText}" />
                     <Label
                     Grid.Row="1"
                     FontSize="15"
@@ -24,7 +24,7 @@
                     Grid.RowSpan="2"
                     Margin="0,0,10,0"
                     FontSize="11"
-                    TextColor="{StaticResource MutedText}"
+                    TextColor="{StaticResource MutedLabel}"
                     VerticalOptions="Center" />
                     <Border
                     Grid.RowSpan="2"
@@ -124,14 +124,18 @@
                             Text="This week" />
                             <Border
                             Grid.Column="1"
-                            Padding="10,4"
+                            Padding="12,8"
                             BackgroundColor="{StaticResource AccentLight}"
                             StrokeShape="RoundRectangle 12"
                             StrokeThickness="0">
                                 <Label
-                                FontSize="11"
-                                Text="Mon-Sun"
+                                FontSize="13"
+                                FontAttributes="Bold"
+                                Text="History"
                                 TextColor="{StaticResource Accent}" />
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GoHistoryCommand}"/>
+                                </Border.GestureRecognizers>
                             </Border>
                         </Grid>
                         <CollectionView
@@ -209,6 +213,7 @@
                                         WidthRequest="36">
                                             <Label
                                             FontSize="11"
+                                            FontAttributes="Bold"
                                             HorizontalOptions="Center"
                                             Text="OT"
                                             TextColor="{StaticResource Accent}"
@@ -248,19 +253,6 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <Grid ColumnDefinitions="*,100" ColumnSpacing="8">
-                    <Button
-                        Command="{Binding GoLogTodayCommand}"
-                        Style="{StaticResource PrimaryButton}"
-                        Text="Log today's OT" />
-                    <Button
-                        Grid.Column="1"
-                        BackgroundColor="{StaticResource AccentLight}"
-                        FontAttributes="Bold"
-                        TextColor="{StaticResource PrimaryDarkText}"
-                        Command="{Binding GoHistoryCommand}"
-                    Text="History" />
-                </Grid>
             </VerticalStackLayout>
         </ScrollView>
         <controls:AppTabBar Grid.Row="1" ActiveRoute="Dashboard" />

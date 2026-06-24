@@ -44,13 +44,13 @@ public sealed partial class PinViewModel : BaseViewModel
     public string Dot3 => EnteredPin.Length >= 3 ? "●" : "○";
 
     public string Dot4 => EnteredPin.Length >= 4 ? "●" : "○";
-    public Label AnimeDot1 { get; set; }
+    public VisualElement? AnimeDot1 { get; set; }
 
-    public Label AnimeDot2 { get; set; }
+    public VisualElement? AnimeDot2 { get; set; }
 
-    public Label AnimeDot3 { get; set; }
+    public VisualElement? AnimeDot3 { get; set; }
 
-    public Label AnimeDot4 { get; set; }
+    public VisualElement? AnimeDot4 { get; set; }
 
     private string _enteredPin = string.Empty;
     public string EnteredPin
@@ -83,10 +83,10 @@ public sealed partial class PinViewModel : BaseViewModel
         }
     }
 
-    private async Task DotAnimatedAsync(Label dot)
+    private static async Task DotAnimatedAsync(VisualElement? dot)
     {
         if (dot == null) return; 
-        await dot.TranslateTo(0, 25, 100);
+        await dot.TranslateTo(0, 3, 50);
         await dot.TranslateTo(0, 0, 100);
     }
 

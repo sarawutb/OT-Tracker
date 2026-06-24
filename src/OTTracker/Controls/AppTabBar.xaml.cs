@@ -51,7 +51,7 @@ public partial class AppTabBar : ContentView
 
         icon.Stroke = brush;
         label.TextColor = surface;
-        label.IsVisible = isActive;
+        label.IsVisible = true;
         dot.Fill = brush;
         dot.IsVisible = isActive;
     }

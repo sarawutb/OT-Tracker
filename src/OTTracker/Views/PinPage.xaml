@@ -3,6 +3,7 @@
     x:Class="OTTracker.Views.PinPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="{StaticResource AppBackground}"
     Shell.NavBarIsVisible="False">
     <Grid Padding="24" RowDefinitions="Auto,*,Auto">
         <VerticalStackLayout
@@ -33,27 +34,67 @@
             <HorizontalStackLayout
                 Margin="0,16,0,0"
                 HorizontalOptions="Center"
-                Spacing="12">
-                <Label
+                Spacing="18">
+                <Border
                     x:Name="Dot1"
-                    FontSize="55"
-                    Text="{Binding Dot1}"
-                    TextColor="{StaticResource Ink}" />
-                <Label
+                    WidthRequest="18"
+                    HeightRequest="18"
+                    BackgroundColor="White"
+                    Stroke="{StaticResource Ink}"
+                    StrokeThickness="0.75"
+                    StrokeShape="RoundRectangle 16">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding Dot1}" Value="●">
+                            <Setter Property="BackgroundColor" Value="{StaticResource Ink}" />
+                            <Setter Property="StrokeThickness" Value="0" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                </Border>
+                <Border
                     x:Name="Dot2"
-                    FontSize="55"
-                    Text="{Binding Dot2}"
-                    TextColor="{StaticResource Ink}" />
-                <Label
+                    WidthRequest="18"
+                    HeightRequest="18"
+                    BackgroundColor="White"
+                    Stroke="{StaticResource Ink}"
+                    StrokeThickness="0.75"
+                    StrokeShape="RoundRectangle 16">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding Dot2}" Value="●">
+                            <Setter Property="BackgroundColor" Value="{StaticResource Ink}" />
+                            <Setter Property="StrokeThickness" Value="0" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                </Border>
+                <Border
                     x:Name="Dot3"
-                    FontSize="55"
-                    Text="{Binding Dot3}"
-                    TextColor="{StaticResource Ink}" />
-                <Label
+                    WidthRequest="18"
+                    HeightRequest="18"
+                    BackgroundColor="White"
+                    Stroke="{StaticResource Ink}"
+                    StrokeThickness="0.75"
+                    StrokeShape="RoundRectangle 16">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding Dot3}" Value="●">
+                            <Setter Property="BackgroundColor" Value="{StaticResource Ink}" />
+                            <Setter Property="StrokeThickness" Value="0" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                </Border>
+                <Border
                     x:Name="Dot4"
-                    FontSize="55"
-                    Text="{Binding Dot4}"
-                    TextColor="{StaticResource Ink}" />
+                    WidthRequest="18"
+                    HeightRequest="18"
+                    BackgroundColor="White"
+                    Stroke="{StaticResource Ink}"
+                    StrokeThickness="0.75"
+                    StrokeShape="RoundRectangle 16">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding Dot4}" Value="●">
+                            <Setter Property="BackgroundColor" Value="{StaticResource Ink}" />
+                            <Setter Property="StrokeThickness" Value="0" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                </Border>
             </HorizontalStackLayout>
             <Label
                 FontSize="12"
@@ -167,9 +208,10 @@
                 Text="{Binding BiometricHint}" />
             <Label
                 x:Name="AppVersionLabel"
-                FontSize="11"
+                FontSize="12"
+                FontAttributes="Bold"
                 HorizontalTextAlignment="Center"
-                TextColor="{StaticResource MutedText}" />
+                TextColor="{StaticResource MutedLabel}" />
         </VerticalStackLayout>
     </Grid>
 </ContentPage>
