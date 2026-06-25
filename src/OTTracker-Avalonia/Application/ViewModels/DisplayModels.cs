@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using OTTracker_Avalonia.Domain.Entities;
-using OTTracker_Avalonia.Domain.Enums;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Enums;
 
 namespace OTTracker_Avalonia.AppServices.ViewModels;
 

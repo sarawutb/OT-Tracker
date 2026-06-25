@@ -1,6 +1,6 @@
 using System;
 
-namespace OTTracker_Avalonia.Domain.Entities;
+namespace OTTracker.Domain.Entities;
 
 public sealed class CalendarDay
 {

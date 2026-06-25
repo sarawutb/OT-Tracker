@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
-using OTTracker_Avalonia.Domain.Entities;
-using OTTracker_Avalonia.Domain.Enums;
-using OTTracker_Avalonia.AppServices.Interfaces.Repositories;
-using OTTracker_Avalonia.AppServices.Interfaces.Services;
-using OTTracker_Avalonia.AppServices.Services;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Enums;
+using OTTracker.Domain.Interfaces;
+using OTTracker.Domain.Interfaces;
+using OTTracker.Infrastructure.Services;
 using OTTracker_Avalonia.AppServices.ViewModels;
 
 namespace OTTracker_Avalonia.ViewModels;

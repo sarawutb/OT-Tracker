@@ -1,9 +1,9 @@
 using System;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using OTTracker_Avalonia.Domain.Enums;
+using OTTracker.Domain.Enums;
 
-namespace OTTracker_Avalonia.Domain.Entities;
+namespace OTTracker.Domain.Entities;
 
 [Table("ot_entries")]
 public sealed class OtEntry : BaseModel

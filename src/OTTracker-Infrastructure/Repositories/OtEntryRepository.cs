@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OTTracker_Avalonia.Domain.Entities;
-using OTTracker_Avalonia.AppServices.Interfaces.Repositories;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Interfaces;
 using Supabase.Postgrest;
 
-namespace OTTracker_Avalonia.Infrastructure.Repositories;
+namespace OTTracker.Infrastructure.Repositories;
 
 public sealed class OtEntryRepository(Supabase.Client client) : IOtEntryRepository
 {

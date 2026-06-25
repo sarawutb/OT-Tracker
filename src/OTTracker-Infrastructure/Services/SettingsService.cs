@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using OTTracker_Avalonia.Domain.Entities;
-using OTTracker_Avalonia.AppServices.Interfaces.Services;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Interfaces;
 using Supabase.Postgrest;
 
-namespace OTTracker_Avalonia.Infrastructure.Services;
+namespace OTTracker.Infrastructure.Services;
 
 public sealed class SettingsService(Supabase.Client client) : ISettingsService
 {

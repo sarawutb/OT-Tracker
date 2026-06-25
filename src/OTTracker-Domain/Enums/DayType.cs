@@ -1,4 +1,4 @@
-namespace OTTracker_Avalonia.Domain.Enums;
+namespace OTTracker.Domain.Enums;
 
 public enum DayType
 {

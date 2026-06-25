@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
-using OTTracker_Avalonia.AppServices.Interfaces.Services;
+using OTTracker.Domain.Interfaces;
 
 namespace OTTracker_Avalonia.ViewModels;
 

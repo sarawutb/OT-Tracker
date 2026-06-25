@@ -2,7 +2,7 @@ using System;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 
-namespace OTTracker_Avalonia.Domain.Entities;
+namespace OTTracker.Domain.Entities;
 
 [Table("app_settings")]
 public sealed class AppSettings : BaseModel

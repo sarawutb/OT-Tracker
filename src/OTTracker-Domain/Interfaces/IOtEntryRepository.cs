@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using OTTracker_Avalonia.Domain.Entities;
+using OTTracker.Domain.Entities;
 
-namespace OTTracker_Avalonia.AppServices.Interfaces.Repositories;
+namespace OTTracker.Domain.Interfaces;
 
 public interface IOtEntryRepository
 {

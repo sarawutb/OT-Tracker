@@ -1,6 +1,6 @@
 using System;
 
-namespace OTTracker_Avalonia.Domain.Entities;
+namespace OTTracker.Domain.Entities;
 
 public readonly record struct OtPeriod(DateTime Start, DateTime End)
 {

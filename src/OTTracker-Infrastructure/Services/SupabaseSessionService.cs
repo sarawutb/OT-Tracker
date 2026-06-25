@@ -3,30 +3,23 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using OTTracker_Avalonia.AppServices.Interfaces.Services;
+using OTTracker.Domain.Interfaces;
 
-namespace OTTracker_Avalonia.Infrastructure.Services;
+namespace OTTracker.Infrastructure.Services;
 
-public sealed class AuthService : IAuthService
+public sealed class SupabaseSessionService : ISupabaseSessionService
 {
-    private const string PinFileName = "pin.dat";
+    private const string SessionFileName = "session.dat";
     private static readonly string FilePath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "OTTracker",
-        PinFileName
+        SessionFileName
     );
 
-    public Task<bool> HasPinAsync()
+    public Task SaveSessionAsync(string accessToken, string refreshToken)
     {
-        return Task.FromResult(File.Exists(FilePath));
-    }
-
-    public async Task SetPinAsync(string pin)
-    {
-        var hashStr = Hash(pin);
-        var bytes = Encoding.UTF8.GetBytes(hashStr);
-        
-        // Encrypt bytes via OS User Profile (DPAPI)
+        var raw = $"{accessToken};{refreshToken}";
+        var bytes = Encoding.UTF8.GetBytes(raw);
         byte[] encryptedBytes;
         if (OperatingSystem.IsWindows())
         {
@@ -34,22 +27,24 @@ public sealed class AuthService : IAuthService
         }
         else
         {
-            // For cross-platform fallback (e.g. Linux/Mac in debug) use plain or simple obfuscation
             encryptedBytes = bytes;
         }
-        
+
         var dir = Path.GetDirectoryName(FilePath);
-        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) 
+        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
         {
             Directory.CreateDirectory(dir);
         }
-        
-        await File.WriteAllBytesAsync(FilePath, encryptedBytes);
+
+        return File.WriteAllBytesAsync(FilePath, encryptedBytes);
     }
 
-    public async Task<bool> VerifyPinAsync(string pin)
+    public async Task<(string AccessToken, string RefreshToken)?> LoadSessionAsync()
     {
-        if (!File.Exists(FilePath)) return false;
+        if (!File.Exists(FilePath))
+        {
+            return null;
+        }
 
         try
         {
@@ -63,28 +58,27 @@ public sealed class AuthService : IAuthService
             {
                 decryptedBytes = encryptedBytes;
             }
-            
-            var savedHash = Encoding.UTF8.GetString(decryptedBytes);
-            return savedHash == Hash(pin);
+            var raw = Encoding.UTF8.GetString(decryptedBytes);
+            var parts = raw.Split(';', 2);
+            if (parts.Length == 2)
+            {
+                return (parts[0], parts[1]);
+            }
         }
         catch
         {
-            return false;
+            // Ignore exception and return null
         }
+
+        return null;
     }
 
-    public Task ClearPinAsync()
+    public Task ClearSessionAsync()
     {
         if (File.Exists(FilePath))
         {
             File.Delete(FilePath);
         }
         return Task.CompletedTask;
-    }
-
-    private static string Hash(string value)
-    {
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(value));
-        return Convert.ToHexString(bytes);
     }
 }

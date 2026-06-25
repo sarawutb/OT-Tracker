@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using OTTracker_Avalonia.Domain.Entities;
-using OTTracker_Avalonia.AppServices.Interfaces.Services;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Interfaces;
 
 namespace OTTracker_Avalonia.ViewModels;
 

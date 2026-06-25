@@ -1,8 +1,8 @@
-using OTTracker_Avalonia.AppServices.Interfaces.Services;
+using OTTracker.Domain.Interfaces;
 using Supabase.Gotrue;
 using static Supabase.Gotrue.Constants;
 
-namespace OTTracker_Avalonia.Infrastructure.Services;
+namespace OTTracker.Infrastructure.Services;
 
 public sealed class SupabaseClientProvider : ISupabaseClientProvider
 {

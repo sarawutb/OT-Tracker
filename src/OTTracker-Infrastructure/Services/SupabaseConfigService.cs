@@ -4,9 +4,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using OTTracker_Avalonia.AppServices.Interfaces.Services;
+using OTTracker.Domain.Interfaces;
 
-namespace OTTracker_Avalonia.Infrastructure.Services;
+namespace OTTracker.Infrastructure.Services;
 
 public sealed class SupabaseConfigService : ISupabaseConfigService
 {

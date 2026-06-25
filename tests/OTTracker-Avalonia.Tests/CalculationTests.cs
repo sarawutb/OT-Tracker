@@ -1,8 +1,8 @@
 using System;
 using Xunit;
-using OTTracker_Avalonia.Domain.Entities;
-using OTTracker_Avalonia.Domain.Enums;
-using OTTracker_Avalonia.AppServices.Services;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Enums;
+using OTTracker.Infrastructure.Services;
 
 namespace OTTracker_Avalonia.Tests;
 

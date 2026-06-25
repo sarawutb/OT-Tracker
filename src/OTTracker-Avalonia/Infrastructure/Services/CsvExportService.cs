@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
-using OTTracker_Avalonia.Domain.Entities;
-using OTTracker_Avalonia.Domain.Enums;
-using OTTracker_Avalonia.AppServices.Interfaces.Services;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Enums;
+using OTTracker.Domain.Interfaces;
 
 namespace OTTracker_Avalonia.Infrastructure.Services;
 

@@ -30,7 +30,16 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.9" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
-    <PackageReference Include="Supabase" Version="1.1.1" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.9" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OTTracker-Domain\OTTracker-Domain.csproj" />
+    <ProjectReference Include="..\OTTracker-Infrastructure\OTTracker-Infrastructure.csproj" />
+  </ItemGroup>
+
+  <Target Name="RemoveDuplicateCommunityToolkitMvvmAnalyzers" AfterTargets="ResolvePackageDependenciesForBuild;ResolveNuGetPackageAssets">
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" Condition="'%(Analyzer.NuGetPackageId)' == 'CommunityToolkit.Mvvm' and !$([System.String]::Concat('', '%(Analyzer.FullPath)').Contains('roslyn5.0'))" />
+    </ItemGroup>
+  </Target>
 </Project>

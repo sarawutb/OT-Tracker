@@ -1,6 +1,6 @@
 using System;
 
-namespace OTTracker_Avalonia.AppServices.Services;
+namespace OTTracker.Infrastructure.Services;
 
 public sealed class AppEvents
 {

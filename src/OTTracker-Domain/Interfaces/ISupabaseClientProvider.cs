@@ -1,4 +1,4 @@
-namespace OTTracker_Avalonia.AppServices.Interfaces.Services;
+namespace OTTracker.Domain.Interfaces;
 
 public interface ISupabaseClientProvider
 {

@@ -1,8 +1,8 @@
 using System;
-using OTTracker_Avalonia.Domain.Entities;
-using OTTracker_Avalonia.Domain.Enums;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Enums;
 
-namespace OTTracker_Avalonia.AppServices.Interfaces.Services;
+namespace OTTracker.Domain.Interfaces;
 
 public interface IOtCalculationService
 {
