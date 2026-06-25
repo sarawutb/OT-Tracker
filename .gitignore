@@ -34,3 +34,5 @@ releases/
 TestResults/
 coverage/
 /.github/copilot-instructions.md
+
+appsettings.json

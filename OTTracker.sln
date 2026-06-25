@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11723.231 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B2A7329A-2743-49F3-9BD0-B8007CF445DA}"
 EndProject
@@ -11,26 +11,44 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{ADED3E12
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OTTracker.Tests", "tests\OTTracker.Tests\OTTracker.Tests.csproj", "{1CC53223-A501-4D6F-A330-41B3A181EC88}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OTTracker-Avalonia.Tests", "tests\OTTracker-Avalonia.Tests\OTTracker-Avalonia.Tests.csproj", "{DEA774D4-BFF0-F32B-5341-0EC5AFABBB3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OTTracker-Avalonia", "src\OTTracker-Avalonia\OTTracker-Avalonia.csproj", "{905A45B3-CFDA-40B3-06DB-527606F5303D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{719DE572-53ED-4067-8C46-58F92E71E568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{719DE572-53ED-4067-8C46-58F92E71E568}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{719DE572-53ED-4067-8C46-58F92E71E568}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{719DE572-53ED-4067-8C46-58F92E71E568}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{719DE572-53ED-4067-8C46-58F92E71E568}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1CC53223-A501-4D6F-A330-41B3A181EC88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1CC53223-A501-4D6F-A330-41B3A181EC88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CC53223-A501-4D6F-A330-41B3A181EC88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CC53223-A501-4D6F-A330-41B3A181EC88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEA774D4-BFF0-F32B-5341-0EC5AFABBB3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEA774D4-BFF0-F32B-5341-0EC5AFABBB3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEA774D4-BFF0-F32B-5341-0EC5AFABBB3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEA774D4-BFF0-F32B-5341-0EC5AFABBB3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{905A45B3-CFDA-40B3-06DB-527606F5303D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{905A45B3-CFDA-40B3-06DB-527606F5303D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{905A45B3-CFDA-40B3-06DB-527606F5303D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{905A45B3-CFDA-40B3-06DB-527606F5303D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{719DE572-53ED-4067-8C46-58F92E71E568} = {B2A7329A-2743-49F3-9BD0-B8007CF445DA}
 		{1CC53223-A501-4D6F-A330-41B3A181EC88} = {ADED3E12-8912-4FF4-ADDE-E76B3A7FA52D}
+		{DEA774D4-BFF0-F32B-5341-0EC5AFABBB3A} = {ADED3E12-8912-4FF4-ADDE-E76B3A7FA52D}
+		{905A45B3-CFDA-40B3-06DB-527606F5303D} = {B2A7329A-2743-49F3-9BD0-B8007CF445DA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7348A25-5E4E-447C-8D7F-13CBC7A7F35B}
 	EndGlobalSection
 EndGlobal
