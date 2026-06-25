@@ -34,7 +34,7 @@
                             StrokeShape="RoundRectangle 21"
                             StrokeThickness="0"
                             MinimumWidthRequest="42">
-                                                        <Label
+                                <Label
                                 FontFamily="OpenSansSemibold"
                                 HorizontalOptions="Center"
                                 Text="{Binding UserName}"
