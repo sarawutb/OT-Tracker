@@ -1,0 +1,251 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:OTTracker_Avalonia.ViewModels"
+             xmlns:entities="using:OTTracker_Avalonia.Domain.Entities"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="OTTracker_Avalonia.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+
+    <Grid ColumnDefinitions="*, 360" Margin="0,10,0,0">
+        <!-- Left Section: Greeting, KPI, & Weekly Chart -->
+        <Grid Grid.Column="0" RowDefinitions="Auto, Auto, *" Margin="0,0,20,0">
+            <!-- Greeting Header Widget -->
+            <Border Grid.Row="0" Classes="Card" Margin="0,0,0,20">
+                <Grid ColumnDefinitions="*, Auto">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="{Binding GreetingText}" 
+                                   FontFamily="{StaticResource InterFont}" 
+                                   FontSize="14" 
+                                   Foreground="{DynamicResource TextMutedBrush}"/>
+                        <TextBlock Text="{Binding UserName}" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="24" 
+                                   Foreground="{DynamicResource AccentBrush}"/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="👋" FontSize="36" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <!-- Total Hours Period Card -->
+            <Border Grid.Row="1" Classes="Card" Margin="0,0,0,20">
+                <Grid ColumnDefinitions="*, Auto">
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="TOTAL HOURS THIS PERIOD" 
+                                   FontFamily="{StaticResource InterFont}" 
+                                   FontWeight="SemiBold" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource TextMutedBrush}" 
+                                   LetterSpacing="1"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Bottom">
+                            <TextBlock Text="{Binding TotalHoursText}" 
+                                       FontFamily="{StaticResource OutfitFont}" 
+                                       FontWeight="Bold" 
+                                       FontSize="32"/>
+                            <TextBlock Text="hrs" 
+                                       FontFamily="{StaticResource InterFont}" 
+                                       FontSize="16" 
+                                       Foreground="{DynamicResource TextMutedBrush}" 
+                                       VerticalAlignment="Bottom" 
+                                       Margin="0,0,0,6"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding MonthText}" 
+                                   FontFamily="{StaticResource InterFont}" 
+                                   FontSize="12" 
+                                   Foreground="{DynamicResource TextMutedBrush}"/>
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="⏳" FontSize="32" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                </Grid>
+            </Border>
+
+            <!-- Weekly Summary Bar Graph Card -->
+            <Border Grid.Row="2" Classes="Card" VerticalAlignment="Stretch">
+                <Grid RowDefinitions="Auto, *" VerticalAlignment="Stretch">
+                    <TextBlock Grid.Row="0" Text="WEEKLY SUMMARY CHART" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontWeight="SemiBold" 
+                               FontSize="11" 
+                               Foreground="{DynamicResource TextMutedBrush}" 
+                               LetterSpacing="1"
+                               Margin="0,0,0,16"/>
+                    
+                    <!-- Horizontal Bars Layout Container -->
+                    <ItemsControl Grid.Row="1" ItemsSource="{Binding WeeklySummaries}" VerticalAlignment="Stretch">
+                        <ItemsControl.Styles>
+                            <Style Selector="ContentPresenter">
+                                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ItemsControl.Styles>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Rows="1" VerticalAlignment="Stretch"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="entities:WeeklyDaySummary">
+                                <Grid RowDefinitions="*, Auto, Auto" Margin="4" VerticalAlignment="Stretch">
+                                    <!-- Vertical Bar Column -->
+                                    <Grid Grid.Row="0" VerticalAlignment="Stretch">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="{Binding Hours, Converter={StaticResource RowHeightConverter}, ConverterParameter=Before}"/>
+                                            <RowDefinition Height="{Binding Hours, Converter={StaticResource RowHeightConverter}, ConverterParameter=Bar}"/>
+                                        </Grid.RowDefinitions>
+                                        <Border Grid.Row="1" 
+                                                Classes="ChartBar"
+                                                Width="24" 
+                                                VerticalAlignment="Stretch"
+                                                Background="{Binding IsWeekend, Converter={StaticResource ConditionConverter}, ConverterParameter='#FFBE3B;#2DCA73'}"/>
+                                    </Grid>
+                                    
+                                    <!-- Day Label -->
+                                    <TextBlock Grid.Row="1" 
+                                               Text="{Binding Day}" 
+                                               FontFamily="{StaticResource InterFont}" 
+                                               FontSize="11" 
+                                               HorizontalAlignment="Center" 
+                                               Margin="0,8,0,2"
+                                               Foreground="{DynamicResource TextMutedBrush}"/>
+                                    
+                                    <!-- Hours text -->
+                                    <TextBlock Grid.Row="2" 
+                                               Text="{Binding Hours, StringFormat={}{0:0.#}h}" 
+                                               FontFamily="{StaticResource InterFont}" 
+                                               FontWeight="SemiBold"
+                                               FontSize="10" 
+                                               HorizontalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Right Section: Estimated Earnings & Recent Entries -->
+        <Grid Grid.Column="1" RowDefinitions="Auto, *">
+            <!-- Accent Earnings Card -->
+            <Border Grid.Row="0" Classes="AccentCard" Margin="0,0,0,20">
+                <Grid RowDefinitions="Auto, Auto, Auto">
+                    <!-- Title & Privacy Toggle Row -->
+                    <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                        <TextBlock Grid.Column="0" 
+                                   Text="ESTIMATED EARNINGS" 
+                                   FontFamily="{StaticResource InterFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="11" 
+                                   Foreground="#CCCCCC" 
+                                   LetterSpacing="1"/>
+                        <ToggleButton Grid.Column="1" 
+                                      IsChecked="{Binding MaskEarnings}"
+                                      Background="Transparent" 
+                                      BorderThickness="0" 
+                                      Padding="4">
+                            <TextBlock Text="{Binding MaskEarnings, Converter={StaticResource ConditionConverter}, ConverterParameter='👁;🙈'}" 
+                                       Foreground="White" 
+                                       FontSize="16"/>
+                        </ToggleButton>
+                    </Grid>
+                    
+                    <!-- Earnings Amount -->
+                    <TextBlock Grid.Row="1" 
+                               Text="{Binding EarningsText}" 
+                               FontFamily="{StaticResource OutfitFont}" 
+                               FontWeight="Bold" 
+                               FontSize="36" 
+                               Foreground="White"
+                               Margin="0,10,0,10"/>
+                    
+                    <!-- Period Info text -->
+                    <TextBlock Grid.Row="2" 
+                               Text="Estimated Net Earnings" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontSize="12" 
+                               Foreground="#EEEEEE"/>
+                </Grid>
+            </Border>
+
+            <!-- Recent Entries List Card -->
+            <Border Grid.Row="1" Classes="Card">
+                <Grid RowDefinitions="Auto, *">
+                    <TextBlock Grid.Row="0" 
+                               Text="RECENT ENTRIES" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontWeight="SemiBold" 
+                               FontSize="11" 
+                               Foreground="{DynamicResource TextMutedBrush}" 
+                               LetterSpacing="1"
+                               Margin="0,0,0,12"/>
+                    
+                    <!-- Tabular Records List -->
+                    <ListBox Grid.Row="1" 
+                             ItemsSource="{Binding RecentEntries}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Padding="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{DynamicResource BorderBrush}" 
+                                        BorderThickness="0,0,0,1" 
+                                        Padding="0,8">
+                                    <Grid ColumnDefinitions="48, *, Auto">
+                                        <!-- Date Box Widget -->
+                                        <Border Grid.Column="0" 
+                                                Classes="Card" 
+                                                Padding="4" 
+                                                Width="40" Height="40" 
+                                                CornerRadius="8"
+                                                Background="{DynamicResource BgAppBrush}"
+                                                HorizontalAlignment="Left">
+                                            <StackPanel VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding DayBox}" 
+                                                           FontFamily="{StaticResource OutfitFont}" 
+                                                           FontWeight="Bold" 
+                                                           FontSize="13" 
+                                                           HorizontalAlignment="Center"/>
+                                                <TextBlock Text="{Binding MonthBox}" 
+                                                           FontFamily="{StaticResource InterFont}" 
+                                                           FontSize="8" 
+                                                           HorizontalAlignment="Center" 
+                                                           Foreground="{DynamicResource TextMutedBrush}"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Notes/Times & Day Type -->
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                                            <TextBlock Text="{Binding TimeText}" 
+                                                       FontFamily="{StaticResource InterFont}" 
+                                                       FontWeight="Medium" 
+                                                       FontSize="13"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding TypeText}" 
+                                                       FontFamily="{StaticResource InterFont}" 
+                                                       FontSize="11" 
+                                                       Foreground="{DynamicResource TextMutedBrush}"/>
+                                        </StackPanel>
+
+                                        <!-- Earnings Masked/Value -->
+                                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding EarningsText}" 
+                                                       FontFamily="{StaticResource OutfitFont}" 
+                                                       FontWeight="Bold" 
+                                                       FontSize="13" 
+                                                       Foreground="{Binding AccentColor}"/>
+                                            <TextBlock Text="{Binding HoursText}" 
+                                                       FontFamily="{StaticResource InterFont}" 
+                                                       FontSize="11" 
+                                                       Foreground="{DynamicResource TextMutedBrush}"
+                                                       HorizontalAlignment="Right"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

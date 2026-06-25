@@ -1,0 +1,392 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:OTTracker_Avalonia.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="OTTracker_Avalonia.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+    <Grid>
+        <!-- Split Layout Panel -->
+        <Grid ColumnDefinitions="*, 360" Margin="0,10,0,0">
+            <!-- Left Side: Core Configurations ScrollViewer -->
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,20,0">
+                <Border Classes="Card">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="CALCULATION CONFIGURATIONS" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="16"
+                                   Margin="0,0,0,10"/>
+
+                        <!-- User Profile Name -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="User Name" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                            <TextBox Text="{Binding UserName}" 
+                                     Background="{DynamicResource BgInputBrush}"
+                                     BorderBrush="{DynamicResource BorderBrush}"
+                                     CornerRadius="6"/>
+                        </StackPanel>
+
+                        <!-- Base Salary -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Base Monthly Salary (฿)" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                            <NumericUpDown Value="{Binding BaseMonthlySalary}" 
+                                           Minimum="0" Maximum="1000000" Increment="500"
+                                           Background="{DynamicResource BgInputBrush}"
+                                           BorderBrush="{DynamicResource BorderBrush}"
+                                           CornerRadius="6"/>
+                        </StackPanel>
+
+                        <!-- Standard Workdays & Hours Row -->
+                        <Grid ColumnDefinitions="*, *">
+                            <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                                <TextBlock Text="Workdays/Month" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                                <NumericUpDown Value="{Binding WorkingDaysPerMonth}" 
+                                               Minimum="1" Maximum="31" Increment="1"
+                                               Background="{DynamicResource BgInputBrush}"
+                                               BorderBrush="{DynamicResource BorderBrush}"
+                                               CornerRadius="6"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="6" Margin="8,0,0,0">
+                                <TextBlock Text="Hours/Day" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                                <NumericUpDown Value="{Binding HoursPerDay}" 
+                                               Minimum="1" Maximum="24" Increment="0.5"
+                                               Background="{DynamicResource BgInputBrush}"
+                                               BorderBrush="{DynamicResource BorderBrush}"
+                                               CornerRadius="6"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Margin="0,10"/>
+
+                        <!-- Default Times Row -->
+                        <Grid ColumnDefinitions="*, *">
+                            <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                                <TextBlock Text="Default Start Time" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                                <TimePicker SelectedTime="{Binding DefaultStartTime}" 
+                                            ClockIdentifier="24HourClock"
+                                            Background="{DynamicResource BgInputBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            CornerRadius="6"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="6" Margin="8,0,0,0">
+                                <TextBlock Text="Default End Time" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                                <TimePicker SelectedTime="{Binding DefaultEndTime}" 
+                                            ClockIdentifier="24HourClock"
+                                            Background="{DynamicResource BgInputBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            CornerRadius="6"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Default Break & Period Start Day -->
+                        <Grid ColumnDefinitions="*, *">
+                            <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                                <TextBlock Text="Default Break (mins)" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                                <NumericUpDown Value="{Binding DefaultBreakMinutes}" 
+                                               Minimum="0" Maximum="240" Increment="5"
+                                               Background="{DynamicResource BgInputBrush}"
+                                               BorderBrush="{DynamicResource BorderBrush}"
+                                               CornerRadius="6"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="6" Margin="8,0,0,0">
+                                <TextBlock Text="Period Start Day" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                                <NumericUpDown Value="{Binding PeriodStartDay}" 
+                                               Minimum="1" Maximum="31" Increment="1"
+                                               Background="{DynamicResource BgInputBrush}"
+                                               BorderBrush="{DynamicResource BorderBrush}"
+                                               CornerRadius="6"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Margin="0,10"/>
+
+                        <!-- Multipliers Constants -->
+                        <TextBlock Text="Multiplier Factors" FontFamily="{StaticResource OutfitFont}" FontWeight="Bold" FontSize="14"/>
+                        <Grid ColumnDefinitions="*, *, *">
+                            <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,6,0">
+                                <TextBlock Text="Regular" FontFamily="{StaticResource InterFont}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
+                                <NumericUpDown Value="{Binding RegularMultiplier}" Minimum="0" Increment="0.1" Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource BorderBrush}" CornerRadius="6"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Spacing="6" Margin="6,0,6,0">
+                                <TextBlock Text="Weekend" FontFamily="{StaticResource InterFont}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
+                                <NumericUpDown Value="{Binding WeekendMultiplier}" Minimum="0" Increment="0.1" Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource BorderBrush}" CornerRadius="6"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Spacing="6" Margin="6,0,0,0">
+                                <TextBlock Text="Holiday" FontFamily="{StaticResource InterFont}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
+                                <NumericUpDown Value="{Binding HolidayMultiplier}" Minimum="0" Increment="0.1" Background="{DynamicResource BgInputBrush}" BorderBrush="{DynamicResource BorderBrush}" CornerRadius="6"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="{Binding ErrorMessage}" 
+                                   FontFamily="{StaticResource InterFont}" 
+                                   FontSize="12" 
+                                   Foreground="{DynamicResource DangerBrush}" 
+                                   IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                   Margin="0,6,0,0"/>
+
+                        <!-- Save settings action button -->
+                        <Button Content="Save Settings" 
+                                Classes="Primary" 
+                                Command="{Binding SaveCommand}" 
+                                Margin="0,16,0,0"
+                                HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </Border>
+            </ScrollViewer>
+
+            <!-- Right Side: Security & Data Actions Card -->
+            <StackPanel Grid.Column="1" Spacing="20">
+                <!-- Security Settings Card -->
+                <Border Classes="Card">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="SECURITY SETTINGS" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="14"
+                                   Margin="0,0,0,6"/>
+
+                        <!-- Enable PIN lock Toggle -->
+                        <Grid ColumnDefinitions="*, Auto" Margin="0,4">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="PIN Lock Screen" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                                <TextBlock Text="Require PIN code at launch" FontFamily="{StaticResource InterFont}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                            </StackPanel>
+                            <ToggleSwitch Grid.Column="1" 
+                                          IsChecked="{Binding PinLockEnabled}" 
+                                          Command="{Binding SaveCommand}"/>
+                        </Grid>
+
+                        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"/>
+
+                        <!-- Set/Update PIN Button -->
+                        <Button Content="Change 4-Digit PIN" 
+                                Classes="Secondary" 
+                                Command="{Binding ChangePinCommand}"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,4,0,0"/>
+
+                        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"/>
+
+                        <!-- Sign Out Button -->
+                        <Button Content="🚪 Sign Out of Supabase" 
+                                Classes="Secondary" 
+                                Command="{Binding SignOutCommand}"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,4,0,0"
+                                Foreground="{DynamicResource DangerBrush}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Database Settings Card -->
+                <Border Classes="Card">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="DATABASE SETTINGS (SUPABASE)" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="14"
+                                   Margin="0,0,0,6"/>
+
+                        <!-- Supabase URL Input -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Supabase Project URL" 
+                                       FontFamily="{StaticResource InterFont}" 
+                                       FontSize="12" 
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBox Text="{Binding SupabaseUrl}" 
+                                     PlaceholderText="https://your-project.supabase.co"
+                                     Background="{DynamicResource BgInputBrush}"
+                                     BorderBrush="{DynamicResource BorderBrush}"
+                                     CornerRadius="6"/>
+                        </StackPanel>
+
+                        <!-- Supabase Anon Key Input -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Supabase Anon Key" 
+                                       FontFamily="{StaticResource InterFont}" 
+                                       FontSize="12" 
+                                       Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBox Text="{Binding SupabaseAnonKey}" 
+                                     PasswordChar="*" 
+                                     PlaceholderText="your-anon-public-key"
+                                     Background="{DynamicResource BgInputBrush}"
+                                     BorderBrush="{DynamicResource BorderBrush}"
+                                     CornerRadius="6"/>
+                        </StackPanel>
+
+                        <!-- Save Connection Credentials -->
+                        <Button Content="💾 Save &amp; Test Connection" 
+                                Classes="Secondary" 
+                                Command="{Binding SaveSupabaseConfigCommand}"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Data Management / Utilities Card -->
+                <Border Classes="Card">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="DATA MANAGEMENT" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="14"
+                                   Margin="0,0,0,6"/>
+
+                        <!-- Export CSV -->
+                        <Button Content="📤 Export records to CSV" 
+                                Classes="Secondary" 
+                                Command="{Binding ExportCommand}"
+                                HorizontalAlignment="Stretch"/>
+
+                        <!-- Import CSV -->
+                        <Button Content="📥 Import records from CSV" 
+                                Classes="Secondary" 
+                                Command="{Binding ImportCommand}"
+                                HorizontalAlignment="Stretch"/>
+
+                        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Margin="0,6"/>
+
+                        <!-- Wipe Database -->
+                        <Button Content="🗑 Clear All Local Data" 
+                                Classes="Secondary" 
+                                Foreground="{DynamicResource DangerBrush}" 
+                                Command="{Binding ClearDataCommand}"
+                                HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Glassmorphism Change PIN Overlay Popup -->
+        <Grid Background="#B0000000" 
+              IsVisible="{Binding IsChangePinVisible}" 
+              HorizontalAlignment="Stretch" 
+              VerticalAlignment="Stretch">
+            <Border Classes="Card" 
+                    Width="320" Height="220" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource BgWindowBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    BoxShadow="0 10 30 0 #40000000">
+                <StackPanel Spacing="16" VerticalAlignment="Center">
+                    <TextBlock Text="Change PIN" 
+                               FontFamily="{StaticResource OutfitFont}" 
+                               FontWeight="Bold" 
+                               FontSize="16" 
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Enter a new 4-digit PIN code:" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontSize="12" 
+                               Foreground="{DynamicResource TextMutedBrush}" 
+                               HorizontalAlignment="Center"/>
+                    <TextBox Text="{Binding NewPinInput}" 
+                             MaxLength="4" 
+                             Width="160"
+                             PasswordChar="●"
+                             HorizontalAlignment="Center"
+                             TextAlignment="Center"
+                             Background="{DynamicResource BgInputBrush}"
+                             BorderBrush="{DynamicResource BorderBrush}"/>
+                    <Grid ColumnDefinitions="*, *" Margin="0,10,0,0">
+                        <Button Grid.Column="0" 
+                                Content="Cancel" 
+                                Classes="Secondary" 
+                                Command="{Binding CancelPinChangeCommand}" 
+                                Margin="0,0,6,0"
+                                HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="1" 
+                                Content="Save PIN" 
+                                Classes="Primary" 
+                                Command="{Binding ConfirmPinChangeCommand}" 
+                                Margin="6,0,0,0"
+                                HorizontalAlignment="Stretch"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Glassmorphism Alert Box overlay -->
+        <Grid Background="#B0000000" 
+              IsVisible="{Binding IsAlertVisible}" 
+              HorizontalAlignment="Stretch" 
+              VerticalAlignment="Stretch">
+            <Border Classes="Card" 
+                    Width="300" Height="160" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource BgWindowBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    BoxShadow="0 10 30 0 #40000000">
+                <StackPanel Spacing="16" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding AlertTitle}" 
+                               FontFamily="{StaticResource OutfitFont}" 
+                               FontWeight="Bold" 
+                               FontSize="16" 
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding AlertMessage}" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontSize="12" 
+                               Foreground="{DynamicResource TextMutedBrush}" 
+                               TextWrapping="Wrap"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"/>
+                    <Button Content="OK" 
+                            Classes="Primary" 
+                            Command="{Binding CloseAlertCommand}" 
+                            Width="100"
+                            HorizontalAlignment="Center"
+                            Margin="0,10,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Glassmorphic Confirmation Modal Dialog -->
+        <Grid Background="#B0000000" 
+              IsVisible="{Binding IsConfirmVisible}" 
+              HorizontalAlignment="Stretch" 
+              VerticalAlignment="Stretch">
+            <Border Classes="Card" 
+                    Width="320" Height="180" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource BgWindowBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    BoxShadow="0 10 30 0 #40000000">
+                <StackPanel Spacing="16" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding ConfirmTitle}" 
+                               FontFamily="{StaticResource OutfitFont}" 
+                               FontWeight="Bold" 
+                               FontSize="16" 
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding ConfirmMessage}" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontSize="12" 
+                               Foreground="{DynamicResource TextMutedBrush}" 
+                               TextWrapping="Wrap"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"/>
+                    <Grid ColumnDefinitions="*, *" Margin="0,10,0,0">
+                        <Button Grid.Column="0" 
+                                Content="Cancel" 
+                                Classes="Secondary" 
+                                Command="{Binding CancelActionCommand}" 
+                                Margin="0,0,6,0"
+                                HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="1" 
+                                Content="Proceed" 
+                                Classes="Primary" 
+                                Command="{Binding ConfirmActionCommand}" 
+                                Margin="6,0,0,0"
+                                HorizontalAlignment="Stretch"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

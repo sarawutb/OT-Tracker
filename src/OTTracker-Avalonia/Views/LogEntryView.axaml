@@ -1,0 +1,212 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:OTTracker_Avalonia.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="OTTracker_Avalonia.Views.LogEntryView"
+             x:DataType="vm:LogEntryViewModel">
+
+    <Grid ColumnDefinitions="*, 360" Margin="0,10,0,0">
+        <!-- Left Column: Entry Form Card -->
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,20,0">
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <!-- Title Header -->
+                    <TextBlock Text="LOG DETAILS" 
+                               FontFamily="{StaticResource OutfitFont}" 
+                               FontWeight="Bold" 
+                               FontSize="16"
+                               Margin="0,0,0,10"/>
+
+                    <!-- Date Selection -->
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Date" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                        <CalendarDatePicker SelectedDate="{Binding EntryDate}" 
+                                            HorizontalAlignment="Stretch"
+                                            Background="{DynamicResource BgInputBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            CornerRadius="6"/>
+                    </StackPanel>
+
+                    <!-- Day Type Selection -->
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Day Type" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                        <ComboBox SelectedIndex="{Binding SelectedDayType, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch"
+                                  Background="{DynamicResource BgInputBrush}"
+                                  BorderBrush="{DynamicResource BorderBrush}"
+                                  CornerRadius="6">
+                            <ComboBoxItem>Regular Workday</ComboBoxItem>
+                            <ComboBoxItem>Weekend Shift</ComboBoxItem>
+                            <ComboBoxItem>Public Holiday</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!-- Shift Times Row -->
+                    <Grid ColumnDefinitions="*, *">
+                        <!-- Start Time -->
+                        <StackPanel Grid.Column="0" Spacing="6" Margin="0,0,8,0">
+                            <TextBlock Text="Start Time" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                            <TimePicker SelectedTime="{Binding StartTime}" 
+                                        HorizontalAlignment="Stretch"
+                                        ClockIdentifier="24HourClock"
+                                        Background="{DynamicResource BgInputBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        CornerRadius="6"/>
+                        </StackPanel>
+
+                        <!-- End Time -->
+                        <StackPanel Grid.Column="1" Spacing="6" Margin="8,0,0,0">
+                            <TextBlock Text="End Time" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                            <TimePicker SelectedTime="{Binding EndTime}" 
+                                        HorizontalAlignment="Stretch"
+                                        ClockIdentifier="24HourClock"
+                                        Background="{DynamicResource BgInputBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        CornerRadius="6"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Break Minutes Input -->
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Break Duration (minutes)" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                        <NumericUpDown Value="{Binding BreakMinutes}" 
+                                       Minimum="0" Maximum="240" Increment="5"
+                                       FormatString="0"
+                                       HorizontalAlignment="Stretch"
+                                       Background="{DynamicResource BgInputBrush}"
+                                       BorderBrush="{DynamicResource BorderBrush}"
+                                       CornerRadius="6"/>
+                    </StackPanel>
+
+                    <!-- Optional Log Notes -->
+                    <StackPanel Spacing="6">
+                        <TextBlock Text="Task Note / Reference" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                        <TextBox Text="{Binding Note}" 
+                                 PlaceholderText="E.g., Prepared database migration POC"
+                                 Height="80" 
+                                 AcceptsReturn="True" 
+                                 TextWrapping="Wrap"
+                                 Background="{DynamicResource BgInputBrush}"
+                                 BorderBrush="{DynamicResource BorderBrush}"
+                                 CornerRadius="6"/>
+                    </StackPanel>
+
+                    <!-- Error message block -->
+                    <TextBlock Text="{Binding ErrorMessage}" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontSize="12" 
+                               Foreground="{DynamicResource DangerBrush}" 
+                               IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                               HorizontalAlignment="Left"
+                               Margin="0,6,0,0"/>
+
+                    <!-- Action Control Buttons -->
+                    <Grid ColumnDefinitions="*, *" Margin="0,10,0,0">
+                        <Button Grid.Column="0" 
+                                Content="Cancel" 
+                                Classes="Secondary" 
+                                Command="{Binding CancelCommand}" 
+                                Margin="0,0,8,0"
+                                HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="1" 
+                                Content="Save Log" 
+                                Classes="Primary" 
+                                Command="{Binding SaveCommand}" 
+                                Margin="8,0,0,0"
+                                HorizontalAlignment="Stretch"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+
+        <!-- Right Column: Live Calculation Previews -->
+        <StackPanel Grid.Column="1" Spacing="20">
+            <!-- Accent Earnings Summary Box -->
+            <Border Classes="AccentCard">
+                <Grid RowDefinitions="Auto, Auto, Auto">
+                    <TextBlock Grid.Row="0" 
+                               Text="LIVE ESTIMATED PAY" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontWeight="Bold" 
+                               FontSize="11" 
+                               Foreground="#CCCCCC" 
+                               LetterSpacing="1"/>
+                    
+                    <TextBlock Grid.Row="1" 
+                               Text="{Binding EarningsText}" 
+                               FontFamily="{StaticResource OutfitFont}" 
+                               FontWeight="Bold" 
+                               FontSize="36" 
+                               Foreground="White"
+                               Margin="0,10,0,10"/>
+                    
+                    <TextBlock Grid.Row="2" 
+                               Text="Based on current inputs" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontSize="12" 
+                               Foreground="#EEEEEE"/>
+                </Grid>
+            </Border>
+
+            <!-- Calculations Breakdown Cards -->
+            <Border Classes="Card">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="CALCULATION RULES" 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontWeight="SemiBold" 
+                               FontSize="11" 
+                               Foreground="{DynamicResource TextMutedBrush}" 
+                               LetterSpacing="1"
+                               Margin="0,0,0,6"/>
+
+                    <!-- Net Hours Worked -->
+                    <Grid ColumnDefinitions="*, Auto" Margin="0,4">
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Text="Net OT Hours" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                            <TextBlock Text="Shift duration less break" FontFamily="{StaticResource InterFont}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding NetHoursText}" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="15"
+                                   Foreground="{DynamicResource AccentBrush}"/>
+                    </Grid>
+                    
+                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"/>
+
+                    <!-- Hourly rate snapshot -->
+                    <Grid ColumnDefinitions="*, Auto" Margin="0,4">
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Text="Snapshot Rate" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                            <TextBlock Text="Base salary hourly conversion" FontFamily="{StaticResource InterFont}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding RateText}" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="15"/>
+                    </Grid>
+
+                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"/>
+
+                    <!-- Day Type Multipliers Applied -->
+                    <Grid ColumnDefinitions="*, Auto" Margin="0,4">
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Text="Multiplier applied" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
+                            <TextBlock Text="Based on day type settings" FontFamily="{StaticResource InterFont}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}"/>
+                        </StackPanel>
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding MultiplierText}" 
+                                   FontFamily="{StaticResource InterFont}" 
+                                   FontWeight="SemiBold" 
+                                   FontSize="13"
+                                   Foreground="{DynamicResource WarningBrush}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

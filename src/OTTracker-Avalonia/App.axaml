@@ -1,0 +1,76 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="OTTracker_Avalonia.App"
+             xmlns:local="using:OTTracker_Avalonia"
+             xmlns:converters="clr-namespace:OTTracker_Avalonia.AppServices.Converters"
+             RequestedThemeVariant="Dark">
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Font Families -->
+            <FontFamily x:Key="OutfitFont">Outfit, Segoe UI, Arial, sans-serif</FontFamily>
+            <FontFamily x:Key="InterFont">Inter, Segoe UI, Arial, sans-serif</FontFamily>
+
+            <!-- Global Converters -->
+            <converters:ConditionConverter x:Key="ConditionConverter"/>
+            <converters:RowHeightConverter x:Key="RowHeightConverter"/>
+
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- Light Theme Resources -->
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="BgAppBrush">#F3F3F9</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgWindowBrush">#FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgSidebarBrush">#F9F9FC</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgCardBrush">#FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgCardHoverBrush">#FAFAFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgInputBrush">#FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="BorderBrush">#E2E2EC</SolidColorBrush>
+                    
+                    <SolidColorBrush x:Key="TextMainBrush">#1A1A2E</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextMutedBrush">#6E6E82</SolidColorBrush>
+                    
+                    <SolidColorBrush x:Key="AccentBrush">#5B4FE8</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentLightBrush">#F0EFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentHoverBrush">#493CD6</SolidColorBrush>
+                    
+                    <SolidColorBrush x:Key="SuccessBrush">#2DCA73</SolidColorBrush>
+                    <SolidColorBrush x:Key="SuccessLightBrush">#E8F9F0</SolidColorBrush>
+                    <SolidColorBrush x:Key="WarningBrush">#FFB01A</SolidColorBrush>
+                    <SolidColorBrush x:Key="DangerBrush">#FF3B30</SolidColorBrush>
+                </ResourceDictionary>
+
+                <!-- Dark Theme Resources -->
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="BgAppBrush">#0E0E17</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgWindowBrush">#161623</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgSidebarBrush">#1A1A2B</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgCardBrush">#202033</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgCardHoverBrush">#26263B</SolidColorBrush>
+                    <SolidColorBrush x:Key="BgInputBrush">#26263D</SolidColorBrush>
+                    <SolidColorBrush x:Key="BorderBrush">#2E2E46</SolidColorBrush>
+                    
+                    <SolidColorBrush x:Key="TextMainBrush">#F0F0F5</SolidColorBrush>
+                    <SolidColorBrush x:Key="TextMutedBrush">#A0A0B5</SolidColorBrush>
+                    
+                    <SolidColorBrush x:Key="AccentBrush">#786DF7</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentLightBrush">#252347</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentHoverBrush">#9287ff</SolidColorBrush>
+                    
+                    <SolidColorBrush x:Key="SuccessBrush">#3BE085</SolidColorBrush>
+                    <SolidColorBrush x:Key="SuccessLightBrush">#163825</SolidColorBrush>
+                    <SolidColorBrush x:Key="WarningBrush">#FFBE3B</SolidColorBrush>
+                    <SolidColorBrush x:Key="DangerBrush">#FF5247</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://OTTracker-Avalonia/Styles/AppStyles.axaml" />
+    </Application.Styles>
+</Application>

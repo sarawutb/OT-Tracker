@@ -1,0 +1,98 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Card Container Style -->
+    <Style Selector="Border.Card">
+        <Setter Property="Background" Value="{DynamicResource BgCardBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BoxShadowsTransition Property="BoxShadow" Duration="0:0:0.25" />
+                <BrushTransition Property="Background" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+        <Setter Property="BoxShadow" Value="0 2 4 0 #0A000000" />
+    </Style>
+
+    <Style Selector="Border.Card:pointerover">
+        <Setter Property="Background" Value="{DynamicResource BgCardHoverBrush}" />
+        <Setter Property="BoxShadow" Value="0 4 12 0 #145B4FE8" />
+    </Style>
+
+    <Style Selector="Border.AccentCard">
+        <Setter Property="Background">
+            <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                <GradientStop Color="#5B4FE8" Offset="0" />
+                <GradientStop Color="#3629B8" Offset="1" />
+            </LinearGradientBrush>
+        </Setter>
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="BoxShadow" Value="0 10 20 0 #335B4FE8" />
+    </Style>
+
+    <!-- Primary Button -->
+    <Style Selector="Button.Primary">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Padding" Value="20,12" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.15" />
+                <BrushTransition Property="Background" Duration="0:0:0.15" />
+            </Transitions>
+        </Setter>
+    </Style>
+    <Style Selector="Button.Primary:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
+    </Style>
+    <Style Selector="Button.Primary:pressed">
+        <Setter Property="RenderTransform" Value="scale(0.98)" />
+    </Style>
+
+    <!-- Secondary / Ghost Button -->
+    <Style Selector="Button.Secondary">
+        <Setter Property="Background" Value="{DynamicResource BgInputBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource TextMainBrush}" />
+        <Setter Property="Padding" Value="20,12" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Button.Secondary:pointerover">
+        <Setter Property="BorderBrush" Value="{DynamicResource TextMutedBrush}" />
+    </Style>
+    
+    <!-- TabButton styling -->
+    <Style Selector="ListBoxItem.TabItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Margin" Value="0,2"/>
+    </Style>
+    <Style Selector="ListBoxItem.TabItem:selected">
+        <Setter Property="Background" Value="{DynamicResource AccentLightBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+    </Style>
+    
+    <!-- Chart bar style -->
+    <Style Selector="Border.ChartBar">
+        <Setter Property="CornerRadius" Value="4,4,0,0"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.5" Easing="CubicEaseOut" />
+            </Transitions>
+        </Setter>
+    </Style>
+</Styles>

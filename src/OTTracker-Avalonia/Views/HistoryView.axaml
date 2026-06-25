@@ -1,0 +1,224 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:OTTracker_Avalonia.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="OTTracker_Avalonia.Views.HistoryView"
+             x:DataType="vm:HistoryViewModel">
+
+    <Grid>
+        <!-- Split View: Calendar & Entries List -->
+        <Grid ColumnDefinitions="*, 380" Margin="0,10,0,0">
+            <!-- Left Side: Month navigation and Calendar Grid Card -->
+            <Border Grid.Column="0" Classes="Card" Margin="0,0,20,0">
+                <Grid RowDefinitions="Auto, Auto, *">
+                    <!-- Month Navigator Header Row -->
+                    <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Margin="0,0,0,20">
+                        <Button Grid.Column="0" 
+                                Content="◀" 
+                                Classes="Secondary" 
+                                Command="{Binding PreviousMonthCommand}"
+                                Padding="12,8"
+                                CornerRadius="6"/>
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding MonthText}" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="16" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center"/>
+                        <Button Grid.Column="2" 
+                                Content="▶" 
+                                Classes="Secondary" 
+                                Command="{Binding NextMonthCommand}"
+                                Padding="12,8"
+                                CornerRadius="6"/>
+                    </Grid>
+
+                    <!-- Calendar Header Days of Week -->
+                    <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*,*,*,*" Margin="0,0,0,10">
+                        <TextBlock Grid.Column="0" Text="Su" FontFamily="{StaticResource InterFont}" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                        <TextBlock Grid.Column="1" Text="Mo" FontFamily="{StaticResource InterFont}" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                        <TextBlock Grid.Column="2" Text="Tu" FontFamily="{StaticResource InterFont}" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                        <TextBlock Grid.Column="3" Text="We" FontFamily="{StaticResource InterFont}" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                        <TextBlock Grid.Column="4" Text="Th" FontFamily="{StaticResource InterFont}" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                        <TextBlock Grid.Column="5" Text="Fr" FontFamily="{StaticResource InterFont}" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                        <TextBlock Grid.Column="6" Text="Sa" FontFamily="{StaticResource InterFont}" FontWeight="SemiBold" FontSize="11" HorizontalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}"/>
+                    </Grid>
+
+                    <!-- Calendar Days Grid Container -->
+                    <ItemsControl Grid.Row="2" ItemsSource="{Binding CalendarDays}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="7" VerticalAlignment="Stretch"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="2" 
+                                        BorderThickness="{Binding IsSelected, Converter={StaticResource ConditionConverter}, ConverterParameter='2;0'}"
+                                        BorderBrush="{DynamicResource AccentBrush}"
+                                        CornerRadius="6"
+                                        Background="{Binding IsToday, Converter={StaticResource ConditionConverter}, ConverterParameter='#252347;#00000000'}">
+                                    <Grid>
+                                        <TextBlock Text="{Binding DayText}" 
+                                                   FontFamily="{StaticResource InterFont}"
+                                                   FontWeight="{Binding IsToday, Converter={StaticResource ConditionConverter}, ConverterParameter='Bold;Normal'}"
+                                                   Foreground="{Binding IsBlank, Converter={StaticResource ConditionConverter}, ConverterParameter='#00000000;#FFFFFFFF'}"
+                                                   HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center"
+                                                   FontSize="12"/>
+                                        
+                                        <!-- Dot indicator if day has logged entries -->
+                                        <Ellipse Width="4" Height="4" 
+                                                 Fill="{DynamicResource AccentBrush}" 
+                                                 HorizontalAlignment="Center" 
+                                                 VerticalAlignment="Bottom" 
+                                                 Margin="0,0,0,4"
+                                                 IsVisible="{Binding HasEntries}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+            </Border>
+
+            <!-- Right Side: Month totals card and the MonthEntries list -->
+            <Grid Grid.Column="1" RowDefinitions="Auto, *">
+                <!-- Month Totals stats card -->
+                <Border Grid.Row="0" Classes="Card" Margin="0,0,0,20" Padding="16">
+                    <Grid ColumnDefinitions="*, *">
+                        <!-- Total Hours -->
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Text="CUMULATIVE HOURS" FontFamily="{StaticResource InterFont}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBlock Text="{Binding MonthHoursText}" FontFamily="{StaticResource OutfitFont}" FontWeight="Bold" FontSize="18" Foreground="{DynamicResource SuccessBrush}"/>
+                        </StackPanel>
+                        <!-- Estimated earnings -->
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Text="CUMULATIVE PAY" FontFamily="{StaticResource InterFont}" FontSize="10" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <TextBlock Text="{Binding MonthEarningsText}" FontFamily="{StaticResource OutfitFont}" FontWeight="Bold" FontSize="18" Foreground="{DynamicResource AccentBrush}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- Month entries list card -->
+                <Border Grid.Row="1" Classes="Card">
+                    <Grid RowDefinitions="Auto, *">
+                        <TextBlock Grid.Row="0" 
+                                   Text="ENTRIES LIST" 
+                                   FontFamily="{StaticResource InterFont}" 
+                                   FontWeight="SemiBold" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource TextMutedBrush}" 
+                                   LetterSpacing="1"
+                                   Margin="0,0,0,12"/>
+                        
+                        <ListBox Grid.Row="1" 
+                                 ItemsSource="{Binding MonthEntries}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{DynamicResource BorderBrush}" 
+                                            BorderThickness="0,0,0,1" 
+                                            Padding="0,8">
+                                        <Grid ColumnDefinitions="*, Auto, Auto">
+                                            <!-- Shift Date / Note -->
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding DateText}" 
+                                                           FontFamily="{StaticResource InterFont}" 
+                                                           FontWeight="SemiBold" 
+                                                           FontSize="13"/>
+                                                <TextBlock Text="{Binding TimeText}" 
+                                                           FontFamily="{StaticResource InterFont}" 
+                                                           FontSize="11" 
+                                                           Foreground="{DynamicResource TextMutedBrush}"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+
+                                            <!-- Earnings / Hours -->
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,20,0" HorizontalAlignment="Right">
+                                                <TextBlock Text="{Binding EarningsText}" 
+                                                           FontFamily="{StaticResource OutfitFont}" 
+                                                           FontWeight="Bold" 
+                                                           FontSize="13" 
+                                                           Foreground="{Binding AccentColor}"/>
+                                                <TextBlock Text="{Binding HoursText}" 
+                                                           FontFamily="{StaticResource InterFont}" 
+                                                           FontSize="11" 
+                                                           Foreground="{DynamicResource TextMutedBrush}"/>
+                                            </StackPanel>
+
+                                            <!-- Edit / Delete actions -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                                <Button Content="✏" 
+                                                        Classes="Secondary" 
+                                                        Padding="8,6"
+                                                        Command="{Binding $parent[UserControl].((vm:HistoryViewModel)DataContext).EditCommand}" 
+                                                        CommandParameter="{Binding}"/>
+                                                <Button Content="🗑" 
+                                                        Classes="Secondary" 
+                                                        Padding="8,6"
+                                                        Foreground="{DynamicResource DangerBrush}" 
+                                                        Command="{Binding $parent[UserControl].((vm:HistoryViewModel)DataContext).DeleteCommand}" 
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Glassmorphism Confirmation Dialog overlay for deletes -->
+        <Grid Background="#B0000000" 
+              IsVisible="{Binding IsDeleteConfirmationVisible}" 
+              HorizontalAlignment="Stretch" 
+              VerticalAlignment="Stretch">
+            <Border Classes="Card" 
+                    Width="340" Height="180" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center"
+                    Background="{DynamicResource BgWindowBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    BoxShadow="0 10 30 0 #40000000">
+                <StackPanel Spacing="16" VerticalAlignment="Center">
+                    <TextBlock Text="Delete Log Entry" 
+                               FontFamily="{StaticResource OutfitFont}" 
+                               FontWeight="Bold" 
+                               FontSize="16" 
+                               HorizontalAlignment="Center"/>
+                    <TextBlock Text="Are you sure you want to delete this overtime entry? This action cannot be undone." 
+                               FontFamily="{StaticResource InterFont}" 
+                               FontSize="12" 
+                               Foreground="{DynamicResource TextMutedBrush}" 
+                               TextWrapping="Wrap"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"/>
+                    <Grid ColumnDefinitions="*, *" Margin="0,10,0,0">
+                        <Button Grid.Column="0" 
+                                Content="Cancel" 
+                                Classes="Secondary" 
+                                Command="{Binding CancelDeleteCommand}" 
+                                Margin="0,0,6,0"
+                                HorizontalAlignment="Stretch"/>
+                        <Button Grid.Column="1" 
+                                Content="Delete" 
+                                Classes="Primary" 
+                                Background="{DynamicResource DangerBrush}"
+                                Command="{Binding ConfirmDeleteCommand}" 
+                                Margin="6,0,0,0"
+                                HorizontalAlignment="Stretch"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

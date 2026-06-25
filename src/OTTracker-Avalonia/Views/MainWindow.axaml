@@ -1,0 +1,170 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OTTracker_Avalonia.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" 
+        Width="1050" Height="700"
+        MinWidth="950" MinHeight="650"
+        WindowStartupLocation="CenterScreen"
+        x:Class="OTTracker_Avalonia.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Background="{DynamicResource BgAppBrush}"
+        Foreground="{DynamicResource TextMainBrush}"
+        Title="OT Tracker - Desktop Client">
+
+    <Grid>
+        <!-- Full screen lock mode (No sidebar visible) -->
+        <TransitioningContentControl Content="{Binding CurrentView}" 
+                                     IsVisible="{Binding !IsSidebarVisible}">
+            <TransitioningContentControl.PageTransition>
+                <CrossFade Duration="0:0:0.25" />
+            </TransitioningContentControl.PageTransition>
+        </TransitioningContentControl>
+
+        <!-- Main workspace mode with sidebar navigation -->
+        <Grid ColumnDefinitions="240, *" IsVisible="{Binding IsSidebarVisible}">
+            <!-- Left Sidebar Navigation -->
+            <Border Grid.Column="0" 
+                    Background="{DynamicResource BgSidebarBrush}" 
+                    BorderBrush="{DynamicResource BorderBrush}" 
+                    BorderThickness="0,0,1,0">
+                <Grid RowDefinitions="Auto, *, Auto" Margin="20,30,20,20">
+                    
+                    <!-- Sidebar Logo / Title -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="10,0,0,30">
+                        <TextBlock Text="OT TRACKER" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="Bold" 
+                                   FontSize="25" 
+                                   LetterSpacing="1"
+                                   Foreground="{DynamicResource AccentBrush}" 
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Sidebar Navigation Items -->
+                    <StackPanel Grid.Row="1" Spacing="6">
+                        <!-- Dashboard Button -->
+                        <Button Classes="Secondary" 
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Command="{Binding GoToDashboardCommand}"
+                                BorderThickness="{Binding SelectedMenuIndex, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}"
+                                BorderBrush="{DynamicResource AccentBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="📊" VerticalAlignment="Center"/>
+                                <TextBlock Text="Dashboard" FontFamily="{StaticResource InterFont}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Log OT Button -->
+                        <Button Classes="Secondary" 
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Command="{Binding GoToLogEntryCommand}"
+                                BorderThickness="{Binding SelectedMenuIndex, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=1}"
+                                BorderBrush="{DynamicResource AccentBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="📝" VerticalAlignment="Center"/>
+                                <TextBlock Text="Log Overtime" FontFamily="{StaticResource InterFont}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- History Button -->
+                        <Button Classes="Secondary" 
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Command="{Binding GoToHistoryCommand}"
+                                BorderThickness="{Binding SelectedMenuIndex, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=2}"
+                                BorderBrush="{DynamicResource AccentBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="📅" VerticalAlignment="Center"/>
+                                <TextBlock Text="History" FontFamily="{StaticResource InterFont}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Settings Button -->
+                        <Button Classes="Secondary" 
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left"
+                                Command="{Binding GoToSettingsCommand}"
+                                BorderThickness="{Binding SelectedMenuIndex, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=3}"
+                                BorderBrush="{DynamicResource AccentBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="⚙" VerticalAlignment="Center"/>
+                                <TextBlock Text="Settings" FontFamily="{StaticResource InterFont}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Profile Info Area at Bottom -->
+                    <Border Grid.Row="2" 
+                            Classes="Card" 
+                            Padding="12" 
+                            Background="{DynamicResource BgAppBrush}">
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Border Grid.Column="0" 
+                                    Width="36" Height="36" 
+                                    Background="{DynamicResource AccentBrush}" 
+                                    CornerRadius="18" 
+                                    Margin="0,0,10,0">
+                                <TextBlock Text="👤" 
+                                           HorizontalAlignment="Center" 
+                                           VerticalAlignment="Center" 
+                                           Foreground="White" 
+                                           FontSize="16"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="Senior Developer" 
+                                           FontFamily="{StaticResource InterFont}" 
+                                           FontWeight="SemiBold" 
+                                           FontSize="13"/>
+                                <TextBlock Text="Offline Client" 
+                                           FontFamily="{StaticResource InterFont}" 
+                                           FontSize="11" 
+                                           Foreground="{DynamicResource TextMutedBrush}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- Main Content Container Panel -->
+            <Grid Grid.Column="1" RowDefinitions="Auto, *" Margin="30,20,30,30">
+                <!-- Top Header Pane -->
+                <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,20">
+                    <StackPanel Grid.Column="0" Spacing="4">
+                        <TextBlock Text="OT Tracker Workspace" 
+                                   FontFamily="{StaticResource OutfitFont}" 
+                                   FontWeight="SemiBold" 
+                                   FontSize="22"/>
+                        <TextBlock Text="Track and estimate your overtime payroll hours" 
+                                   FontFamily="{StaticResource InterFont}" 
+                                   FontSize="13" 
+                                   Foreground="{DynamicResource TextMutedBrush}"/>
+                    </StackPanel>
+                    
+                    <Border Grid.Column="1" 
+							Height="35"
+                            CornerRadius="20" 
+                            Background="{DynamicResource AccentLightBrush}" 
+                            Padding="10,6">
+                        <TextBlock Text="Desktop Live" 
+								   VerticalAlignment="Center"
+                                   FontFamily="{StaticResource InterFont}" 
+                                   FontWeight="SemiBold" 
+                                   FontSize="12" 
+                                   Foreground="{DynamicResource AccentBrush}"/>
+                    </Border>
+                </Grid>
+
+                <!-- Embedded Active Sub-View -->
+                <TransitioningContentControl Grid.Row="1" Content="{Binding CurrentView}">
+                    <TransitioningContentControl.PageTransition>
+                        <CrossFade Duration="0:0:0.25" />
+                    </TransitioningContentControl.PageTransition>
+                </TransitioningContentControl>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
