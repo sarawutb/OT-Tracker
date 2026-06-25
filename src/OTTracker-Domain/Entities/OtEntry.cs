@@ -15,6 +15,7 @@ public sealed class OtEntry : BaseModel
     public string UserId { get; set; } = string.Empty;
 
     [Column("entry_date")]
+    [Newtonsoft.Json.JsonConverter(typeof(InvariantDateTimeConverter))]
     public DateTime EntryDate { get; set; } = DateTime.Today;
 
     [Column("day_type")]
@@ -45,9 +46,11 @@ public sealed class OtEntry : BaseModel
     public decimal EstimatedEarnings { get; set; }
 
     [Column("create_date")]
+    [Newtonsoft.Json.JsonConverter(typeof(InvariantDateTimeConverter))]
     public DateTime CreateDate { get; set; } = DateTime.Now;
 
     [Column("revise_date")]
+    [Newtonsoft.Json.JsonConverter(typeof(InvariantDateTimeConverter))]
     public DateTime ReviseDate { get; set; } = DateTime.Now;
 
     // Helper property to map TimeSpan StartTime to StartTimeString

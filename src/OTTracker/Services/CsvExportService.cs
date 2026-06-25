@@ -1,12 +1,14 @@
 using System.Globalization;
 using System.Text;
-using OTTracker.Models;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Enums;
+using OTTracker.Domain.Interfaces;
 
 namespace OTTracker.Services;
 
 public sealed class CsvExportService : ICsvExportService
 {
-    public async Task<string> ExportAsync(IEnumerable<OtEntry> entries)
+    public async Task<bool> ExportAsync(IEnumerable<OtEntry> entries)
     {
         var path = Path.Combine(FileSystem.CacheDirectory, $"ot-records-{DateTime.Now:yyyyMMdd-HHmmss}.csv");
         var builder = new StringBuilder();
@@ -31,10 +33,10 @@ public sealed class CsvExportService : ICsvExportService
 
         await File.WriteAllTextAsync(path, builder.ToString(), Encoding.UTF8);
         await Share.Default.RequestAsync(new ShareFileRequest("Export OT records", new ShareFile(path)));
-        return path;
+        return true;
     }
 
-    public async Task<IReadOnlyList<OtEntry>> ImportAsync()
+    public async Task<IReadOnlyList<OtEntry>?> ImportAsync()
     {
         var result = await FilePicker.Default.PickAsync(new PickOptions
         {
@@ -43,7 +45,7 @@ public sealed class CsvExportService : ICsvExportService
 
         if (result is null)
         {
-            return Array.Empty<OtEntry>();
+            return null;
         }
 
         await using var stream = await result.OpenReadAsync();

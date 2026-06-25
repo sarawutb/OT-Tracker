@@ -3,11 +3,13 @@ using CommunityToolkit.Maui;
 using DotNet.Meteor.HotReload.Plugin;
 using MauiIcons.FontAwesome;
 using Microsoft.Extensions.Logging;
-using OTTracker.Data;
-using OTTracker.Services;
+using OTTracker.Domain.Interfaces;
+using OTTracker.Infrastructure.Repositories;
+using OTTracker.Infrastructure.Services;
 using OTTracker.ViewModels;
 using OTTracker.Views;
 using UraniumUI;
+using MauiCsvExportService = OTTracker.Services.CsvExportService;
 
 namespace OTTracker;
 
@@ -33,21 +35,27 @@ public static class MauiProgram
             })
             .UseMauiCommunityToolkit();
 
-        builder.Services.AddSingleton<AppDatabase>();
+        builder.Services.AddSingleton<ISupabaseConfigService, SupabaseConfigService>();
+        builder.Services.AddSingleton<ISupabaseSessionService, SupabaseSessionService>();
+        builder.Services.AddSingleton<ISupabaseClientProvider, SupabaseClientProvider>();
+        builder.Services.AddTransient(provider => provider.GetRequiredService<ISupabaseClientProvider>().Client);
+
         builder.Services.AddSingleton<AppEvents>();
         builder.Services.AddSingleton<IOtCalculationService, OtCalculationService>();
         builder.Services.AddSingleton<IOtEntryRepository, OtEntryRepository>();
         builder.Services.AddSingleton<ISettingsService, SettingsService>();
         builder.Services.AddSingleton<IAuthService, AuthService>();
-        builder.Services.AddSingleton<IBiometricService, BiometricService>();
-        builder.Services.AddSingleton<ICsvExportService, CsvExportService>();
+        builder.Services.AddSingleton<Services.IBiometricService, Services.BiometricService>();
+        builder.Services.AddSingleton<ICsvExportService, MauiCsvExportService>();
 
+        builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<PinViewModel>();
         builder.Services.AddScoped<DashboardViewModel>();
         builder.Services.AddTransient<LogEntryViewModel>();
         builder.Services.AddTransient<HistoryViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
 
+        builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<PinPage>();
         builder.Services.AddTransient<DashboardPage>();
         builder.Services.AddTransient<LogEntryPage>();

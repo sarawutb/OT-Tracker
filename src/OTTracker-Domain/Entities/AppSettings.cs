@@ -59,6 +59,7 @@ public sealed class AppSettings : BaseModel
     public string UserName { get; set; } = "Say HI";
 
     [Column("revise_date")]
+    [Newtonsoft.Json.JsonConverter(typeof(InvariantDateTimeConverter))]
     public DateTime ReviseDate { get; set; } = DateTime.Now;
 
     // Helper property to map TimeSpan DefaultStartTime to DefaultStartTimeString

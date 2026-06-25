@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="OTTracker.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="{StaticResource AppBackground}"
+    Shell.NavBarIsVisible="False">
+    <Grid Padding="24" RowDefinitions="*,Auto,*">
+        <VerticalStackLayout
+            Grid.Row="1"
+            MaximumWidthRequest="420"
+            Spacing="16"
+            VerticalOptions="Center">
+            <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                <Border
+                    BackgroundColor="{StaticResource AccentLight}"
+                    HeightRequest="80"
+                    StrokeShape="RoundRectangle 22"
+                    StrokeThickness="0"
+                    WidthRequest="80">
+                    <Image
+                        Aspect="AspectFit"
+                        Source="ot_tracker.png" />
+                </Border>
+                <Label
+                    FontFamily="OpenSansSemibold"
+                    FontSize="22"
+                    HorizontalTextAlignment="Center"
+                    Text="OT Tracker"
+                    TextColor="{StaticResource Ink}" />
+                <Label
+                    HorizontalTextAlignment="Center"
+                    Style="{StaticResource MutedLabel}"
+                    Text="Sign in to sync your OT logs" />
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <Entry
+                        Keyboard="Email"
+                        Placeholder="Email address"
+                        ReturnType="Next"
+                        Text="{Binding Email}" />
+                    <Entry
+                        IsPassword="True"
+                        Placeholder="Password"
+                        ReturnType="Done"
+                        Text="{Binding Password}" />
+                    <Label
+                        FontSize="12"
+                        HeightRequest="36"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding ErrorMessage}"
+                        TextColor="{StaticResource Red}" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button
+                            Command="{Binding SignInCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                            Style="{StaticResource PrimaryButton}"
+                            Text="Sign in" />
+                        <Button
+                            Grid.Column="1"
+                            Command="{Binding SignUpCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                            Style="{StaticResource GhostButton}"
+                            Text="Sign up" />
+                    </Grid>
+                    <ActivityIndicator
+                        Color="{StaticResource Accent}"
+                        HorizontalOptions="Center"
+                        IsRunning="{Binding IsBusy}"
+                        IsVisible="{Binding IsBusy}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="SUPABASE" Style="{StaticResource MutedLabel}" />
+                    <Entry
+                        Keyboard="Url"
+                        Placeholder="Project URL"
+                        Text="{Binding SupabaseUrl}" />
+                    <Entry
+                        Placeholder="Anon key"
+                        Text="{Binding SupabaseAnonKey}" />
+                    <Button
+                        Command="{Binding SaveSupabaseConfigCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                        Style="{StaticResource GhostButton}"
+                        Text="Save connection" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

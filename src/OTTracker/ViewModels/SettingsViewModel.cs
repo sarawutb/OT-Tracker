@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.Input;
-using OTTracker.Models;
-using OTTracker.Services;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Interfaces;
+using OTTracker.Infrastructure.Services;
+using OTTracker.Views;
 
 namespace OTTracker.ViewModels;
 
@@ -12,7 +14,16 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private readonly IOtEntryRepository _entries;
     private readonly ICsvExportService _csv;
     private readonly AppEvents _events;
+    private readonly ISupabaseConfigService _configService;
+    private readonly ISupabaseClientProvider _clientProvider;
+    private readonly IServiceProvider _services;
     private bool _maskEarnings;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string supabaseUrl = string.Empty;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string supabaseAnonKey = string.Empty;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string userName = "Username";
@@ -62,7 +73,16 @@ public sealed partial class SettingsViewModel : BaseViewModel
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private bool biometricUnlockEnabled;
 
-    public SettingsViewModel(ISettingsService settingsService, IOtCalculationService calculator, IAuthService auth, IOtEntryRepository entries, ICsvExportService csv, AppEvents events)
+    public SettingsViewModel(
+        ISettingsService settingsService,
+        IOtCalculationService calculator,
+        IAuthService auth,
+        IOtEntryRepository entries,
+        ICsvExportService csv,
+        AppEvents events,
+        ISupabaseConfigService configService,
+        ISupabaseClientProvider clientProvider,
+        IServiceProvider services)
     {
         IsBusy = true;
         _settingsService = settingsService;
@@ -71,8 +91,13 @@ public sealed partial class SettingsViewModel : BaseViewModel
         _entries = entries;
         _csv = csv;
         _events = events;
+        _configService = configService;
+        _clientProvider = clientProvider;
+        _services = services;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SaveCommand = new AsyncRelayCommand(SaveAsync);
+        SaveSupabaseConfigCommand = new AsyncRelayCommand(SaveSupabaseConfigAsync);
+        SignOutCommand = new AsyncRelayCommand(SignOutAsync);
         ChangePinCommand = new AsyncRelayCommand(ChangePinAsync);
         ExportCommand = new AsyncRelayCommand(ExportAsync);
         ImportCommand = new AsyncRelayCommand(ImportAsync);
@@ -82,6 +107,10 @@ public sealed partial class SettingsViewModel : BaseViewModel
     public IAsyncRelayCommand LoadCommand { get; }
 
     public IAsyncRelayCommand SaveCommand { get; }
+
+    public IAsyncRelayCommand SaveSupabaseConfigCommand { get; }
+
+    public IAsyncRelayCommand SignOutCommand { get; }
 
     public IAsyncRelayCommand ChangePinCommand { get; }
 
@@ -97,7 +126,24 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     public async Task LoadAsync()
     {
-        var settings = await _settingsService.GetAsync();
+        IsBusy = true;
+        ErrorMessage = string.Empty;
+
+        var credentials = _configService.GetCredentials();
+        SupabaseUrl = credentials.Url;
+        SupabaseAnonKey = credentials.AnonKey;
+
+        AppSettings settings;
+        try
+        {
+            settings = await _settingsService.GetAsync();
+        }
+        catch (Exception ex)
+        {
+            settings = new AppSettings();
+            ErrorMessage = $"Supabase connection failed: {ex.Message}";
+        }
+
         UserName = string.IsNullOrWhiteSpace(settings.UserName) ? "Username" : settings.UserName.Trim();
         BaseMonthlySalary = settings.BaseMonthlySalary;
         WorkingDaysPerMonth = settings.WorkingDaysPerMonth;
@@ -115,6 +161,46 @@ public sealed partial class SettingsViewModel : BaseViewModel
         _maskEarnings = settings.MaskEarnings;
         RefreshCalculated();
         IsBusy = false;
+    }
+
+    private async Task SaveSupabaseConfigAsync()
+    {
+        ErrorMessage = string.Empty;
+        if (string.IsNullOrWhiteSpace(SupabaseUrl) || string.IsNullOrWhiteSpace(SupabaseAnonKey))
+        {
+            ErrorMessage = "Supabase URL and anon key are required.";
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            await _configService.SaveCredentialsAsync(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
+            _clientProvider.RecreateClient(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
+            Application.Current!.MainPage = _services.GetRequiredService<LoginPage>();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to save Supabase connection: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task SignOutAsync()
+    {
+        try
+        {
+            await _clientProvider.Client.Auth.SignOut();
+        }
+        catch
+        {
+            // The session listener also clears local session storage when sign out succeeds.
+        }
+
+        Application.Current!.MainPage = _services.GetRequiredService<LoginPage>();
     }
 
     private async Task SaveAsync()
@@ -202,6 +288,11 @@ public sealed partial class SettingsViewModel : BaseViewModel
         try
         {
             var imported = await _csv.ImportAsync();
+            if (imported is null)
+            {
+                return;
+            }
+
             if (imported.Count == 0)
             {
                 await Shell.Current.DisplayAlert("No records imported", "No CSV records were imported.", "OK");

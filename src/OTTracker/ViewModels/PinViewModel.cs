@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using OTTracker.Models;
+﻿using CommunityToolkit.Mvvm.Input;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Interfaces;
 using OTTracker.Services;
 
 namespace OTTracker.ViewModels;

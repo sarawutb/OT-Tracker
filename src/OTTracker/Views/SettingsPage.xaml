@@ -115,6 +115,23 @@
                     </VerticalStackLayout>
                 </Border>
 
+                <Label Text="SUPABASE" Style="{StaticResource MutedLabel}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <material:TextField
+                        Title="Project URL"
+                        Keyboard="Url"
+                        Text="{Binding SupabaseUrl}" />
+                        <material:TextField
+                        Title="Anon key"
+                        Text="{Binding SupabaseAnonKey}" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Button Text="Save connection" Command="{Binding SaveSupabaseConfigCommand}" Style="{StaticResource GhostButton}" />
+                            <Button Grid.Column="1" Text="Sign out" Command="{Binding SignOutCommand}" Style="{StaticResource GhostButton}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
                 <Label Text="DATA" Style="{StaticResource MutedLabel}" />
                 <Border Style="{StaticResource Card}">
                     <VerticalStackLayout Spacing="10">

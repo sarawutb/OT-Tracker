@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using OTTracker.Models;
+using OTTracker.Domain.Entities;
+using OTTracker.Domain.Enums;
 
 namespace OTTracker.ViewModels;
 
