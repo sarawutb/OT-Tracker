@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using OTTracker.Domain.Entities;
@@ -32,14 +33,14 @@ public sealed class OtEntryRepository(Supabase.Client client) : IOtEntryReposito
     {
         var periodStart = start.Date;
         var periodEnd = end.Date;
-        
+
         var response = await _client.From<OtEntry>()
-            .Filter("entry_date", Constants.Operator.GreaterThanOrEqual, periodStart.ToString("yyyy-MM-dd"))
-            .Filter("entry_date", Constants.Operator.LessThanOrEqual, periodEnd.ToString("yyyy-MM-dd"))
+            .Filter("entry_date", Constants.Operator.GreaterThanOrEqual, periodStart.ToString("yyyy-MM-dd", new CultureInfo("en-US")))
+            .Filter("entry_date", Constants.Operator.LessThanOrEqual, periodEnd.ToString("yyyy-MM-dd", new CultureInfo("en-US")))
             .Order("entry_date", Constants.Ordering.Descending)
             .Order("start_time", Constants.Ordering.Descending)
             .Get();
-            
+
         return response.Models;
     }
 
@@ -50,7 +51,7 @@ public sealed class OtEntryRepository(Supabase.Client client) : IOtEntryReposito
             .Order("start_time", Constants.Ordering.Descending)
             .Limit(count)
             .Get();
-            
+
         return response.Models;
     }
 
@@ -69,7 +70,7 @@ public sealed class OtEntryRepository(Supabase.Client client) : IOtEntryReposito
         {
             entry.UserId = currentUser.Id;
         }
-        
+
         entry.ReviseDate = DateTime.Now;
 
         if (entry.Id == 0)
@@ -95,7 +96,7 @@ public sealed class OtEntryRepository(Supabase.Client client) : IOtEntryReposito
         {
             return;
         }
-        
+
         await _client.From<OtEntry>()
             .Filter("user_id", Constants.Operator.Equals, currentUser.Id)
             .Delete();

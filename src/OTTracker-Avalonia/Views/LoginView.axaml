@@ -32,7 +32,7 @@
                            HorizontalAlignment="Center" 
                            Margin="0,0,0,2"/>
 
-                <TextBlock Text="Sign in or register to sync your OT logs" 
+                <TextBlock Text="Sign in to sync your OT logs" 
                            FontFamily="{StaticResource InterFont}" 
                            FontSize="12" 
                            Foreground="{DynamicResource TextMutedBrush}" 
@@ -77,22 +77,12 @@
                            IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
                 <!-- Action Buttons -->
-                <Grid ColumnDefinitions="*, *" Margin="0,10,0,0">
-                    <Button Grid.Column="0" 
-                            Content="Sign In" 
-                            Classes="Primary" 
-                            Command="{Binding SignInCommand}"
-                            HorizontalAlignment="Stretch"
-                            IsEnabled="{Binding !IsBusy}"
-                            Margin="0,0,6,0"/>
-                    <Button Grid.Column="1" 
-                            Content="Sign Up" 
-                            Classes="Secondary" 
-                            Command="{Binding SignUpCommand}"
-                            HorizontalAlignment="Stretch"
-                            IsEnabled="{Binding !IsBusy}"
-                            Margin="6,0,0,0"/>
-                </Grid>
+                <Button Content="Sign In" 
+                        Classes="Primary" 
+                        Command="{Binding SignInCommand}"
+                        HorizontalAlignment="Stretch"
+                        IsEnabled="{Binding !IsBusy}"
+                        Margin="0,10,0,0"/>
 
                 <!-- Loading bar -->
                 <ProgressBar IsIndeterminate="True" 

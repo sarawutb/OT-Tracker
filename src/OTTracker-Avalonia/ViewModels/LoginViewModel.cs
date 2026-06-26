@@ -32,11 +32,9 @@ public sealed partial class LoginViewModel : ViewModelBase
         _auth = auth;
 
         SignInCommand = new AsyncRelayCommand(SignInAsync);
-        SignUpCommand = new AsyncRelayCommand(SignUpAsync);
     }
 
     public IAsyncRelayCommand SignInCommand { get; }
-    public IAsyncRelayCommand SignUpCommand { get; }
 
     private async Task SignInAsync()
     {
@@ -57,38 +55,6 @@ public sealed partial class LoginViewModel : ViewModelBase
         catch (Exception ex)
         {
             ErrorMessage = $"Login failed: {ex.Message}";
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-
-    private async Task SignUpAsync()
-    {
-        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
-        {
-            ErrorMessage = "Email and Password are required.";
-            return;
-        }
-
-        if (Password.Length < 6)
-        {
-            ErrorMessage = "Password must be at least 6 characters.";
-            return;
-        }
-
-        IsBusy = true;
-        ErrorMessage = string.Empty;
-
-        try
-        {
-            await _client.Auth.SignUp(Email, Password);
-            ErrorMessage = "Registration successful! Please sign in.";
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Sign Up failed: {ex.Message}";
         }
         finally
         {

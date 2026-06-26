@@ -191,6 +191,12 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     private async Task SignOutAsync()
     {
+        var confirm = await Shell.Current.DisplayAlert("Sign Out", "Are you sure you want to sign out?", "Yes", "No");
+        if (!confirm)
+        {
+            return;
+        }
+
         try
         {
             await _clientProvider.Client.Auth.SignOut();

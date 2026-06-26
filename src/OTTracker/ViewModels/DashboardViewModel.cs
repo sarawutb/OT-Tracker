@@ -1,10 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
 using OTTracker.Infrastructure.Services;
-using UraniumUI.Dialogs;
 
 namespace OTTracker.ViewModels;
 
@@ -38,6 +36,9 @@ public sealed partial class DashboardViewModel : BaseViewModel
     private int thisWeekEntries;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool isRefreshing;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(EarningsText))]
     private bool maskEarnings = true;
     private bool _suppressMaskSave;
@@ -47,6 +48,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
         _entries = entries;
         _settings = settings;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
+        RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         GoLogTodayCommand = new AsyncRelayCommand(GoLogTodayAsync);
         GoHistoryCommand = new AsyncRelayCommand(GoHistoryAsync);
         events.EntriesChanged += async (_, _) => await LoadAsync();
@@ -54,6 +56,8 @@ public sealed partial class DashboardViewModel : BaseViewModel
     }
 
     public IAsyncRelayCommand LoadCommand { get; }
+
+    public IAsyncRelayCommand RefreshCommand { get; }
 
     public IAsyncRelayCommand GoLogTodayCommand { get; }
 
@@ -66,6 +70,18 @@ public sealed partial class DashboardViewModel : BaseViewModel
     public string EarningsText => MaskEarnings ? "\u0E3F *,***" : $"\u0E3F {EstimatedEarnings:N2}";
 
     public string TotalHoursText => $"{TotalHours:0.##}";
+
+    public async Task RefreshAsync()
+    {
+        try
+        {
+            await LoadAsync();
+        }
+        finally
+        {
+            IsRefreshing = false;
+        }
+    }
 
     public async Task LoadAsync()
     {

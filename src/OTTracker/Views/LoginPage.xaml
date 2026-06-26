@@ -3,93 +3,87 @@
     x:Class="OTTracker.Views.LoginPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     BackgroundColor="{StaticResource AppBackground}"
     Shell.NavBarIsVisible="False">
     <Grid Padding="24" RowDefinitions="*,Auto,*">
-        <VerticalStackLayout
-            Grid.Row="1"
+        <Border Style="{StaticResource Card}" 
+            Grid.Row="1">
+            <VerticalStackLayout
             MaximumWidthRequest="420"
-            Spacing="16"
+            Spacing="10"
             VerticalOptions="Center">
-            <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
-                <Border
-                    BackgroundColor="{StaticResource AccentLight}"
-                    HeightRequest="80"
-                    StrokeShape="RoundRectangle 22"
-                    StrokeThickness="0"
-                    WidthRequest="80">
-                    <Image
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                    <Image     
+                        WidthRequest="100"    
+                        HeightRequest="100"
                         Aspect="AspectFit"
                         Source="ot_tracker.png" />
-                </Border>
-                <Label
+                    <Label
                     FontFamily="OpenSansSemibold"
-                    FontSize="22"
+                    FontSize="25"
                     HorizontalTextAlignment="Center"
                     Text="OT Tracker"
                     TextColor="{StaticResource Ink}" />
-                <Label
+                    <Label
                     HorizontalTextAlignment="Center"
                     Style="{StaticResource MutedLabel}"
                     Text="Sign in to sync your OT logs" />
-            </VerticalStackLayout>
+                </VerticalStackLayout>
 
-            <Border Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="12">
-                    <Entry
+                    <material:TextField
                         Keyboard="Email"
-                        Placeholder="Email address"
+                        Title="Email"
                         ReturnType="Next"
                         Text="{Binding Email}" />
-                    <Entry
+                    <material:TextField
+                        IsTextPredictionEnabled="True"
                         IsPassword="True"
-                        Placeholder="Password"
+                        Keyboard="Password"
+                        Title="Password"
                         ReturnType="Done"
-                        Text="{Binding Password}" />
-                    <Label
-                        FontSize="12"
-                        HeightRequest="36"
-                        HorizontalTextAlignment="Center"
-                        Text="{Binding ErrorMessage}"
-                        TextColor="{StaticResource Red}" />
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                        <Button
-                            Command="{Binding SignInCommand}"
-                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                            Style="{StaticResource PrimaryButton}"
-                            Text="Sign in" />
-                        <Button
-                            Grid.Column="1"
-                            Command="{Binding SignUpCommand}"
-                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                            Style="{StaticResource GhostButton}"
-                            Text="Sign up" />
+                        Text="{Binding Password}" >
+                    </material:TextField>
+                    
+                    <Grid ColumnDefinitions="*" ColumnSpacing="10" Margin="0,10">
+                        <material:ButtonView VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"
+                               TappedCommand="{Binding SignInCommand}"
+                               IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}">
+                            <HorizontalStackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label FontAttributes="Bold" TextColor="White" VerticalOptions="Center" Text="Sign in"></Label>
+                                <ActivityIndicator
+                                    Margin="10,0,0,0"
+                                    Color="{StaticResource White}"
+                                    WidthRequest="20"
+                                    HeightRequest="20"
+                                    VerticalOptions="Center" 
+                                    HorizontalOptions="Center"
+                                    IsRunning="{Binding IsBusy}"
+                                    IsVisible="{Binding IsBusy}" />
+                            </HorizontalStackLayout>
+                        </material:ButtonView>
                     </Grid>
-                    <ActivityIndicator
-                        Color="{StaticResource Accent}"
-                        HorizontalOptions="Center"
-                        IsRunning="{Binding IsBusy}"
-                        IsVisible="{Binding IsBusy}" />
-                </VerticalStackLayout>
-            </Border>
 
-            <Border Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="SUPABASE" Style="{StaticResource MutedLabel}" />
-                    <Entry
-                        Keyboard="Url"
-                        Placeholder="Project URL"
-                        Text="{Binding SupabaseUrl}" />
-                    <Entry
-                        Placeholder="Anon key"
-                        Text="{Binding SupabaseAnonKey}" />
-                    <Button
-                        Command="{Binding SaveSupabaseConfigCommand}"
-                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
-                        Style="{StaticResource GhostButton}"
-                        Text="Save connection" />
+                    <VerticalStackLayout
+                        Margin="0,0,0,5"
+                        VerticalOptions="End"
+                        HorizontalOptions="Center"
+                        Spacing="4">
+                        <Label
+                            HorizontalTextAlignment="Center"
+                            Style="{StaticResource MutedLabel}"
+                            Text="{Binding BiometricHint}" />
+                        <Label
+                            Text="{Binding AppVersion}"
+                            FontSize="12"
+                            FontAttributes="Bold"
+                            HorizontalTextAlignment="Center"
+                            TextColor="{StaticResource Ink2}" />
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
-            </Border>
-        </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Border>
     </Grid>
 </ContentPage>

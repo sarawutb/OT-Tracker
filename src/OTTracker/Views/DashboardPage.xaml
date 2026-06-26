@@ -9,25 +9,30 @@
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
     <Grid RowDefinitions="*,Auto">
-        <ScrollView Grid.Row="0">
-            <VerticalStackLayout Padding="18,18,18,24" Spacing="12">
-                <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
-                    <Label FontAttributes="Bold" Style="{StaticResource MutedLabel}" FontSize="20" Text="{Binding GreetingText}" />
-                    <Label
+        <RefreshView 
+            Command="{Binding RefreshCommand}"
+            Grid.Row="0"
+            IsRefreshEnabled="{Binding IsBusy,Converter={StaticResource InverseBooleanConverter}}"
+            IsRefreshing="{Binding IsRefreshing}">
+            <ScrollView>
+                <VerticalStackLayout Padding="18,18,18,24" Spacing="12">
+                    <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
+                        <Label FontAttributes="Bold" Style="{StaticResource MutedLabel}" FontSize="20" Text="{Binding GreetingText}" />
+                        <Label
                     Grid.Row="1"
                     FontSize="15"
                     Style="{StaticResource PageTitle}"
                     Text="{Binding MonthText}" />
-                    <VerticalStackLayout
+                        <VerticalStackLayout
                             Grid.RowSpan="2"
                             Grid.Column="2">
-                        <Label HorizontalTextAlignment="End"
+                            <Label HorizontalTextAlignment="End"
                                x:Name="HeaderVersionLabel"
                                Margin="0,0,10,3"
                                FontSize="11"
                                TextColor="{StaticResource Ink2}"
                     VerticalOptions="Center" />
-                        <Border
+                            <Border
                             Padding="12,0"
                             BackgroundColor="{StaticResource AccentLight}"
                             HeightRequest="42"
@@ -40,221 +45,222 @@
                                 Text="{Binding UserName}"
                                 TextColor="{StaticResource Accent}"
                                 VerticalOptions="Center" />
-                        </Border>
-                    </VerticalStackLayout>
-                </Grid>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Grid>
 
-                <Border
+                    <Border
                 Padding="20"
                 BackgroundColor="{StaticResource Accent}"
                 StrokeShape="RoundRectangle 22"
                 StrokeThickness="0">
-                    <VerticalStackLayout Spacing="8">
-                        <Label
+                        <VerticalStackLayout Spacing="8">
+                            <Label
                         FontSize="11"
                         Text="TOTAL OT THIS PERIOD"
                         TextColor="#CCFFFFFF" />
-                        <HorizontalStackLayout Spacing="6">
-                            <Label
+                            <HorizontalStackLayout Spacing="6">
+                                <Label
                             FontFamily="OpenSansSemibold"
                             FontSize="42"
                             Text="{Binding TotalHoursText}"
                             TextColor="White" />
-                            <Label
+                                <Label
                             Margin="0,0,0,7"
                             FontSize="14"
                             Text="hours"
                             TextColor="#CCFFFFFF"
                             VerticalOptions="End" />
-                        </HorizontalStackLayout>
-                        <BoxView
+                            </HorizontalStackLayout>
+                            <BoxView
                         Margin="0,6"
                         HeightRequest="1"
                         Color="#33FFFFFF" />
-                        <Grid ColumnDefinitions="*,Auto">
-                            <VerticalStackLayout>
-                                <Label
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout>
+                                    <Label
                                 FontSize="11"
                                 Text="ESTIMATED EARNINGS"
                                 TextColor="#AAFFFFFF" />
-                                <Label
+                                    <Label
                                 FontFamily="OpenSansSemibold"
                                 FontSize="20"
                                 Text="{Binding EarningsText}"
                                 TextColor="White" />
-                            </VerticalStackLayout>
-                            <Switch
+                                </VerticalStackLayout>
+                                <Switch
                             Grid.Column="1"
                             IsToggled="{Binding MaskEarnings}"
                             OnColor="#AFA9EC"
                             ThumbColor="White" />
-                        </Grid>
-                    </VerticalStackLayout>
-                </Border>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
 
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                    <Border Style="{StaticResource CompactCard}">
-                        <VerticalStackLayout>
-                            <Label Style="{StaticResource MutedLabel}" Text="This week" />
-                            <Label
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Border Style="{StaticResource CompactCard}">
+                            <VerticalStackLayout>
+                                <Label Style="{StaticResource MutedLabel}" Text="This week" />
+                                <Label
                             FontFamily="OpenSansSemibold"
                             FontSize="20"
                             Text="{Binding ThisWeekHours, StringFormat='{0:0.##} hrs'}"
                             TextColor="{StaticResource Ink}" />
-                        </VerticalStackLayout>
-                    </Border>
-                    <Border Grid.Column="1" Style="{StaticResource CompactCard}">
-                        <VerticalStackLayout>
-                            <Label Style="{StaticResource MutedLabel}" Text="Entries logged" />
-                            <Label
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource CompactCard}">
+                            <VerticalStackLayout>
+                                <Label Style="{StaticResource MutedLabel}" Text="Entries logged" />
+                                <Label
                             FontFamily="OpenSansSemibold"
                             FontSize="20"
                             Text="{Binding ThisWeekEntries, StringFormat='{0} days'}"
                             TextColor="{StaticResource Ink}" />
-                        </VerticalStackLayout>
-                    </Border>
-                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
 
-                <Border Style="{StaticResource Card}">
-                    <VerticalStackLayout Spacing="10">
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="10">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label
                             Margin="0"
                             Style="{StaticResource SectionTitle}"
                             Text="This week" />
-                            <Border
+                                <Border
                             Grid.Column="1"
                             Padding="12,8"
                             BackgroundColor="{StaticResource AccentLight}"
                             StrokeShape="RoundRectangle 12"
                             StrokeThickness="0">
-                                <Label
+                                    <Label
                                 FontSize="13"
                                 FontAttributes="Bold"
                                 Text="History"
                                 TextColor="{StaticResource Accent}" />
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding GoHistoryCommand}"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                        </Grid>
-                        <CollectionView
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding GoHistoryCommand}"/>
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </Grid>
+                            <CollectionView
                         HeightRequest="96"
                         HorizontalOptions="Fill"
                         HorizontalScrollBarVisibility="Never"
                         ItemsSource="{Binding WeeklySummaries}">
-                            <CollectionView.ItemsLayout>
-                                <GridItemsLayout
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout
                                 HorizontalItemSpacing="4"
                                 Orientation="Vertical"
                                 Span="7"
                                 VerticalItemSpacing="0" />
-                            </CollectionView.ItemsLayout>
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <VerticalStackLayout
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <VerticalStackLayout
                                     HorizontalOptions="Fill"
                                     Spacing="4"
                                     VerticalOptions="End">
-                                        <Label
+                                            <Label
                                         FontSize="10"
                                         HorizontalTextAlignment="Center"
                                         Text="{Binding Hours, StringFormat='{0:0.#}'}"
                                         TextColor="{StaticResource Ink2}" />
-                                        <BoxView
+                                            <BoxView
                                         HorizontalOptions="Center"
                                         HeightRequest="{Binding Hours}"
                                         VerticalOptions="End"
                                         WidthRequest="26"
                                         Color="{StaticResource GreenMid}" />
-                                        <Label
+                                            <Label
                                         FontSize="10"
                                         HorizontalTextAlignment="Center"
                                         Text="{Binding Day}"
                                         TextColor="{StaticResource MutedText}" />
-                                    </VerticalStackLayout>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                        <HorizontalStackLayout Spacing="14">
-                            <Label
+                                        </VerticalStackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                            <HorizontalStackLayout Spacing="14">
+                                <Label
                             FontSize="11"
                             Text="Weekday"
                             TextColor="{StaticResource GreenMid}" />
-                            <Label
+                                <Label
                             FontSize="11"
                             Text="Weekend"
                             TextColor="{StaticResource AmberMid}" />
-                        </HorizontalStackLayout>
-                    </VerticalStackLayout>
-                </Border>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
 
-                <Border Style="{StaticResource Card}">
-                    <VerticalStackLayout Spacing="8">
-                        <Label
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label
                         Margin="0,0,0,4"
                         Style="{StaticResource SectionTitle}"
                         Text="Recent entries" />
-                        <CollectionView ItemsSource="{Binding RecentEntries}">
-                            <CollectionView.EmptyView>
-                                <Label Style="{StaticResource MutedLabel}" Text="No OT entries yet." />
-                            </CollectionView.EmptyView>
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid
+                            <CollectionView ItemsSource="{Binding RecentEntries}">
+                                <CollectionView.EmptyView>
+                                    <Label Style="{StaticResource MutedLabel}" Text="No OT entries yet." />
+                                </CollectionView.EmptyView>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid
                                     Padding="0,8"
                                     ColumnDefinitions="42,*,Auto"
                                     ColumnSpacing="10">
-                                        <Border
+                                            <Border
                                         BackgroundColor="{StaticResource AccentLight}"
                                         HeightRequest="36"
                                         StrokeShape="RoundRectangle 10"
                                         StrokeThickness="0"
                                         WidthRequest="36">
-                                            <Label
+                                                <Label
                                             FontSize="11"
                                             FontAttributes="Bold"
                                             HorizontalOptions="Center"
                                             Text="OT"
                                             TextColor="{StaticResource Accent}"
                                             VerticalOptions="Center" />
-                                        </Border>
-                                        <VerticalStackLayout Grid.Column="1" Spacing="1">
-                                            <Label
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                                <Label
                                             FontFamily="OpenSansSemibold"
                                             FontSize="12"
                                             Text="{Binding DateText}"
                                             TextColor="{StaticResource Ink}" />
-                                            <Label
+                                                <Label
                                             FontSize="11"
                                             Text="{Binding TimeText}"
                                             TextColor="{StaticResource MutedText}" />
-                                        </VerticalStackLayout>
-                                        <VerticalStackLayout
+                                            </VerticalStackLayout>
+                                            <VerticalStackLayout
                                         Grid.Column="2"
                                         HorizontalOptions="End"
                                         Spacing="1">
-                                            <Label
+                                                <Label
                                             FontFamily="OpenSansSemibold"
                                             FontSize="13"
                                             HorizontalTextAlignment="End"
                                             Text="{Binding HoursText}"
                                             TextColor="{StaticResource Ink}" />
-                                            <Label
+                                                <Label
                                             FontSize="11"
                                             HorizontalTextAlignment="End"
                                             Text="{Binding EarningsText}"
                                             TextColor="{StaticResource GreenMid}" />
-                                        </VerticalStackLayout>
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Border>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
 
-            </VerticalStackLayout>
-        </ScrollView>
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
         <controls:AppTabBar Grid.Row="1" ActiveRoute="Dashboard" />
     </Grid>
 </ContentPage>

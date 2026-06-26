@@ -126,8 +126,8 @@
                         Title="Anon key"
                         Text="{Binding SupabaseAnonKey}" />
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                            <Button Text="Save connection" Command="{Binding SaveSupabaseConfigCommand}" Style="{StaticResource GhostButton}" />
-                            <Button Grid.Column="1" Text="Sign out" Command="{Binding SignOutCommand}" Style="{StaticResource GhostButton}" />
+                            <Button Text="Save Connection" Command="{Binding SaveSupabaseConfigCommand}" BackgroundColor="{StaticResource GreenMid}" />
+                            <Button Grid.Column="1" Text="Sign out" Command="{Binding SignOutCommand}" BackgroundColor="{StaticResource Red}" />
                         </Grid>
                     </VerticalStackLayout>
                 </Border>

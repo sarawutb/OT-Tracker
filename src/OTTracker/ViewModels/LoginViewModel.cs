@@ -1,3 +1,4 @@
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OTTracker.Domain.Interfaces;
@@ -20,10 +21,13 @@ public sealed partial class LoginViewModel : BaseViewModel
     private string password = "Sarawut7754*";
 
     [ObservableProperty]
-    private string supabaseUrl = "https://qeoauyussturlgjjysqe.supabase.co";
+    private string appVersion;
 
-    [ObservableProperty]
-    private string supabaseAnonKey = "sb_secret_MY2ISglTP9jTYLH5yXrhAg_OuR6uc0r";
+    //[ObservableProperty]
+    //private string supabaseUrl = "https://qeoauyussturlgjjysqe.supabase.co";
+
+    //[ObservableProperty]
+    //private string supabaseAnonKey = "sb_secret_MY2ISglTP9jTYLH5yXrhAg_OuR6uc0r";
 
     public LoginViewModel(
         ISupabaseClientProvider clientProvider,
@@ -38,18 +42,11 @@ public sealed partial class LoginViewModel : BaseViewModel
         _settingsService = settingsService;
         _auth = auth;
 
-        var credentials = _configService.GetCredentials();
-        SupabaseUrl = "https://qeoauyussturlgjjysqe.supabase.co";
-        SupabaseAnonKey = "sb_secret_MY2ISglTP9jTYLH5yXrhAg_OuR6uc0r";
-
         SignInCommand = new AsyncRelayCommand(SignInAsync);
-        SignUpCommand = new AsyncRelayCommand(SignUpAsync);
-        SaveSupabaseConfigCommand = new AsyncRelayCommand(SaveSupabaseConfigAsync);
+        SetVersionText();
     }
 
     public IAsyncRelayCommand SignInCommand { get; }
-
-    public IAsyncRelayCommand SignUpCommand { get; }
 
     public IAsyncRelayCommand SaveSupabaseConfigCommand { get; }
 
@@ -75,37 +72,8 @@ public sealed partial class LoginViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
-        }
-    }
-
-    private async Task SignUpAsync()
-    {
-        if (!ValidateCredentials())
-        {
-            return;
-        }
-
-        if (Password.Length < 6)
-        {
-            ErrorMessage = "Password must be at least 6 characters.";
-            return;
-        }
-
-        IsBusy = true;
-        ErrorMessage = string.Empty;
-
-        try
-        {
-            await _clientProvider.Client.Auth.SignUp(Email.Trim(), Password);
-            ErrorMessage = "Registration successful. Please sign in.";
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Sign up failed: {ex.Message}";
-        }
-        finally
-        {
-            IsBusy = false;
+            if (!string.IsNullOrEmpty(ErrorMessage))
+                await App.Current.MainPage.DisplayAlert("Error Message", ErrorMessage, "OK");
         }
     }
 
@@ -121,32 +89,6 @@ public sealed partial class LoginViewModel : BaseViewModel
         return true;
     }
 
-    private async Task SaveSupabaseConfigAsync()
-    {
-        ErrorMessage = string.Empty;
-        if (string.IsNullOrWhiteSpace(SupabaseUrl) || string.IsNullOrWhiteSpace(SupabaseAnonKey))
-        {
-            ErrorMessage = "Supabase URL and anon key are required.";
-            return;
-        }
-
-        IsBusy = true;
-        try
-        {
-            await _configService.SaveCredentialsAsync(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
-            _clientProvider.RecreateClient(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
-            ErrorMessage = "Connection saved. You can sign in now.";
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Failed to save connection: {ex.Message}";
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-
     private async Task NavigateAfterLoginAsync()
     {
         var settings = await _settingsService.GetAsync();
@@ -157,5 +99,30 @@ public sealed partial class LoginViewModel : BaseViewModel
         }
 
         await App.ShowMainAsync();
+    }
+
+    private void SetVersionText()
+    {
+        AppVersion = GetVersionText();
+    }
+
+    private static string GetVersionText()
+    {
+        var version = AppInfo.Current.VersionString;
+        var build = AppInfo.Current.BuildString;
+
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            version = typeof(App).Assembly
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+                .InformationalVersion;
+        }
+
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            version = typeof(App).Assembly.GetName().Version?.ToString(3);
+        }
+
+        return string.IsNullOrWhiteSpace(build) ? $"version {version}" : $"version {version} ({build})";
     }
 }
