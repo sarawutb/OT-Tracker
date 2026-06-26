@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.Input;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
 using OTTracker.Infrastructure.Services;
+using OTTracker.Services;
 using OTTracker.Views;
 
 namespace OTTracker.ViewModels;
@@ -16,8 +17,13 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private readonly AppEvents _events;
     private readonly ISupabaseConfigService _configService;
     private readonly ISupabaseClientProvider _clientProvider;
+    private readonly IDataSourceModeService _modeService;
+    private readonly IDataSyncService _syncService;
     private readonly IServiceProvider _services;
     private bool _maskEarnings;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool useSupabase;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string supabaseUrl = string.Empty;
@@ -82,6 +88,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         AppEvents events,
         ISupabaseConfigService configService,
         ISupabaseClientProvider clientProvider,
+        IDataSourceModeService modeService,
+        IDataSyncService syncService,
         IServiceProvider services)
     {
         IsBusy = true;
@@ -93,10 +101,13 @@ public sealed partial class SettingsViewModel : BaseViewModel
         _events = events;
         _configService = configService;
         _clientProvider = clientProvider;
+        _modeService = modeService;
+        _syncService = syncService;
         _services = services;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         SaveSupabaseConfigCommand = new AsyncRelayCommand(SaveSupabaseConfigAsync);
+        ApplyDataSourceCommand = new AsyncRelayCommand(ApplyDataSourceAsync);
         SignOutCommand = new AsyncRelayCommand(SignOutAsync);
         ChangePinCommand = new AsyncRelayCommand(ChangePinAsync);
         ExportCommand = new AsyncRelayCommand(ExportAsync);
@@ -109,6 +120,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
     public IAsyncRelayCommand SaveCommand { get; }
 
     public IAsyncRelayCommand SaveSupabaseConfigCommand { get; }
+
+    public IAsyncRelayCommand ApplyDataSourceCommand { get; }
 
     public IAsyncRelayCommand SignOutCommand { get; }
 
@@ -130,6 +143,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         ErrorMessage = string.Empty;
 
         var credentials = _configService.GetCredentials();
+        UseSupabase = _modeService.UseSupabase;
         SupabaseUrl = credentials.Url;
         SupabaseAnonKey = credentials.AnonKey;
 
@@ -177,11 +191,74 @@ public sealed partial class SettingsViewModel : BaseViewModel
         {
             await _configService.SaveCredentialsAsync(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
             _clientProvider.RecreateClient(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
-            Application.Current!.MainPage = _services.GetRequiredService<LoginPage>();
+            await Shell.Current.DisplayAlert("Connection saved", "Supabase connection settings are updated.", "OK");
         }
         catch (Exception ex)
         {
             ErrorMessage = $"Failed to save Supabase connection: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task ApplyDataSourceAsync()
+    {
+        ErrorMessage = string.Empty;
+        IsBusy = true;
+
+        try
+        {
+            await _settingsService.SaveAsync(ToSettings());
+
+            if (UseSupabase)
+            {
+                if (string.IsNullOrWhiteSpace(SupabaseUrl) || string.IsNullOrWhiteSpace(SupabaseAnonKey))
+                {
+                    ErrorMessage = "Supabase URL and anon key are required.";
+                    return;
+                }
+
+                await _configService.SaveCredentialsAsync(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
+                _clientProvider.RecreateClient(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
+
+                if (_modeService.UseSupabase)
+                {
+                    await Shell.Current.DisplayAlert("Supabase enabled", "Supabase is already the active data source.", "OK");
+                    return;
+                }
+
+                if (_clientProvider.Client.Auth.CurrentUser is null)
+                {
+                    await _modeService.SetUseSupabaseAsync(true);
+                    await _modeService.SetPendingSupabaseSyncAsync(true);
+                    Application.Current!.MainPage = _services.GetRequiredService<LoginPage>();
+                    return;
+                }
+
+                var synced = await _syncService.EnableSupabaseAsync();
+                _events.NotifySettingsChanged();
+                _events.NotifyEntriesChanged();
+                await Shell.Current.DisplayAlert("Supabase enabled", $"{synced} local OT record(s) synced to Supabase.", "OK");
+                return;
+            }
+
+            if (!_modeService.UseSupabase)
+            {
+                await _modeService.SetUseSupabaseAsync(false);
+                await Shell.Current.DisplayAlert("SQLite enabled", "SQLite is already the active data source.", "OK");
+                return;
+            }
+
+            var copied = await _syncService.DisableSupabaseAsync();
+            _events.NotifySettingsChanged();
+            _events.NotifyEntriesChanged();
+            await Shell.Current.DisplayAlert("SQLite enabled", $"{copied} Supabase OT record(s) copied to local SQLite.", "OK");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
         }
         finally
         {

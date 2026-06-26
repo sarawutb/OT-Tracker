@@ -1,6 +1,7 @@
 using Microsoft.Maui.Controls;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
+using OTTracker.Services;
 using OTTracker.Views;
 
 namespace OTTracker;
@@ -12,19 +13,22 @@ public partial class App : Application
     private readonly IAuthService _auth;
     private readonly ISupabaseClientProvider _clientProvider;
     private readonly ISupabaseSessionService _sessionService;
+    private readonly IDataSourceModeService _modeService;
 
     public App(
         IServiceProvider services,
         ISettingsService settings,
         IAuthService auth,
         ISupabaseClientProvider clientProvider,
-        ISupabaseSessionService sessionService)
+        ISupabaseSessionService sessionService,
+        IDataSourceModeService modeService)
     {
         _services = services;
         _settings = settings;
         _auth = auth;
         _clientProvider = clientProvider;
         _sessionService = sessionService;
+        _modeService = modeService;
         InitializeComponent();
         MainPage = new ContentPage
         {
@@ -48,11 +52,14 @@ public partial class App : Application
 
     private async Task InitializeAsync()
     {
-        var sessionRestored = await RestoreSessionAsync();
-        if (!sessionRestored)
+        if (_modeService.UseSupabase)
         {
-            MainPage = _services.GetRequiredService<LoginPage>();
-            return;
+            var sessionRestored = await RestoreSessionAsync();
+            if (!sessionRestored)
+            {
+                MainPage = _services.GetRequiredService<LoginPage>();
+                return;
+            }
         }
 
         AppSettings settings;

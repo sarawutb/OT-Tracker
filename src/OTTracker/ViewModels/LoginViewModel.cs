@@ -2,6 +2,7 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OTTracker.Domain.Interfaces;
+using OTTracker.Services;
 using OTTracker.Views;
 
 namespace OTTracker.ViewModels;
@@ -13,6 +14,8 @@ public sealed partial class LoginViewModel : BaseViewModel
     private readonly IServiceProvider _services;
     private readonly ISettingsService _settingsService;
     private readonly IAuthService _auth;
+    private readonly IDataSourceModeService _modeService;
+    private readonly IDataSyncService _syncService;
 
     [ObservableProperty]
     private string email = "rang7754@gmail.com";
@@ -21,7 +24,7 @@ public sealed partial class LoginViewModel : BaseViewModel
     private string password = "Sarawut7754*";
 
     [ObservableProperty]
-    private string appVersion;
+    private string appVersion = string.Empty;
 
     //[ObservableProperty]
     //private string supabaseUrl = "https://qeoauyussturlgjjysqe.supabase.co";
@@ -34,21 +37,23 @@ public sealed partial class LoginViewModel : BaseViewModel
         ISupabaseConfigService configService,
         IServiceProvider services,
         ISettingsService settingsService,
-        IAuthService auth)
+        IAuthService auth,
+        IDataSourceModeService modeService,
+        IDataSyncService syncService)
     {
         _clientProvider = clientProvider;
         _configService = configService;
         _services = services;
         _settingsService = settingsService;
         _auth = auth;
+        _modeService = modeService;
+        _syncService = syncService;
 
         SignInCommand = new AsyncRelayCommand(SignInAsync);
         SetVersionText();
     }
 
     public IAsyncRelayCommand SignInCommand { get; }
-
-    public IAsyncRelayCommand SaveSupabaseConfigCommand { get; }
 
     private async Task SignInAsync()
     {
@@ -63,6 +68,15 @@ public sealed partial class LoginViewModel : BaseViewModel
         try
         {
             await _clientProvider.Client.Auth.SignIn(Email.Trim(), Password);
+            if (_modeService.PendingSupabaseSync)
+            {
+                await _syncService.EnableSupabaseAsync();
+            }
+            else
+            {
+                await _modeService.SetUseSupabaseAsync(true);
+            }
+
             await NavigateAfterLoginAsync();
         }
         catch (Exception ex)

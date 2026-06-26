@@ -118,6 +118,13 @@
                 <Label Text="SUPABASE" Style="{StaticResource MutedLabel}" />
                 <Border Style="{StaticResource Card}">
                     <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout>
+                                <Label Text="Use Supabase" TextColor="{StaticResource Ink}" />
+                                <Label Text="When off, OT Tracker uses local SQLite data" Style="{StaticResource MutedLabel}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding UseSupabase}" />
+                        </Grid>
                         <material:TextField
                         Title="Project URL"
                         Keyboard="Url"
@@ -129,6 +136,7 @@
                             <Button Text="Save Connection" Command="{Binding SaveSupabaseConfigCommand}" BackgroundColor="{StaticResource GreenMid}" />
                             <Button Grid.Column="1" Text="Sign out" Command="{Binding SignOutCommand}" BackgroundColor="{StaticResource Red}" />
                         </Grid>
+                        <Button Text="Apply data source" Command="{Binding ApplyDataSourceCommand}" Style="{StaticResource PrimaryButton}" />
                     </VerticalStackLayout>
                 </Border>
 
