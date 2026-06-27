@@ -7,7 +7,7 @@ public readonly record struct OtPeriod(DateTime Start, DateTime End)
 {
     private static readonly Calendar Gregorian = new GregorianCalendar();
 
-    public string DisplayText => $"{Start:dd/MM/yyyy} - {End:dd/MM/yyyy}";
+    public string DisplayText => $"{Start:dd/MM/yy} - {End:dd/MM/yy}";
 
     public OtPeriod AddMonths(int months) => new(Start.AddMonths(months), End.AddMonths(months));
 

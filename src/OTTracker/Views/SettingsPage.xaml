@@ -134,7 +134,7 @@
                         Title="Anon key"
                         Text="{Binding SupabaseAnonKey}" />
                         </VerticalStackLayout>
-                        <Button IsVisible="{Binding UseSupabase}" Text="Apply data source" Margin="0,10,0,0" Command="{Binding ApplyDataSourceCommand}" Style="{StaticResource PrimaryButton}" />
+                        <Button IsVisible="{Binding UseSupabase}" Text="Connect" Margin="0,10,0,0" Command="{Binding ApplyDataSourceCommand}" Style="{StaticResource PrimaryButton}" />
                     </VerticalStackLayout>
                 </Border>
                 <Label Text="DATA" Style="{StaticResource MutedLabel}" />

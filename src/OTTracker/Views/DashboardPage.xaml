@@ -121,33 +121,28 @@
                     </Grid>
 
                     <Border Style="{StaticResource Card}">
-                        <VerticalStackLayout Spacing="10">
-                            <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="20">
+                            <Grid ColumnDefinitions="*,Auto" VerticalOptions="FillAndExpand">
                                 <Label
-                            Margin="0"
-                            Style="{StaticResource SectionTitle}"
-                            Text="This week" />
-                                <Border
-                            Grid.Column="1"
-                            Padding="12,8"
-                            BackgroundColor="{StaticResource AccentLight}"
-                            StrokeShape="RoundRectangle 12"
-                            StrokeThickness="0">
-                                    <Label
-                                FontSize="13"
-                                FontAttributes="Bold"
-                                Text="History"
-                                TextColor="{StaticResource Accent}" />
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding GoHistoryCommand}"/>
-                                    </Border.GestureRecognizers>
-                                </Border>
+                                    VerticalOptions="CenterAndExpand"
+                                    Margin="0"
+                                    Style="{StaticResource SectionTitle}"
+                                    Text="This week" />
+                                <Button
+                                    VerticalOptions="CenterAndExpand"
+                                    Grid.Column="1"
+                                    Padding="12,8"
+                                    Text="History"
+                                    FontSize="13"
+                                    FontAttributes="Bold"
+                                    TextColor="{StaticResource Accent}"
+                                    BackgroundColor="{StaticResource AccentLight}"
+                                    Command="{Binding GoHistoryCommand}"/>
                             </Grid>
                             <CollectionView
-                        HeightRequest="96"
-                        HorizontalOptions="Fill"
-                        HorizontalScrollBarVisibility="Never"
-                        ItemsSource="{Binding WeeklySummaries}">
+                                HorizontalOptions="Fill"
+                                HorizontalScrollBarVisibility="Never"
+                                ItemsSource="{Binding WeeklySummaries}">
                                 <CollectionView.ItemsLayout>
                                     <GridItemsLayout
                                 HorizontalItemSpacing="4"
@@ -171,7 +166,16 @@
                                         HeightRequest="{Binding Hours}"
                                         VerticalOptions="End"
                                         WidthRequest="26"
-                                        Color="{StaticResource GreenMid}" />
+                                        Color="{StaticResource GreenMid}">
+                                                <BoxView.Triggers>
+                                                    <DataTrigger
+                                                Binding="{Binding IsWeekend}"
+                                                TargetType="BoxView"
+                                                Value="True">
+                                                        <Setter Property="Color" Value="{StaticResource AmberMid}" />
+                                                    </DataTrigger>
+                                                </BoxView.Triggers>
+                                            </BoxView>
                                             <Label
                                         FontSize="10"
                                         HorizontalTextAlignment="Center"

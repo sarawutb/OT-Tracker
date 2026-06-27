@@ -97,14 +97,21 @@ public sealed partial class DashboardViewModel : BaseViewModel
 
             var today = DateTime.Today;
             var period = OtPeriod.FromDate(today, settings.PeriodStartDay, settings.PeriodEndDay);
+            var weekStart = today.AddDays(-((int)today.DayOfWeek + 6) % 7);
+            var weekEnd = weekStart.AddDays(7);
+
             MonthText = period.DisplayText;
-            var month = await _entries.GetPeriodAsync(period.Start, period.End);
+            var monthTask = _entries.GetPeriodAsync(period.Start, period.End);
+            var weekTask = _entries.GetPeriodAsync(weekStart, weekEnd.AddDays(-1));
+            await Task.WhenAll(monthTask, weekTask);
+
+            var month = await monthTask;
             TotalHours = month.Sum(e => e.NetHours);
             EstimatedEarnings = month.Sum(e => e.EstimatedEarnings);
 
-            var weekStart = today.AddDays(-((int)today.DayOfWeek + 6) % 7);
-            var weekEnd = weekStart.AddDays(7);
-            var thisWeek = month.Where(e => e.EntryDate >= weekStart && e.EntryDate < weekEnd).ToList();
+            var thisWeek = (await weekTask)
+                .Where(e => e.EntryDate.Date >= weekStart && e.EntryDate.Date < weekEnd)
+                .ToList();
             ThisWeekHours = thisWeek.Sum(e => e.NetHours);
             ThisWeekEntries = thisWeek.Select(e => e.EntryDate.Date).Distinct().Count();
 

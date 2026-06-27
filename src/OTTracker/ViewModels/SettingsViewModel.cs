@@ -79,6 +79,9 @@ public sealed partial class SettingsViewModel : BaseViewModel
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private bool biometricUnlockEnabled;
 
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private AppSettings appSetting;
+
     public SettingsViewModel(
         ISettingsService settingsService,
         LocalSettingsService localSettings,
@@ -144,35 +147,34 @@ public sealed partial class SettingsViewModel : BaseViewModel
         SupabaseUrl = credentials.Url;
         SupabaseAnonKey = credentials.AnonKey;
 
-        AppSettings settings;
         try
         {
-            settings = await _settingsService.GetAsync();
+            AppSetting = await _settingsService.GetAsync();
         }
         catch (Exception ex)
         {
-            settings = new AppSettings();
+            AppSetting = new AppSettings();
             ErrorMessage = $"Supabase connection failed: {ex.Message}";
         }
 
         var deviceSettings = await _localSettings.GetAsync();
 
-        UserName = string.IsNullOrWhiteSpace(settings.UserName) ? "Username" : settings.UserName.Trim();
-        _userId = settings.UserId;
-        BaseMonthlySalary = settings.BaseMonthlySalary;
-        WorkingDaysPerMonth = settings.WorkingDaysPerMonth;
-        HoursPerDay = settings.HoursPerDay;
-        DefaultStartTime = settings.DefaultStartTime;
-        DefaultEndTime = settings.DefaultEndTime;
-        DefaultBreakMinutes = settings.DefaultBreakMinutes;
-        PeriodStartDay = settings.PeriodStartDay;
-        PeriodEndDay = settings.PeriodEndDay;
-        RegularMultiplier = settings.RegularMultiplier;
-        WeekendMultiplier = settings.WeekendMultiplier;
-        HolidayMultiplier = settings.HolidayMultiplier;
+        UserName = string.IsNullOrWhiteSpace(AppSetting.UserName) ? "Username" : AppSetting.UserName.Trim();
+        _userId = AppSetting.UserId;
+        BaseMonthlySalary = AppSetting.BaseMonthlySalary;
+        WorkingDaysPerMonth = AppSetting.WorkingDaysPerMonth;
+        HoursPerDay = AppSetting.HoursPerDay;
+        DefaultStartTime = AppSetting.DefaultStartTime;
+        DefaultEndTime = AppSetting.DefaultEndTime;
+        DefaultBreakMinutes = AppSetting.DefaultBreakMinutes;
+        PeriodStartDay = AppSetting.PeriodStartDay;
+        PeriodEndDay = AppSetting.PeriodEndDay;
+        RegularMultiplier = AppSetting.RegularMultiplier;
+        WeekendMultiplier = AppSetting.WeekendMultiplier;
+        HolidayMultiplier = AppSetting.HolidayMultiplier;
         PinLockEnabled = deviceSettings.PinLockEnabled;
         BiometricUnlockEnabled = deviceSettings.BiometricUnlockEnabled;
-        _maskEarnings = settings.MaskEarnings;
+        _maskEarnings = AppSetting.MaskEarnings;
         RefreshCalculated();
         IsBusy = false;
     }
@@ -478,6 +480,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         var settings = await _localSettings.GetAsync();
         settings.PinLockEnabled = PinLockEnabled;
         settings.BiometricUnlockEnabled = BiometricUnlockEnabled;
+        await _auth.SetPinLockEnabledAsync(PinLockEnabled);
         await _localSettings.SaveAsync(settings);
     }
 
@@ -503,6 +506,17 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     public async Task CheckPinLock()
     {
-        await ChangePinAsync();
+        bool _isPinLockEnabled = await _auth.IsPinLockEnabledAsync();
+        if (PinLockEnabled && !_isPinLockEnabled)
+            await ChangePinAsync();
+        else
+        {
+            if (_isPinLockEnabled)
+            {
+                await _auth.ClearPinAsync();
+                await SaveDeviceSecurityAsync();
+                await CurrentPage?.DisplayAlert("PIN updated", "PIN lock is closed.", "OK");
+            }
+        }
     }
 }

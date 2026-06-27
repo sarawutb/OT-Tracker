@@ -27,7 +27,6 @@ public partial class SettingsPage : ContentPage
 
     private async void Switch_PinLock_Toggled(object sender, ToggledEventArgs e)
     {
-        if (e.Value)
-            await _viewModel.CheckPinLock();
+        await _viewModel.CheckPinLock();
     }
 }
