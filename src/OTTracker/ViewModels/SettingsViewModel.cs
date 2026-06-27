@@ -29,7 +29,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private string supabaseUrl = string.Empty;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private string supabaseAnonKey = string.Empty;
+    private string supabaseAnonKey = "sb_secret_3tIOiTck6mxgeAuULk0x_Q_3TTNZt5e";
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string userName = "Username";
