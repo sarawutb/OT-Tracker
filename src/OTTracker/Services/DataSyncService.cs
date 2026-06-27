@@ -1,6 +1,7 @@
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
 using OTTracker.Infrastructure.Repositories;
+using OTTracker.Infrastructure.Services;
 using SupabaseSettingsService = OTTracker.Infrastructure.Services.SettingsService;
 
 namespace OTTracker.Services;
@@ -8,6 +9,8 @@ namespace OTTracker.Services;
 public sealed class DataSyncService(
     IDataSourceModeService modeService,
     ISupabaseClientProvider clientProvider,
+    ISupabaseConfigService supabaseConfigService,
+    ISettingsService settingsService,
     LocalOtEntryRepository localEntries,
     LocalSettingsService localSettings,
     OtEntryRepository supabaseEntries,
@@ -16,33 +19,27 @@ public sealed class DataSyncService(
     public async Task<int> EnableSupabaseAsync()
     {
         EnsureSignedIn();
-        var count = await SyncToSupabaseAsync();
+        var settings = await localSettings.GetAsync();
+        var count = await SyncToSupabaseAsync(settings);
         await modeService.SetUseSupabaseAsync(true);
-        await modeService.SetPendingSupabaseSyncAsync(false);
+        return count;
+    }
+
+    public async Task<int> EnableSupabaseAsync(AppSettings settings)
+    {
+        EnsureSignedIn();
+        var userId = settings.UserId;
+        settings = await supabaseSettings.GetAsync();
+        settings.UserId = userId;
+        await settingsService.SaveAsync(settings);
+        var count = await SyncToSupabaseAsync(settings);
+        await modeService.SetUseSupabaseAsync(true);
         return count;
     }
 
     public async Task<int> DisableSupabaseAsync()
     {
-        if (clientProvider.Client.Auth.CurrentUser is not null)
-        {
-            var settings = await supabaseSettings.GetAsync();
-            await localSettings.SaveAsync(settings);
-
-            var remoteEntries = await supabaseEntries.GetAllAsync();
-            await localEntries.ClearAsync();
-            foreach (var entry in remoteEntries)
-            {
-                await localEntries.SaveAsync(CloneForLocal(entry));
-            }
-
-            await modeService.SetUseSupabaseAsync(false);
-            await modeService.SetPendingSupabaseSyncAsync(false);
-            return remoteEntries.Count;
-        }
-
         await modeService.SetUseSupabaseAsync(false);
-        await modeService.SetPendingSupabaseSyncAsync(false);
         return 0;
     }
 
@@ -51,21 +48,18 @@ public sealed class DataSyncService(
         EnsureSignedIn();
 
         var settings = await localSettings.GetAsync();
-        await supabaseSettings.SaveAsync(settings);
+        return await SyncToSupabaseAsync(settings);
+    }
 
-        var local = await localEntries.GetAllAsync();
-        await supabaseEntries.ClearAsync();
-        foreach (var entry in local.OrderBy(e => e.EntryDate).ThenBy(e => e.StartTime))
-        {
-            await supabaseEntries.SaveAsync(CloneForSupabase(entry));
-        }
-
-        return local.Count;
+    private async Task<int> SyncToSupabaseAsync(AppSettings settings)
+    {
+        var data = await supabaseEntries.GetAllAsync();
+        return data.Count;
     }
 
     private void EnsureSignedIn()
     {
-        if (clientProvider.Client.Auth.CurrentUser is null)
+        if (clientProvider?.Client?.Auth.CurrentUser is null)
         {
             throw new InvalidOperationException("Sign in to Supabase before enabling sync.");
         }
@@ -78,6 +72,7 @@ public sealed class DataSyncService(
     private static OtEntry Clone(OtEntry entry, int id) => new()
     {
         Id = id,
+        UserId = entry.UserId,
         EntryDate = entry.EntryDate.Date,
         DayTypeIndex = entry.DayTypeIndex,
         StartTimeString = entry.StartTimeString,

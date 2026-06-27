@@ -59,14 +59,12 @@ public static class MauiProgram
         builder.Services.AddSingleton<Services.IBiometricService, Services.BiometricService>();
         builder.Services.AddSingleton<ICsvExportService, MauiCsvExportService>();
 
-        builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<PinViewModel>();
         builder.Services.AddScoped<DashboardViewModel>();
         builder.Services.AddTransient<LogEntryViewModel>();
         builder.Services.AddTransient<HistoryViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
 
-        builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<PinPage>();
         builder.Services.AddTransient<DashboardPage>();
         builder.Services.AddTransient<LogEntryPage>();

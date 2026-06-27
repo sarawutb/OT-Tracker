@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
+using OTTracker.Infrastructure.Services;
 using Supabase.Postgrest;
 
 namespace OTTracker.Infrastructure.Repositories;
@@ -65,12 +66,7 @@ public sealed class OtEntryRepository(Supabase.Client client) : IOtEntryReposito
 
     public async Task SaveAsync(OtEntry entry)
     {
-        var currentUser = _client.Auth.CurrentUser;
-        if (currentUser is not null)
-        {
-            entry.UserId = currentUser.Id;
-        }
-
+        entry.UserId = SupabaseAuthUser.GetRequiredUserId(_client, entry.UserId);
         entry.ReviseDate = DateTime.Now;
 
         if (entry.Id == 0)
@@ -91,14 +87,20 @@ public sealed class OtEntryRepository(Supabase.Client client) : IOtEntryReposito
 
     public async Task ClearAsync()
     {
-        var currentUser = _client.Auth.CurrentUser;
-        if (currentUser is null)
+        if (!SupabaseAuthUser.TryGetUserId(_client, out var userId))
         {
             return;
         }
 
+        await ClearAsync(userId);
+    }
+
+    public async Task ClearAsync(string userId)
+    {
+        userId = SupabaseAuthUser.GetRequiredUserId(_client, userId);
+
         await _client.From<OtEntry>()
-            .Filter("user_id", Constants.Operator.Equals, currentUser.Id)
+            .Filter("user_id", Constants.Operator.Equals, userId)
             .Delete();
     }
 }

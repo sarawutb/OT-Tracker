@@ -3,6 +3,7 @@
              x:Class="OTTracker_Avalonia.App"
              xmlns:local="using:OTTracker_Avalonia"
              xmlns:converters="clr-namespace:OTTracker_Avalonia.AppServices.Converters"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              RequestedThemeVariant="Dark">
 
     <Application.DataTemplates>
@@ -33,12 +34,12 @@
                     <SolidColorBrush x:Key="TextMainBrush">#1A1A2E</SolidColorBrush>
                     <SolidColorBrush x:Key="TextMutedBrush">#6E6E82</SolidColorBrush>
                     
-                    <SolidColorBrush x:Key="AccentBrush">#5B4FE8</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentBrush">#5346FF</SolidColorBrush>
                     <SolidColorBrush x:Key="AccentLightBrush">#F0EFFF</SolidColorBrush>
-                    <SolidColorBrush x:Key="AccentHoverBrush">#493CD6</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentHoverBrush">#3A2CD6</SolidColorBrush>
                     
-                    <SolidColorBrush x:Key="SuccessBrush">#2DCA73</SolidColorBrush>
-                    <SolidColorBrush x:Key="SuccessLightBrush">#E8F9F0</SolidColorBrush>
+                    <SolidColorBrush x:Key="SuccessBrush">#00B584</SolidColorBrush>
+                    <SolidColorBrush x:Key="SuccessLightBrush">#E5FBF5</SolidColorBrush>
                     <SolidColorBrush x:Key="WarningBrush">#FFB01A</SolidColorBrush>
                     <SolidColorBrush x:Key="DangerBrush">#FF3B30</SolidColorBrush>
                 </ResourceDictionary>
@@ -57,11 +58,11 @@
                     <SolidColorBrush x:Key="TextMutedBrush">#A0A0B5</SolidColorBrush>
                     
                     <SolidColorBrush x:Key="AccentBrush">#786DF7</SolidColorBrush>
-                    <SolidColorBrush x:Key="AccentLightBrush">#252347</SolidColorBrush>
-                    <SolidColorBrush x:Key="AccentHoverBrush">#9287ff</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentLightBrush">#201E42</SolidColorBrush>
+                    <SolidColorBrush x:Key="AccentHoverBrush">#9F94FF</SolidColorBrush>
                     
-                    <SolidColorBrush x:Key="SuccessBrush">#3BE085</SolidColorBrush>
-                    <SolidColorBrush x:Key="SuccessLightBrush">#163825</SolidColorBrush>
+                    <SolidColorBrush x:Key="SuccessBrush">#00E6A7</SolidColorBrush>
+                    <SolidColorBrush x:Key="SuccessLightBrush">#0D382B</SolidColorBrush>
                     <SolidColorBrush x:Key="WarningBrush">#FFBE3B</SolidColorBrush>
                     <SolidColorBrush x:Key="DangerBrush">#FF5247</SolidColorBrush>
                 </ResourceDictionary>
@@ -71,6 +72,7 @@
 
     <Application.Styles>
         <FluentTheme />
+        <materialIcons:MaterialIconStyles />
         <StyleInclude Source="avares://OTTracker-Avalonia/Styles/AppStyles.axaml" />
     </Application.Styles>
 </Application>

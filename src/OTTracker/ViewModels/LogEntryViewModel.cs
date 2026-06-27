@@ -125,34 +125,41 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
 
     private async Task SaveAsync()
     {
-        ErrorMessage = string.Empty;
-        if (BreakMinutes < 0)
+        try
         {
-            ErrorMessage = "Break minutes must be 0 or greater.";
-            return;
-        }
+            ErrorMessage = string.Empty;
+            if (BreakMinutes < 0)
+            {
+                ErrorMessage = "Break minutes must be 0 or greater.";
+                return;
+            }
 
-        if (EndTime <= StartTime)
+            if (EndTime <= StartTime)
+            {
+                ErrorMessage = "End time must be later than start time.";
+                return;
+            }
+
+            var settings = await _settings.GetAsync();
+            var entry = _entryId > 0 ? await _entries.GetByIdAsync(_entryId) ?? new OtEntry() : new OtEntry();
+            entry.EntryDate = EntryDate.Date;
+            entry.DayType = SelectedDayType;
+            entry.StartTime = StartTime;
+            entry.EndTime = EndTime;
+            entry.BreakMinutes = BreakMinutes;
+            entry.Note = Note?.Trim() ?? string.Empty;
+            _calculator.ApplyCalculation(entry, settings);
+
+            await _entries.SaveAsync(entry);
+            _entryId = 0;
+            await Shell.Current.GoToAsync("//Dashboard");
+            _events.NotifyEntriesChanged();
+            await ResetForNewEntryAsync();
+        }
+        catch (Exception ex)
         {
-            ErrorMessage = "End time must be later than start time.";
-            return;
+            CurrentPage?.DisplayAlert("Error Message", ex.Message, "OK");
         }
-
-        var settings = await _settings.GetAsync();
-        var entry = _entryId > 0 ? await _entries.GetByIdAsync(_entryId) ?? new OtEntry() : new OtEntry();
-        entry.EntryDate = EntryDate.Date;
-        entry.DayType = SelectedDayType;
-        entry.StartTime = StartTime;
-        entry.EndTime = EndTime;
-        entry.BreakMinutes = BreakMinutes;
-        entry.Note = Note?.Trim() ?? string.Empty;
-        _calculator.ApplyCalculation(entry, settings);
-
-        await _entries.SaveAsync(entry);
-        _entryId = 0;
-        await Shell.Current.GoToAsync("//Dashboard");
-        _events.NotifyEntriesChanged();
-        await ResetForNewEntryAsync();
     }
 
     private async Task RecalculateAsync()

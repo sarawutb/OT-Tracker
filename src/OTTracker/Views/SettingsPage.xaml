@@ -123,23 +123,20 @@
                                 <Label Text="Use Supabase" TextColor="{StaticResource Ink}" />
                                 <Label Text="When off, OT Tracker uses local SQLite data" Style="{StaticResource MutedLabel}" />
                             </VerticalStackLayout>
-                            <Switch Grid.Column="1" IsToggled="{Binding UseSupabase}" />
+                            <Switch Grid.Column="1" IsToggled="{Binding UseSupabase}" Toggled="Switch_Toggled" />
                         </Grid>
-                        <material:TextField
+                        <VerticalStackLayout IsVisible="{Binding UseSupabase}">
+                            <material:TextField
                         Title="Project URL"
                         Keyboard="Url"
                         Text="{Binding SupabaseUrl}" />
-                        <material:TextField
+                            <material:TextField
                         Title="Anon key"
                         Text="{Binding SupabaseAnonKey}" />
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                            <Button Text="Save Connection" Command="{Binding SaveSupabaseConfigCommand}" BackgroundColor="{StaticResource GreenMid}" />
-                            <Button Grid.Column="1" Text="Sign out" Command="{Binding SignOutCommand}" BackgroundColor="{StaticResource Red}" />
-                        </Grid>
-                        <Button Text="Apply data source" Command="{Binding ApplyDataSourceCommand}" Style="{StaticResource PrimaryButton}" />
+                        </VerticalStackLayout>
+                        <Button IsVisible="{Binding UseSupabase}" Text="Apply data source" Margin="0,10,0,0" Command="{Binding ApplyDataSourceCommand}" Style="{StaticResource PrimaryButton}" />
                     </VerticalStackLayout>
                 </Border>
-
                 <Label Text="DATA" Style="{StaticResource MutedLabel}" />
                 <Border Style="{StaticResource Card}">
                     <VerticalStackLayout Spacing="10">
@@ -149,7 +146,6 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Red}" FontSize="12" />
                 <Button Text="Save settings" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" />
             </VerticalStackLayout>
         </ScrollView>

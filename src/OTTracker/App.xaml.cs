@@ -57,8 +57,7 @@ public partial class App : Application
             var sessionRestored = await RestoreSessionAsync();
             if (!sessionRestored)
             {
-                MainPage = _services.GetRequiredService<LoginPage>();
-                return;
+                await _modeService.SetUseSupabaseAsync(false);
             }
         }
 
@@ -69,8 +68,7 @@ public partial class App : Application
         }
         catch
         {
-            MainPage = _services.GetRequiredService<LoginPage>();
-            return;
+            settings = new AppSettings();
         }
 
         if (settings.PinLockEnabled && await _auth.HasPinAsync())
@@ -93,6 +91,7 @@ public partial class App : Application
             }
 
             var supabase = _clientProvider.Client;
+            if (supabase == null) return false;
             await supabase.Auth.SetSession(savedSession.Value.AccessToken, savedSession.Value.RefreshToken);
             return supabase.Auth.CurrentUser is not null;
         }

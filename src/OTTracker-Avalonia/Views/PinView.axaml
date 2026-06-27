@@ -3,6 +3,7 @@
              xmlns:vm="using:OTTracker_Avalonia.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="OTTracker_Avalonia.Views.PinView"
              x:DataType="vm:PinViewModel">
@@ -21,11 +22,7 @@
             <Grid RowDefinitions="Auto, Auto, Auto, Auto, *">
                 
                 <!-- Icon Lock Header -->
-                <TextBlock Grid.Row="0" 
-                           Text="🔒" 
-                           FontSize="44" 
-                           HorizontalAlignment="Center" 
-                           Margin="0,20,0,10"/>
+                <materialIcons:MaterialIcon Grid.Row="0" Kind="Lock" Width="44" Height="44" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,20,0,10"/>
                 
                 <!-- Title -->
                 <TextBlock Grid.Row="1" 
@@ -94,7 +91,9 @@
                     <!-- Placeholder or clear button -->
                     <Border Grid.Row="3" Grid.Column="0" Margin="4"/>
                     <Button Grid.Row="3" Grid.Column="1" Content="0" Classes="Secondary" Command="{Binding PressCommand}" CommandParameter="0" Margin="4" CornerRadius="30" FontSize="18"/>
-                    <Button Grid.Row="3" Grid.Column="2" Content="⌫" Classes="Secondary" Command="{Binding BackspaceCommand}" Margin="4" CornerRadius="30" FontSize="18" Foreground="{DynamicResource DangerBrush}"/>
+                    <Button Grid.Row="3" Grid.Column="2" Classes="Secondary" Command="{Binding BackspaceCommand}" Margin="4" CornerRadius="30">
+                        <materialIcons:MaterialIcon Kind="Backspace" Width="18" Height="18" Foreground="{DynamicResource DangerBrush}"/>
+                    </Button>
                 </Grid>
                 
             </Grid>

@@ -3,6 +3,7 @@
         xmlns:vm="using:OTTracker_Avalonia.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         mc:Ignorable="d" 
         Width="1050" Height="700"
         MinWidth="950" MinHeight="650"
@@ -33,12 +34,12 @@
                     
                     <!-- Sidebar Logo / Title -->
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="10,0,0,30">
-                        <TextBlock Text="OT TRACKER" 
-                                   FontFamily="{StaticResource OutfitFont}" 
-                                   FontWeight="Bold" 
-                                   FontSize="25" 
+						<TextBlock Text="OT TRACKER"
+                                   FontFamily="{StaticResource OutfitFont}"
+                                   FontWeight="Bold"
+                                   FontSize="25"
                                    LetterSpacing="1"
-                                   Foreground="{DynamicResource AccentBrush}" 
+                                   Foreground="{DynamicResource AccentBrush}"
                                    VerticalAlignment="Center"/>
                     </StackPanel>
 
@@ -52,7 +53,7 @@
                                 BorderThickness="{Binding SelectedMenuIndex, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=0}"
                                 BorderBrush="{DynamicResource AccentBrush}">
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="📊" VerticalAlignment="Center"/>
+                                <materialIcons:MaterialIcon Kind="ViewDashboard" Width="18" Height="18" VerticalAlignment="Center"/>
                                 <TextBlock Text="Dashboard" FontFamily="{StaticResource InterFont}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
@@ -65,7 +66,7 @@
                                 BorderThickness="{Binding SelectedMenuIndex, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=1}"
                                 BorderBrush="{DynamicResource AccentBrush}">
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="📝" VerticalAlignment="Center"/>
+                                <materialIcons:MaterialIcon Kind="CalendarPlus" Width="18" Height="18" VerticalAlignment="Center"/>
                                 <TextBlock Text="Log Overtime" FontFamily="{StaticResource InterFont}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
@@ -78,7 +79,7 @@
                                 BorderThickness="{Binding SelectedMenuIndex, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=2}"
                                 BorderBrush="{DynamicResource AccentBrush}">
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="📅" VerticalAlignment="Center"/>
+                                <materialIcons:MaterialIcon Kind="CalendarRange" Width="18" Height="18" VerticalAlignment="Center"/>
                                 <TextBlock Text="History" FontFamily="{StaticResource InterFont}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
@@ -91,7 +92,7 @@
                                 BorderThickness="{Binding SelectedMenuIndex, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=3}"
                                 BorderBrush="{DynamicResource AccentBrush}">
                             <StackPanel Orientation="Horizontal" Spacing="12">
-                                <TextBlock Text="⚙" VerticalAlignment="Center"/>
+                                <materialIcons:MaterialIcon Kind="Cog" Width="18" Height="18" VerticalAlignment="Center"/>
                                 <TextBlock Text="Settings" FontFamily="{StaticResource InterFont}" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
@@ -108,11 +109,11 @@
                                     Background="{DynamicResource AccentBrush}" 
                                     CornerRadius="18" 
                                     Margin="0,0,10,0">
-                                <TextBlock Text="👤" 
-                                           HorizontalAlignment="Center" 
-                                           VerticalAlignment="Center" 
-                                           Foreground="White" 
-                                           FontSize="16"/>
+                                <materialIcons:MaterialIcon Kind="Account" 
+                                                            Width="20" Height="20" 
+                                                            HorizontalAlignment="Center" 
+                                                            VerticalAlignment="Center" 
+                                                            Foreground="White"/>
                             </Border>
                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                 <TextBlock Text="Senior Developer" 

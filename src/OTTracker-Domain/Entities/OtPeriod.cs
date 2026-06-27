@@ -1,10 +1,13 @@
 using System;
+using System.Globalization;
 
 namespace OTTracker.Domain.Entities;
 
 public readonly record struct OtPeriod(DateTime Start, DateTime End)
 {
-    public string DisplayText => $"{Start:dd/MM/yy} - {End:dd/MM/yy}";
+    private static readonly Calendar Gregorian = new GregorianCalendar();
+
+    public string DisplayText => $"{Start:dd/MM/yyyy} - {End:dd/MM/yyyy}";
 
     public OtPeriod AddMonths(int months) => new(Start.AddMonths(months), End.AddMonths(months));
 
@@ -17,17 +20,22 @@ public readonly record struct OtPeriod(DateTime Start, DateTime End)
     public static OtPeriod FromDate(DateTime date, int startDay, int endDay)
     {
         var target = date.Date;
-        var start = CreateDate(target.Year, target.Month, startDay);
+        var targetYear = Gregorian.GetYear(target);
+        var targetMonth = Gregorian.GetMonth(target);
+
+        var start = CreateDate(targetYear, targetMonth, startDay);
         var end = GetEndDate(start, startDay, endDay);
 
         if (target < start)
         {
-            start = CreateDate(target.AddMonths(-1).Year, target.AddMonths(-1).Month, startDay);
+            var prevTarget = target.AddMonths(-1);
+            start = CreateDate(Gregorian.GetYear(prevTarget), Gregorian.GetMonth(prevTarget), startDay);
             end = GetEndDate(start, startDay, endDay);
         }
         else if (target > end)
         {
-            start = CreateDate(target.AddMonths(1).Year, target.AddMonths(1).Month, startDay);
+            var nextTarget = target.AddMonths(1);
+            start = CreateDate(Gregorian.GetYear(nextTarget), Gregorian.GetMonth(nextTarget), startDay);
             end = GetEndDate(start, startDay, endDay);
         }
 
@@ -37,7 +45,7 @@ public readonly record struct OtPeriod(DateTime Start, DateTime End)
     private static DateTime GetEndDate(DateTime start, int startDay, int endDay)
     {
         var endMonth = startDay <= endDay ? start : start.AddMonths(1);
-        return CreateDate(endMonth.Year, endMonth.Month, endDay);
+        return CreateDate(Gregorian.GetYear(endMonth), Gregorian.GetMonth(endMonth), endDay);
     }
 
     private static DateTime CreateDate(int year, int month, int day)

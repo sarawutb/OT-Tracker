@@ -18,4 +18,10 @@ public partial class SettingsPage : ContentPage
         base.OnAppearing();
         await _viewModel.LoadAsync();
     }
+
+    private async void Switch_Toggled(object sender, ToggledEventArgs e)
+    {
+        if (e.Value == false)
+            await _viewModel.CheckUseSupabase();
+    }
 }

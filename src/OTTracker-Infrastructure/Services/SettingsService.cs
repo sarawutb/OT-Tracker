@@ -13,14 +13,13 @@ public sealed class SettingsService(Supabase.Client client) : ISettingsService
 
     public async Task<AppSettings> GetAsync()
     {
-        var currentUser = _client.Auth.CurrentUser;
-        if (currentUser is null)
+        if (!SupabaseAuthUser.TryGetUserId(_client, out var userId))
         {
             return new AppSettings();
         }
 
         var response = await _client.From<AppSettings>()
-            .Filter("user_id", Constants.Operator.Equals, currentUser.Id)
+            .Filter("user_id", Constants.Operator.Equals, userId)
             .Get();
 
         var settings = response.Models.FirstOrDefault();
@@ -32,8 +31,8 @@ public sealed class SettingsService(Supabase.Client client) : ISettingsService
         // If it doesn't exist yet, we create it
         settings = new AppSettings
         {
-            UserId = currentUser.Id,
-            UserName = currentUser.Email?.Split('@').FirstOrDefault() ?? "Username"
+            UserId = settings.UserId,
+            UserName = _client.Auth.CurrentUser?.Email?.Split('@').FirstOrDefault() ?? "Username"
         };
         await _client.From<AppSettings>().Insert(settings);
         return settings;
@@ -41,13 +40,7 @@ public sealed class SettingsService(Supabase.Client client) : ISettingsService
 
     public async Task SaveAsync(AppSettings settings)
     {
-        var currentUser = _client.Auth.CurrentUser;
-        if (currentUser is null)
-        {
-            return;
-        }
-
-        settings.UserId = currentUser.Id;
+        settings.UserId = SupabaseAuthUser.GetRequiredUserId(_client, settings.UserId);
         settings.ReviseDate = DateTime.Now;
 
         await _client.From<AppSettings>().Upsert(settings);

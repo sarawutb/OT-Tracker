@@ -4,6 +4,7 @@
              xmlns:entities="using:OTTracker.Domain.Entities"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="OTTracker_Avalonia.Views.DashboardView"
              x:DataType="vm:DashboardViewModel">
@@ -25,7 +26,7 @@
                                    FontSize="24" 
                                    Foreground="{DynamicResource AccentBrush}"/>
                     </StackPanel>
-                    <TextBlock Grid.Column="1" Text="👋" FontSize="36" VerticalAlignment="Center"/>
+                    <materialIcons:MaterialIcon Grid.Column="1" Kind="HandWave" Width="36" Height="36" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
@@ -56,7 +57,7 @@
                                    FontSize="12" 
                                    Foreground="{DynamicResource TextMutedBrush}"/>
                     </StackPanel>
-                    <TextBlock Grid.Column="1" Text="⏳" FontSize="32" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    <materialIcons:MaterialIcon Grid.Column="1" Kind="ClockOutline" Width="32" Height="32" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                 </Grid>
             </Border>
 
@@ -95,9 +96,9 @@
                                         </Grid.RowDefinitions>
                                         <Border Grid.Row="1" 
                                                 Classes="ChartBar"
+                                                Tag="{Binding IsWeekend}"
                                                 Width="24" 
-                                                VerticalAlignment="Stretch"
-                                                Background="{Binding IsWeekend, Converter={StaticResource ConditionConverter}, ConverterParameter='#FFBE3B;#2DCA73'}"/>
+                                                VerticalAlignment="Stretch"/>
                                     </Grid>
                                     
                                     <!-- Day Label -->
@@ -139,13 +140,13 @@
                                    Foreground="#CCCCCC" 
                                    LetterSpacing="1"/>
                         <ToggleButton Grid.Column="1" 
-                                      IsChecked="{Binding MaskEarnings}"
-                                      Background="Transparent" 
-                                      BorderThickness="0" 
-                                      Padding="4">
-                            <TextBlock Text="{Binding MaskEarnings, Converter={StaticResource ConditionConverter}, ConverterParameter='👁;🙈'}" 
-                                       Foreground="White" 
-                                       FontSize="16"/>
+                                                                      IsChecked="{Binding MaskEarnings}"
+                                                                      Background="Transparent" 
+                                                                      BorderThickness="0" 
+                                                                      Padding="4">
+                            <materialIcons:MaterialIcon Kind="{Binding MaskEarnings, Converter={StaticResource ConditionConverter}, ConverterParameter='Eye;EyeOff'}" 
+                                                        Foreground="White" 
+                                                        Width="20" Height="20"/>
                         </ToggleButton>
                     </Grid>
                     

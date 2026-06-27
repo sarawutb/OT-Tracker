@@ -23,6 +23,7 @@
                     <StackPanel Spacing="6">
                         <TextBlock Text="Date" FontFamily="{StaticResource InterFont}" FontWeight="Medium" FontSize="13"/>
                         <CalendarDatePicker SelectedDate="{Binding EntryDate}" 
+                                            CustomDateFormatString="dd/MM/yyyy"
                                             HorizontalAlignment="Stretch"
                                             Background="{DynamicResource BgInputBrush}"
                                             BorderBrush="{DynamicResource BorderBrush}"

@@ -4,6 +4,8 @@ namespace OTTracker.ViewModels;
 
 public abstract partial class BaseViewModel : ObservableObject
 {
+    public Page? CurrentPage => App.Current?.MainPage;
+
     [ObservableProperty]
     private bool isBusy;
 

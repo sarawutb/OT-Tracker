@@ -11,8 +11,10 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = new System.Globalization.CultureInfo("en-US");
-        System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = new System.Globalization.CultureInfo("en-US");
+        var culture = new System.Globalization.CultureInfo("en-US");
+        culture.DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
+        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = culture;
+        System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = culture;
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

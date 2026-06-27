@@ -3,6 +3,7 @@
              xmlns:vm="using:OTTracker_Avalonia.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="OTTracker_Avalonia.Views.HistoryView"
              x:DataType="vm:HistoryViewModel">
@@ -16,11 +17,12 @@
                     <!-- Month Navigator Header Row -->
                     <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Margin="0,0,0,20">
                         <Button Grid.Column="0" 
-                                Content="◀" 
                                 Classes="Secondary" 
                                 Command="{Binding PreviousMonthCommand}"
                                 Padding="12,8"
-                                CornerRadius="6"/>
+                                CornerRadius="6">
+                            <materialIcons:MaterialIcon Kind="ChevronLeft" Width="18" Height="18"/>
+                        </Button>
                         <TextBlock Grid.Column="1" 
                                    Text="{Binding MonthText}" 
                                    FontFamily="{StaticResource OutfitFont}" 
@@ -29,11 +31,12 @@
                                    HorizontalAlignment="Center" 
                                    VerticalAlignment="Center"/>
                         <Button Grid.Column="2" 
-                                Content="▶" 
                                 Classes="Secondary" 
                                 Command="{Binding NextMonthCommand}"
                                 Padding="12,8"
-                                CornerRadius="6"/>
+                                CornerRadius="6">
+                            <materialIcons:MaterialIcon Kind="ChevronRight" Width="18" Height="18"/>
+                        </Button>
                     </Grid>
 
                     <!-- Calendar Header Days of Week -->
@@ -60,15 +63,34 @@
                                         BorderThickness="{Binding IsSelected, Converter={StaticResource ConditionConverter}, ConverterParameter='2;0'}"
                                         BorderBrush="{DynamicResource AccentBrush}"
                                         CornerRadius="6"
-                                        Background="{Binding IsToday, Converter={StaticResource ConditionConverter}, ConverterParameter='#252347;#00000000'}">
+                                        Tag="{Binding IsToday}">
+                                    <Border.Styles>
+                                        <Style Selector="Border">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                        </Style>
+                                        <Style Selector="Border[Tag=True]">
+                                            <Setter Property="Background" Value="{DynamicResource AccentLightBrush}"/>
+                                        </Style>
+                                    </Border.Styles>
                                     <Grid>
                                         <TextBlock Text="{Binding DayText}" 
                                                    FontFamily="{StaticResource InterFont}"
                                                    FontWeight="{Binding IsToday, Converter={StaticResource ConditionConverter}, ConverterParameter='Bold;Normal'}"
-                                                   Foreground="{Binding IsBlank, Converter={StaticResource ConditionConverter}, ConverterParameter='#00000000;#FFFFFFFF'}"
                                                    HorizontalAlignment="Center" 
                                                    VerticalAlignment="Center"
-                                                   FontSize="12"/>
+                                                   FontSize="12">
+                                            <TextBlock.Styles>
+                                                <Style Selector="TextBlock">
+                                                    <Setter Property="Foreground" Value="{DynamicResource TextMainBrush}"/>
+                                                </Style>
+                                                <Style Selector="TextBlock[Tag=True]">
+                                                    <Setter Property="Foreground" Value="Transparent"/>
+                                                </Style>
+                                            </TextBlock.Styles>
+                                            <TextBlock.Tag>
+                                                <Binding Path="IsBlank"/>
+                                            </TextBlock.Tag>
+                                        </TextBlock>
                                         
                                         <!-- Dot indicator if day has logged entries -->
                                         <Ellipse Width="4" Height="4" 
@@ -154,17 +176,19 @@
 
                                             <!-- Edit / Delete actions -->
                                             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                                <Button Content="✏" 
-                                                        Classes="Secondary" 
-                                                        Padding="8,6"
-                                                        Command="{Binding $parent[UserControl].((vm:HistoryViewModel)DataContext).EditCommand}" 
-                                                        CommandParameter="{Binding}"/>
-                                                <Button Content="🗑" 
-                                                        Classes="Secondary" 
-                                                        Padding="8,6"
-                                                        Foreground="{DynamicResource DangerBrush}" 
-                                                        Command="{Binding $parent[UserControl].((vm:HistoryViewModel)DataContext).DeleteCommand}" 
-                                                        CommandParameter="{Binding}"/>
+                                                 <Button Classes="Secondary" 
+                                                         Padding="8,6"
+                                                         Command="{Binding $parent[UserControl].((vm:HistoryViewModel)DataContext).EditCommand}" 
+                                                         CommandParameter="{Binding}">
+                                                     <materialIcons:MaterialIcon Kind="Pencil" Width="14" Height="14"/>
+                                                 </Button>
+                                                 <Button Classes="Secondary" 
+                                                         Padding="8,6"
+                                                         Foreground="{DynamicResource DangerBrush}" 
+                                                         Command="{Binding $parent[UserControl].((vm:HistoryViewModel)DataContext).DeleteCommand}" 
+                                                         CommandParameter="{Binding}">
+                                                     <materialIcons:MaterialIcon Kind="Delete" Width="14" Height="14"/>
+                                                 </Button>
                                             </StackPanel>
                                         </Grid>
                                     </Border>
