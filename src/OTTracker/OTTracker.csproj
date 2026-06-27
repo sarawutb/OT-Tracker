@@ -29,8 +29,8 @@
 		<ApplicationId>com.company.ottracker</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>2.0.7</ApplicationDisplayVersion>
-		<ApplicationVersion>8</ApplicationVersion>
+		<ApplicationDisplayVersion>2.2.9</ApplicationDisplayVersion>
+		<ApplicationVersion>10</ApplicationVersion>
 
 		<UseMaterial3>true</UseMaterial3>
 

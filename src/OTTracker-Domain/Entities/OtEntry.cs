@@ -14,9 +14,14 @@ public sealed class OtEntry : BaseModel
     [Column("user_id")]
     public string UserId { get; set; } = string.Empty;
 
+    private DateTime _entryDate = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Utc);
     [Column("entry_date")]
     [Newtonsoft.Json.JsonConverter(typeof(InvariantDateTimeConverter))]
-    public DateTime EntryDate { get; set; } = DateTime.Today;
+    public DateTime EntryDate
+    {
+        get => _entryDate;
+        set => _entryDate = DateTime.SpecifyKind(value.Date, DateTimeKind.Utc);
+    }
 
     [Column("day_type")]
     public int DayTypeIndex { get; set; }

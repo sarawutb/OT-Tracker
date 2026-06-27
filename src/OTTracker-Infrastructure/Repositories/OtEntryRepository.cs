@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
@@ -69,7 +70,6 @@ public sealed class OtEntryRepository(ISupabaseClientProvider clientProvider) : 
         var client = Client;
         entry.UserId = SupabaseAuthUser.GetRequiredUserId(client, entry.UserId);
         entry.ReviseDate = DateTime.Now;
-
         if (entry.Id == 0)
         {
             entry.CreateDate = DateTime.Now;

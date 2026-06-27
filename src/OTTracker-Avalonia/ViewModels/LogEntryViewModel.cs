@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Enums;
 using OTTracker.Domain.Interfaces;
-using OTTracker.Domain.Interfaces;
 using OTTracker.Infrastructure.Services;
 
 namespace OTTracker_Avalonia.ViewModels;

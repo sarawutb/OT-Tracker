@@ -23,9 +23,19 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private string _userId = string.Empty;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(SupabaseActionText))]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(SupabaseStatusText))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(ShowSupabaseCredentials))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(ShowSupabaseAction))]
     private bool useSupabase;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(SupabaseActionText))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(SupabaseActionColor))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(SupabaseStatusText))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(ShowSupabaseSwitch))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(ShowSupabaseCredentials))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(ShowSupabaseAction))]
+    private bool isSupabaseConnected;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string supabaseUrl = string.Empty;
@@ -82,7 +92,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private bool biometricUnlockEnabled;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private AppSettings appSetting;
+    private AppSettings appSetting = new();
 
     public SettingsViewModel(
         ISettingsService settingsService,
@@ -139,11 +149,21 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     public string FormulaText => $"{BaseMonthlySalary:N0} / ({WorkingDaysPerMonth} x {HoursPerDay:0.##}) = {_calculator.GetHourlyRate(ToSettings()):N2}";
 
-    public string SupabaseActionText => UseSupabase ? "Disconnect" : "Connect";
+    public string SupabaseActionText => IsSupabaseConnected ? "Disconnect" : "Connect";
 
-    public Color SupabaseActionColor => UseSupabase ? GetColor("GreenMid") : GetColor("Red");
+    public Color SupabaseActionColor => IsSupabaseConnected ? GetColor("Red") : GetColor("GreenMid");
 
-    public string SupabaseStatusText => UseSupabase ? "Connected to Supabase" : "Using local SQLite data";
+    public string SupabaseStatusText => IsSupabaseConnected
+        ? "Connected to Supabase"
+        : UseSupabase
+            ? "Enter your Supabase connection details"
+            : "Using local SQLite data";
+
+    public bool ShowSupabaseSwitch => !IsSupabaseConnected;
+
+    public bool ShowSupabaseCredentials => !IsSupabaseConnected && UseSupabase;
+
+    public bool ShowSupabaseAction => IsSupabaseConnected || UseSupabase;
 
     private static Color GetColor(string resourceKey)
     {
@@ -158,7 +178,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         ErrorMessage = string.Empty;
 
         var credentials = _configService.GetCredentials();
-        UseSupabase = _modeService.UseSupabase;
+        IsSupabaseConnected = _modeService.UseSupabase;
+        UseSupabase = IsSupabaseConnected;
         SupabaseUrl = credentials.Url;
         SupabaseAnonKey = credentials.AnonKey;
 
@@ -223,7 +244,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private async Task ApplyDataSourceAsync()
     {
         ErrorMessage = string.Empty;
-        IsBusy = true;
 
         try
         {
@@ -236,7 +256,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
                     return;
                 }
 
-                await _configService.SaveCredentialsAsync(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
                 _clientProvider.RecreateClient(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
 
                 var email = await CurrentPage?.DisplayPromptAsync(
@@ -274,6 +293,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
                 _userId = parsedUserId.ToString();
                 settings.UserId = _userId;
                 var loaded = await _syncService.EnableSupabaseAsync(settings);
+                await _configService.SaveCredentialsAsync(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
                 await LoadAsync();
                 _events.NotifySettingsChanged();
                 _events.NotifyEntriesChanged();
@@ -311,13 +331,10 @@ public sealed partial class SettingsViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            UseSupabase = _modeService.UseSupabase;
+            IsSupabaseConnected = _modeService.UseSupabase;
+            UseSupabase = IsSupabaseConnected || UseSupabase;
             ErrorMessage = ex.Message;
             await CurrentPage?.DisplayAlert("Error Message", ErrorMessage, "OK");
-        }
-        finally
-        {
-            IsBusy = false;
         }
     }
 
@@ -504,7 +521,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
             await ChangePinAsync();
         else
         {
-            if (_isPinLockEnabled)
+            if (_isPinLockEnabled && !PinLockEnabled)
             {
                 await _auth.ClearPinAsync();
                 await SaveDeviceSecurityAsync();

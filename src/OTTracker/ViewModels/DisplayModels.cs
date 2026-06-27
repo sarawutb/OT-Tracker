@@ -17,7 +17,7 @@ public sealed partial class EntryDisplay : ObservableObject
 
     public OtEntry Entry { get; }
 
-    public string DateText => Entry.EntryDate.ToString("ddd, MMM d");
+    public string DateText => Entry.EntryDate.ToString("ddd,d MMM");
 
     public string DayBox => Entry.EntryDate.Day.ToString("00");
 

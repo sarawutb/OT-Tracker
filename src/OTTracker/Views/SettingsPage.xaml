@@ -124,19 +124,18 @@
                                 <Label Text="{Binding SupabaseStatusText}" Style="{StaticResource MutedLabel}" />
                             </VerticalStackLayout>
                             <Switch
-                                IsVisible="{Binding UseSupabase, Converter={StaticResource InverseBooleanConverter}}"
                                 Grid.Column="1"
-                                InputTransparent="True"
                                 IsToggled="{Binding UseSupabase}"
+                                IsVisible="{Binding ShowSupabaseSwitch}"
                                 SemanticProperties.Description="Supabase connection status" />
                             <Label
-                                IsVisible="{Binding UseSupabase}"
-                                Grid.Column="1" 
+                                Grid.Column="1"
+                                IsVisible="{Binding IsSupabaseConnected}"
                                 Style="{StaticResource MutedLabel}"
                                 Text="Connected"
                                 TextColor="{StaticResource GreenMid}"/>
                         </Grid>
-                        <VerticalStackLayout IsVisible="{Binding UseSupabase, Converter={StaticResource InverseBooleanConverter}}">
+                        <VerticalStackLayout IsVisible="{Binding ShowSupabaseCredentials}">
                             <material:TextField
                         Title="Project URL"
                         Keyboard="Url"
@@ -148,6 +147,7 @@
                         <Button
                             Margin="0,10,0,0"
                             Command="{Binding ApplyDataSourceCommand}"
+                            IsVisible="{Binding ShowSupabaseAction}"
                             Style="{StaticResource PrimaryButton}"
                             Text="{Binding SupabaseActionText}"
                             BackgroundColor="{Binding SupabaseActionColor}"/>

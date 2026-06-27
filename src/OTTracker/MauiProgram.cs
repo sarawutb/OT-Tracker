@@ -8,6 +8,7 @@ using OTTracker.Domain.Interfaces;
 using OTTracker.Infrastructure.Repositories;
 using OTTracker.Infrastructure.Services;
 using OTTracker.Services;
+using OTTracker.Services.GlobalExceptions;
 using OTTracker.ViewModels;
 using OTTracker.Views;
 using UraniumUI;
@@ -58,6 +59,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<IAuthService, AuthService>();
         builder.Services.AddSingleton<Services.IBiometricService, Services.BiometricService>();
         builder.Services.AddSingleton<ICsvExportService, MauiCsvExportService>();
+        builder.Services.AddSingleton<IExceptionLogger, ExceptionLogger>();
+        builder.Services.AddSingleton<IUserExceptionNotifier, MauiUserExceptionNotifier>();
+        builder.Services.AddSingleton<GlobalExceptionHandler>();
 
         builder.Services.AddTransient<PinViewModel>();
         builder.Services.AddScoped<DashboardViewModel>();
@@ -78,6 +82,8 @@ public static class MauiProgram
         CultureInfo.DefaultThreadCurrentCulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-        return builder.Build();
+        var app = builder.Build();
+        app.Services.GetRequiredService<GlobalExceptionHandler>().Register();
+        return app;
     }
 }
