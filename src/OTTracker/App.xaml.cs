@@ -9,7 +9,7 @@ namespace OTTracker;
 public partial class App : Application
 {
     private readonly IServiceProvider _services;
-    private readonly ISettingsService _settings;
+    private readonly LocalSettingsService _localSettings;
     private readonly IAuthService _auth;
     private readonly ISupabaseClientProvider _clientProvider;
     private readonly ISupabaseSessionService _sessionService;
@@ -17,14 +17,14 @@ public partial class App : Application
 
     public App(
         IServiceProvider services,
-        ISettingsService settings,
+        LocalSettingsService localSettings,
         IAuthService auth,
         ISupabaseClientProvider clientProvider,
         ISupabaseSessionService sessionService,
         IDataSourceModeService modeService)
     {
         _services = services;
-        _settings = settings;
+        _localSettings = localSettings;
         _auth = auth;
         _clientProvider = clientProvider;
         _sessionService = sessionService;
@@ -64,7 +64,7 @@ public partial class App : Application
         AppSettings settings;
         try
         {
-            settings = await _settings.GetAsync();
+            settings = await _localSettings.GetAsync();
         }
         catch
         {

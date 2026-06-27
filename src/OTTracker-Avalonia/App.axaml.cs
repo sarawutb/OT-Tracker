@@ -90,8 +90,9 @@ public partial class App : Avalonia.Application
                             settings = new AppSettings();
                         }
                         var hasPin = await authService.HasPinAsync();
+                        var pinLockEnabled = await authService.IsPinLockEnabledAsync();
 
-                        if (settings.PinLockEnabled && hasPin)
+                        if (pinLockEnabled && hasPin)
                         {
                             var pinViewModel = Services.GetRequiredService<PinViewModel>();
                             pinViewModel.Unlocked = async () =>

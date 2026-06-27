@@ -11,7 +11,7 @@
     <Grid Background="{DynamicResource BgAppBrush}">
         <!-- Glassmorphism Card Container -->
         <Border Classes="Card" 
-                Width="360" Height="500" 
+                Width="360"
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center"
                 BoxShadow="0 10 30 0 #40000000"
@@ -19,10 +19,11 @@
                 BorderBrush="{DynamicResource BorderBrush}"
                 Background="{DynamicResource BgWindowBrush}">
             
-            <Grid RowDefinitions="Auto, Auto, Auto, Auto, *">
+            <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
                 
                 <!-- Icon Lock Header -->
-                <materialIcons:MaterialIcon Grid.Row="0" Kind="Lock" Width="44" Height="44" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,20,0,10"/>
+				<Image Grid.Row="0" Source="/Assets/ottracker-logo.png" Height="100"/>
+                <!--<materialIcons:MaterialIcon Grid.Row="0" Kind="Lock" Width="44" Height="44" Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,20,0,10"/>-->
                 
                 <!-- Title -->
                 <TextBlock Grid.Row="1" 
@@ -31,7 +32,7 @@
                            FontWeight="Bold" 
                            FontSize="18" 
                            HorizontalAlignment="Center" 
-                           Margin="0,0,0,6"/>
+                           Margin="0,10,0,6"/>
 
                 <TextBlock Grid.Row="2" 
                            Text="{Binding BiometricHint}" 
@@ -95,7 +96,17 @@
                         <materialIcons:MaterialIcon Kind="Backspace" Width="18" Height="18" Foreground="{DynamicResource DangerBrush}"/>
                     </Button>
                 </Grid>
-                
+				
+				<!-- Version display area -->
+				<TextBlock Grid.Row="5"
+                           Text="{Binding VersionDisplay}"
+                           FontFamily="{StaticResource InterFont}"
+                           FontSize="12"
+                           Foreground="{DynamicResource FontSizeLarge}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Bottom"
+                           Margin="0,0,0,10"
+                           Height="20"/>
             </Grid>
         </Border>
     </Grid>

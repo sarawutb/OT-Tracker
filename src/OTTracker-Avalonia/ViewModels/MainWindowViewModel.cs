@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     private int _selectedMenuIndex = 0;
+
+    public string? TitleDisplay => $"OT Tracker - v{AppVersion}";
 
     public MainWindowViewModel(IServiceProvider services)
     {

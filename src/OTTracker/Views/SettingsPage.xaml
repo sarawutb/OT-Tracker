@@ -102,10 +102,10 @@
                                 <Label Text="PIN lock" TextColor="{StaticResource Ink}" />
                                 <Label Text="Require PIN on launch" Style="{StaticResource MutedLabel}" />
                             </VerticalStackLayout>
-                            <Switch Grid.Column="1" IsToggled="{Binding PinLockEnabled}" />
+                            <Switch Grid.Column="1" IsToggled="{Binding PinLockEnabled}" Toggled="Switch_PinLock_Toggled"/>
                         </Grid>
-                        <Button Text="Change PIN" Command="{Binding ChangePinCommand}" />
-                        <Grid ColumnDefinitions="*,Auto">
+                        <Button Text="Change PIN" IsVisible="{Binding PinLockEnabled}" Command="{Binding ChangePinCommand}" />
+                        <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding PinLockEnabled}" >
                             <VerticalStackLayout>
                                 <Label Text="Biometric unlock" TextColor="{StaticResource Ink}" />
                                 <Label Text="Requires PIN lock and device fingerprint setup" Style="{StaticResource MutedLabel}" />
@@ -123,7 +123,7 @@
                                 <Label Text="Use Supabase" TextColor="{StaticResource Ink}" />
                                 <Label Text="When off, OT Tracker uses local SQLite data" Style="{StaticResource MutedLabel}" />
                             </VerticalStackLayout>
-                            <Switch Grid.Column="1" IsToggled="{Binding UseSupabase}" Toggled="Switch_Toggled" />
+                            <Switch Grid.Column="1" IsToggled="{Binding UseSupabase}" Toggled="Switch_UseSupabase_Toggled" />
                         </Grid>
                         <VerticalStackLayout IsVisible="{Binding UseSupabase}">
                             <material:TextField

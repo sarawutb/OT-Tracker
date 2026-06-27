@@ -11,4 +11,8 @@ public interface IAuthService
     Task<bool> VerifyPinAsync(string pin);
 
     Task ClearPinAsync();
+
+    Task<bool> IsPinLockEnabledAsync();
+
+    Task SetPinLockEnabledAsync(bool enabled);
 }

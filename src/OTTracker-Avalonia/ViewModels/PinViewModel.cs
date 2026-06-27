@@ -15,6 +15,9 @@ public sealed partial class PinViewModel : ViewModelBase
     [ObservableProperty]
     private AppSettings _appSetting = new();
 
+    [ObservableProperty]
+    private string _versionDisplay = string.Empty;
+
     private string _enteredPin = string.Empty;
     public string EnteredPin
     {
@@ -34,6 +37,7 @@ public sealed partial class PinViewModel : ViewModelBase
         _settingsService = settingsService;
         PressCommand = new AsyncRelayCommand<string>(PressAsync);
         BackspaceCommand = new RelayCommand(Backspace);
+        VersionDisplay = $"v{AppVersion}";
     }
 
     public IAsyncRelayCommand<string> PressCommand { get; }

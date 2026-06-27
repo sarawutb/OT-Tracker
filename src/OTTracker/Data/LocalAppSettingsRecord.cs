@@ -8,6 +8,8 @@ public sealed class LocalAppSettingsRecord
     [PrimaryKey]
     public int Id { get; set; } = 1;
 
+    public string UserId { get; set; } = string.Empty;
+
     public double BaseMonthlySalary { get; set; } = 30000d;
 
     public int WorkingDaysPerMonth { get; set; } = 30;
@@ -45,6 +47,7 @@ public sealed class LocalAppSettingsRecord
     public static LocalAppSettingsRecord FromDomain(AppSettings settings) => new()
     {
         Id = 1,
+        UserId = settings.UserId,
         BaseMonthlySalary = (double)settings.BaseMonthlySalary,
         WorkingDaysPerMonth = settings.WorkingDaysPerMonth,
         HoursPerDay = (double)settings.HoursPerDay,
@@ -66,6 +69,7 @@ public sealed class LocalAppSettingsRecord
 
     public AppSettings ToDomain() => new()
     {
+        UserId = UserId,
         BaseMonthlySalary = (decimal)BaseMonthlySalary,
         WorkingDaysPerMonth = WorkingDaysPerMonth,
         HoursPerDay = (decimal)HoursPerDay,

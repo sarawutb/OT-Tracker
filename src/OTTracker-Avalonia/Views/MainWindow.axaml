@@ -12,7 +12,8 @@
         x:DataType="vm:MainWindowViewModel"
         Background="{DynamicResource BgAppBrush}"
         Foreground="{DynamicResource TextMainBrush}"
-        Title="OT Tracker - Desktop Client">
+		Icon="/Assets/ottracker-logo.png"
+        Title="{Binding TitleDisplay}">
 
     <Grid>
         <!-- Full screen lock mode (No sidebar visible) -->

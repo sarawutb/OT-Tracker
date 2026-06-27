@@ -86,7 +86,7 @@ public sealed class SupabaseConfigService : ISupabaseConfigService
         {
             // Ignore config read exceptions and fall back
         }
-        return ("https://ouahjylzsjiqnhugysmw.supabase.co", "");
+        return (string.Empty, string.Empty);
     }
 
     public async Task SaveCredentialsAsync(string url, string anonKey)

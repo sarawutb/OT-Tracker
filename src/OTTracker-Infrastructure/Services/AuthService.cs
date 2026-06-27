@@ -16,6 +16,13 @@ public sealed class AuthService : IAuthService
         PinFileName
     );
 
+    private const string PinLockFileName = "pin_lock.dat";
+    private static readonly string PinLockFilePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "OTTracker",
+        PinLockFileName
+    );
+
     public Task<bool> HasPinAsync()
     {
         return Task.FromResult(File.Exists(FilePath));
@@ -79,7 +86,61 @@ public sealed class AuthService : IAuthService
         {
             File.Delete(FilePath);
         }
+        if (File.Exists(PinLockFilePath))
+        {
+            File.Delete(PinLockFilePath);
+        }
         return Task.CompletedTask;
+    }
+
+    public async Task<bool> IsPinLockEnabledAsync()
+    {
+        if (!File.Exists(PinLockFilePath)) return false;
+
+        try
+        {
+            var encryptedBytes = await File.ReadAllBytesAsync(PinLockFilePath);
+            byte[] decryptedBytes;
+            if (OperatingSystem.IsWindows())
+            {
+                decryptedBytes = ProtectedData.Unprotect(encryptedBytes, null, DataProtectionScope.CurrentUser);
+            }
+            else
+            {
+                decryptedBytes = encryptedBytes;
+            }
+            
+            var savedText = Encoding.UTF8.GetString(decryptedBytes);
+            return savedText == "true";
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task SetPinLockEnabledAsync(bool enabled)
+    {
+        var text = enabled ? "true" : "false";
+        var bytes = Encoding.UTF8.GetBytes(text);
+        
+        byte[] encryptedBytes;
+        if (OperatingSystem.IsWindows())
+        {
+            encryptedBytes = ProtectedData.Protect(bytes, null, DataProtectionScope.CurrentUser);
+        }
+        else
+        {
+            encryptedBytes = bytes;
+        }
+        
+        var dir = Path.GetDirectoryName(PinLockFilePath);
+        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) 
+        {
+            Directory.CreateDirectory(dir);
+        }
+        
+        await File.WriteAllBytesAsync(PinLockFilePath, encryptedBytes);
     }
 
     private static string Hash(string value)

@@ -13,5 +13,14 @@ public sealed class RoutedSettingsService(
 
     public Task<AppSettings> GetAsync() => Current.GetAsync();
 
-    public Task SaveAsync(AppSettings settings) => Current.SaveAsync(settings);
+    public async Task SaveAsync(AppSettings settings)
+    {
+        if (!modeService.UseSupabase)
+        {
+            await localSettings.SaveAsync(settings);
+            return;
+        }
+
+        await supabaseSettings.SaveSyncedSettingsAsync(settings);
+    }
 }

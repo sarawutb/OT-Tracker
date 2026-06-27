@@ -9,8 +9,6 @@ namespace OTTracker.Services;
 public sealed class DataSyncService(
     IDataSourceModeService modeService,
     ISupabaseClientProvider clientProvider,
-    ISupabaseConfigService supabaseConfigService,
-    ISettingsService settingsService,
     LocalOtEntryRepository localEntries,
     LocalSettingsService localSettings,
     OtEntryRepository supabaseEntries,
@@ -18,50 +16,88 @@ public sealed class DataSyncService(
 {
     public async Task<int> EnableSupabaseAsync()
     {
-        EnsureSignedIn();
+        var userId = GetSignedInUserId();
         var settings = await localSettings.GetAsync();
-        var count = await SyncToSupabaseAsync(settings);
-        await modeService.SetUseSupabaseAsync(true);
-        return count;
+        settings.UserId = userId;
+        return await EnableSupabaseAsync(settings);
     }
 
     public async Task<int> EnableSupabaseAsync(AppSettings settings)
     {
-        EnsureSignedIn();
-        var userId = settings.UserId;
-        settings = await supabaseSettings.GetAsync();
+        var userId = GetSignedInUserId();
         settings.UserId = userId;
-        await settingsService.SaveAsync(settings);
-        var count = await SyncToSupabaseAsync(settings);
+
+        await localSettings.SaveAsync(settings);
+
+        var loadedSettings = await supabaseSettings.GetAsync();
+        var loadedEntries = await supabaseEntries.GetAllAsync();
+        await ReplaceLocalSnapshotAsync(loadedSettings, loadedEntries);
         await modeService.SetUseSupabaseAsync(true);
-        return count;
+        return loadedEntries.Count;
     }
 
     public async Task<int> DisableSupabaseAsync()
     {
+        GetSignedInUserId();
+
+        var settings = await supabaseSettings.GetAsync();
+        var entries = await supabaseEntries.GetAllAsync();
+        await ReplaceLocalSnapshotAsync(settings, entries);
         await modeService.SetUseSupabaseAsync(false);
-        return 0;
+        return entries.Count;
     }
 
     public async Task<int> SyncToSupabaseAsync()
     {
-        EnsureSignedIn();
+        var userId = GetSignedInUserId();
 
         var settings = await localSettings.GetAsync();
+        settings.UserId = userId;
         return await SyncToSupabaseAsync(settings);
     }
 
     private async Task<int> SyncToSupabaseAsync(AppSettings settings)
     {
-        var data = await supabaseEntries.GetAllAsync();
-        return data.Count;
+        var userId = GetSignedInUserId();
+        settings.UserId = userId;
+        await supabaseSettings.SaveSyncedSettingsAsync(settings);
+
+        var localData = await localEntries.GetAllAsync();
+        await supabaseEntries.ClearAsync(userId);
+        foreach (var entry in localData)
+        {
+            var remoteEntry = CloneForSupabase(entry);
+            remoteEntry.UserId = userId;
+            await supabaseEntries.SaveAsync(remoteEntry);
+        }
+
+        return localData.Count;
     }
 
-    private void EnsureSignedIn()
+    private string GetSignedInUserId()
     {
-        if (clientProvider?.Client?.Auth.CurrentUser is null)
+        var userId = clientProvider.Client.Auth.CurrentUser?.Id;
+        if (!Guid.TryParse(userId, out var parsed))
         {
             throw new InvalidOperationException("Sign in to Supabase before enabling sync.");
+        }
+
+        return parsed.ToString();
+    }
+
+    private async Task ReplaceLocalSnapshotAsync(
+        AppSettings settings,
+        IReadOnlyList<OtEntry> entries)
+    {
+        var deviceSettings = await localSettings.GetAsync();
+        settings.PinLockEnabled = deviceSettings.PinLockEnabled;
+        settings.BiometricUnlockEnabled = deviceSettings.BiometricUnlockEnabled;
+        await localSettings.SaveAsync(settings);
+        await localEntries.ClearAsync();
+
+        foreach (var entry in entries)
+        {
+            await localEntries.SaveAsync(CloneForLocal(entry));
         }
     }
 

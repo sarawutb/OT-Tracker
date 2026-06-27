@@ -9,6 +9,7 @@ namespace OTTracker.ViewModels;
 public sealed partial class SettingsViewModel : BaseViewModel
 {
     private readonly ISettingsService _settingsService;
+    private readonly LocalSettingsService _localSettings;
     private readonly IOtCalculationService _calculator;
     private readonly IAuthService _auth;
     private readonly IOtEntryRepository _entries;
@@ -19,6 +20,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private readonly IDataSourceModeService _modeService;
     private readonly IDataSyncService _syncService;
     private bool _maskEarnings;
+    private string _userId = string.Empty;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private bool useSupabase;
@@ -79,6 +81,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     public SettingsViewModel(
         ISettingsService settingsService,
+        LocalSettingsService localSettings,
         IOtCalculationService calculator,
         IAuthService auth,
         IOtEntryRepository entries,
@@ -91,6 +94,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     {
         IsBusy = true;
         _settingsService = settingsService;
+        _localSettings = localSettings;
         _calculator = calculator;
         _auth = auth;
         _entries = entries;
@@ -151,7 +155,10 @@ public sealed partial class SettingsViewModel : BaseViewModel
             ErrorMessage = $"Supabase connection failed: {ex.Message}";
         }
 
+        var deviceSettings = await _localSettings.GetAsync();
+
         UserName = string.IsNullOrWhiteSpace(settings.UserName) ? "Username" : settings.UserName.Trim();
+        _userId = settings.UserId;
         BaseMonthlySalary = settings.BaseMonthlySalary;
         WorkingDaysPerMonth = settings.WorkingDaysPerMonth;
         HoursPerDay = settings.HoursPerDay;
@@ -163,8 +170,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         RegularMultiplier = settings.RegularMultiplier;
         WeekendMultiplier = settings.WeekendMultiplier;
         HolidayMultiplier = settings.HolidayMultiplier;
-        PinLockEnabled = settings.PinLockEnabled;
-        BiometricUnlockEnabled = settings.BiometricUnlockEnabled;
+        PinLockEnabled = deviceSettings.PinLockEnabled;
+        BiometricUnlockEnabled = deviceSettings.BiometricUnlockEnabled;
         _maskEarnings = settings.MaskEarnings;
         RefreshCalculated();
         IsBusy = false;
@@ -227,8 +234,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
                     "Continue",
                     "Cancel",
                     "email@example.com",
-                    keyboard: Keyboard.Email,
-                    initialValue: "rang7754@gmail.com");
+                    keyboard: Keyboard.Email);
 
                 if (string.IsNullOrWhiteSpace(email))
                 {
@@ -241,8 +247,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
                     "Enter your Supabase password",
                     "Activate",
                     "Cancel",
-                    keyboard: Keyboard.Password,
-                    initialValue: "Sarawut7754*");
+                    keyboard: Keyboard.Password);
 
                 if (string.IsNullOrWhiteSpace(password))
                 {
@@ -251,14 +256,19 @@ public sealed partial class SettingsViewModel : BaseViewModel
                 }
 
                 await _clientProvider.Client.Auth.SignIn(email.Trim(), password);
-                settings.UserId = _clientProvider.Client?.Auth?.CurrentUser?.Id ?? null;
-
-                if (UseSupabase)
+                var userId = _clientProvider.Client.Auth.CurrentUser?.Id;
+                if (!Guid.TryParse(userId, out var parsedUserId))
                 {
-                    int synced = await _syncService.EnableSupabaseAsync(settings);
-                    await LoadAsync();
-                    await CurrentPage?.DisplayAlert("Supabase enabled", $"{synced} local OT record(s) synced to Supabase.", "OK");
+                    throw new InvalidOperationException("Supabase sign-in did not return a valid user id.");
                 }
+
+                _userId = parsedUserId.ToString();
+                settings.UserId = _userId;
+                var loaded = await _syncService.EnableSupabaseAsync(settings);
+                await LoadAsync();
+                _events.NotifySettingsChanged();
+                _events.NotifyEntriesChanged();
+                await CurrentPage?.DisplayAlert("Supabase enabled", $"{loaded} OT record(s) loaded.", "OK");
                 return;
             }
 
@@ -280,18 +290,29 @@ public sealed partial class SettingsViewModel : BaseViewModel
                 return;
             }
 
-            SupabaseUrl = null;
-            SupabaseAnonKey = null;
-            await _clientProvider.Client?.Auth.SignOut();
-            await _configService.SaveCredentialsAsync(SupabaseUrl, SupabaseAnonKey);
-            await _syncService.DisableSupabaseAsync();
+            var copied = await _syncService.DisableSupabaseAsync();
+            try
+            {
+                await _clientProvider.Client.Auth.SignOut();
+            }
+            catch
+            {
+                // SQLite is already active and contains the latest Supabase snapshot.
+            }
+
+            SupabaseUrl = string.Empty;
+            SupabaseAnonKey = string.Empty;
+            await _configService.SaveCredentialsAsync(string.Empty, string.Empty);
+            await LoadAsync();
             _events.NotifySettingsChanged();
             _events.NotifyEntriesChanged();
+            await CurrentPage?.DisplayAlert("SQLite enabled", $"{copied} Supabase OT record(s) copied to SQLite.", "OK");
         }
         catch (Exception ex)
         {
+            UseSupabase = _modeService.UseSupabase;
             ErrorMessage = ex.Message;
-            CurrentPage?.DisplayAlert("Error Message", ErrorMessage, "OK");
+            await CurrentPage?.DisplayAlert("Error Message", ErrorMessage, "OK");
         }
         finally
         {
@@ -338,6 +359,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
             }
 
             await _settingsService.SaveAsync(ToSettings());
+            await SaveDeviceSecurityAsync();
             _events.NotifySettingsChanged();
             await CurrentPage?.DisplayAlert("Settings saved", "Your OT settings are updated.", "OK");
         }
@@ -353,6 +375,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         var pin = await CurrentPage?.DisplayPromptAsync("Change PIN", "Enter a new 4-digit PIN", "Save", "Cancel", "1234", 4, Keyboard.Numeric);
         if (pin is null)
         {
+            if (await _auth.IsPinLockEnabledAsync() == false)
+                PinLockEnabled = false;
             return;
         }
 
@@ -364,7 +388,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
         await _auth.SetPinAsync(pin);
         PinLockEnabled = true;
-        await _settingsService.SaveAsync(ToSettings());
+        await SaveDeviceSecurityAsync();
         _events.NotifySettingsChanged();
         await CurrentPage?.DisplayAlert("PIN updated", "PIN lock is ready.", "OK");
     }
@@ -431,6 +455,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     private AppSettings ToSettings() => new()
     {
+        UserId = _userId,
         UserName = string.IsNullOrWhiteSpace(UserName) ? "Username" : UserName.Trim(),
         BaseMonthlySalary = BaseMonthlySalary,
         WorkingDaysPerMonth = WorkingDaysPerMonth,
@@ -447,6 +472,14 @@ public sealed partial class SettingsViewModel : BaseViewModel
         BiometricUnlockEnabled = BiometricUnlockEnabled,
         MaskEarnings = _maskEarnings
     };
+
+    private async Task SaveDeviceSecurityAsync()
+    {
+        var settings = await _localSettings.GetAsync();
+        settings.PinLockEnabled = PinLockEnabled;
+        settings.BiometricUnlockEnabled = BiometricUnlockEnabled;
+        await _localSettings.SaveAsync(settings);
+    }
 
     private void RefreshCalculated()
     {
@@ -466,5 +499,10 @@ public sealed partial class SettingsViewModel : BaseViewModel
     {
         if (_modeService.UseSupabase)
             await ApplyDataSourceAsync();
+    }
+
+    public async Task CheckPinLock()
+    {
+        await ChangePinAsync();
     }
 }

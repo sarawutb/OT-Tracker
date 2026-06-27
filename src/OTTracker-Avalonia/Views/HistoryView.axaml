@@ -69,7 +69,7 @@
                                             <Setter Property="Background" Value="Transparent"/>
                                         </Style>
                                         <Style Selector="Border[Tag=True]">
-                                            <Setter Property="Background" Value="{DynamicResource AccentLightBrush}"/>
+                                            <Setter Property="Background" Value="{DynamicResource SuccessBrush}"/>
                                         </Style>
                                     </Border.Styles>
                                     <Grid>
@@ -94,7 +94,7 @@
                                         
                                         <!-- Dot indicator if day has logged entries -->
                                         <Ellipse Width="4" Height="4" 
-                                                 Fill="{DynamicResource AccentBrush}" 
+                                                 Fill="{DynamicResource SuccessBrush}" 
                                                  HorizontalAlignment="Center" 
                                                  VerticalAlignment="Bottom" 
                                                  Margin="0,0,0,4"

@@ -9,7 +9,7 @@ public sealed partial class PinViewModel : BaseViewModel
 {
     private readonly IAuthService _authService;
     private readonly IBiometricService _biometricService;
-    private readonly ISettingsService _settingsService;
+    private readonly LocalSettingsService _localSettings;
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(BiometricHint))]
     private bool isBiometricVisible;
@@ -17,11 +17,14 @@ public sealed partial class PinViewModel : BaseViewModel
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private AppSettings appSetting = new();
 
-    public PinViewModel(IAuthService authService, IBiometricService biometricService, ISettingsService settingsService)
+    public PinViewModel(
+        IAuthService authService,
+        IBiometricService biometricService,
+        LocalSettingsService localSettings)
     {
         _authService = authService;
         _biometricService = biometricService;
-        _settingsService = settingsService;
+        _localSettings = localSettings;
         PressCommand = new AsyncRelayCommand<string>(PressAsync);
         BackspaceCommand = new RelayCommand(Backspace);
         UnlockBiometricCommand = new AsyncRelayCommand(UnlockBiometricAsync);
@@ -160,7 +163,7 @@ public sealed partial class PinViewModel : BaseViewModel
 
     public async Task LoadAsync()
     {
-        AppSetting = await _settingsService.GetAsync();
+        AppSetting = await _localSettings.GetAsync();
         var hasPin = await _authService.HasPinAsync();
         var canOfferBiometric = AppSetting.PinLockEnabled && AppSetting.BiometricUnlockEnabled && hasPin;
         IsBiometricVisible = canOfferBiometric && await _biometricService.IsAvailableAsync();

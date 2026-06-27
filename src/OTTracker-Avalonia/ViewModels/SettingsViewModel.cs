@@ -192,7 +192,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
         RegularMultiplier = settings.RegularMultiplier;
         WeekendMultiplier = settings.WeekendMultiplier;
         HolidayMultiplier = settings.HolidayMultiplier;
-        PinLockEnabled = settings.PinLockEnabled;
+        PinLockEnabled = await _auth.IsPinLockEnabledAsync();
         _maskEarnings = settings.MaskEarnings;
         RefreshCalculated();
         IsBusy = false;
@@ -287,6 +287,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
             return;
         }
 
+        await _auth.SetPinLockEnabledAsync(PinLockEnabled);
         await _settingsService.SaveAsync(ToSettings());
         _events.NotifySettingsChanged();
         ShowAlert("Settings saved", "Your OT settings are updated.");
@@ -309,6 +310,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
 
         await _auth.SetPinAsync(NewPinInput);
         PinLockEnabled = true;
+        await _auth.SetPinLockEnabledAsync(true);
         await _settingsService.SaveAsync(ToSettings());
         _events.NotifySettingsChanged();
         IsChangePinVisible = false;
@@ -399,7 +401,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
         RegularMultiplier = RegularMultiplier,
         WeekendMultiplier = WeekendMultiplier,
         HolidayMultiplier = HolidayMultiplier,
-        PinLockEnabled = PinLockEnabled,
+        PinLockEnabled = false,
         BiometricUnlockEnabled = false,
         MaskEarnings = _maskEarnings
     };

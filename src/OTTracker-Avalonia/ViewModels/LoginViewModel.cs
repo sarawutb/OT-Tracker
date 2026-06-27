@@ -15,10 +15,10 @@ public sealed partial class LoginViewModel : ViewModelBase
     private readonly IAuthService _auth;
 
     [ObservableProperty]
-    private string _email = "rang7754@gmail.com";
+    private string _email = string.Empty;
 
     [ObservableProperty]
-    private string _password = "Sarawut7754*";
+    private string _password = string.Empty;
 
     public LoginViewModel(
         Supabase.Client client,
@@ -32,6 +32,11 @@ public sealed partial class LoginViewModel : ViewModelBase
         _auth = auth;
 
         SignInCommand = new AsyncRelayCommand(SignInAsync);
+
+#if DEBUG
+        Email = "rang7754@gmail.com";
+        Password = "Sarawut7754*";
+#endif
     }
 
     public IAsyncRelayCommand SignInCommand { get; }
@@ -66,11 +71,12 @@ public sealed partial class LoginViewModel : ViewModelBase
     {
         var settings = await _settingsService.GetAsync();
         var hasPin = await _auth.HasPinAsync();
+        var pinLockEnabled = await _auth.IsPinLockEnabledAsync();
 
         await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(async () =>
         {
             var mainViewModel = _services.GetRequiredService<MainWindowViewModel>();
-            if (settings.PinLockEnabled && hasPin)
+            if (pinLockEnabled && hasPin)
             {
                 var pinViewModel = _services.GetRequiredService<PinViewModel>();
                 pinViewModel.Unlocked = async () =>

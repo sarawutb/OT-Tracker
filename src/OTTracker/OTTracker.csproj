@@ -29,8 +29,8 @@
 		<ApplicationId>com.company.ottracker</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0.7</ApplicationDisplayVersion>
-		<ApplicationVersion>7</ApplicationVersion>
+		<ApplicationDisplayVersion>2.0.7</ApplicationDisplayVersion>
+		<ApplicationVersion>8</ApplicationVersion>
 
 		<UseMaterial3>true</UseMaterial3>
 
@@ -98,7 +98,6 @@
 	<ItemGroup>
 
 		<PackageReference Include="AathifMahir.Maui.MauiIcons.FontAwesome" Version="6.0.0" />
-
 		<PackageReference Include="CommunityToolkit.Maui" Version="14.2.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
