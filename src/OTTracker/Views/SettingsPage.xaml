@@ -121,11 +121,22 @@
                         <Grid ColumnDefinitions="*,Auto">
                             <VerticalStackLayout>
                                 <Label Text="Use Supabase" TextColor="{StaticResource Ink}" />
-                                <Label Text="When off, OT Tracker uses local SQLite data" Style="{StaticResource MutedLabel}" />
+                                <Label Text="{Binding SupabaseStatusText}" Style="{StaticResource MutedLabel}" />
                             </VerticalStackLayout>
-                            <Switch Grid.Column="1" IsToggled="{Binding UseSupabase}" Toggled="Switch_UseSupabase_Toggled" />
+                            <Switch
+                                IsVisible="{Binding UseSupabase, Converter={StaticResource InverseBooleanConverter}}"
+                                Grid.Column="1"
+                                InputTransparent="True"
+                                IsToggled="{Binding UseSupabase}"
+                                SemanticProperties.Description="Supabase connection status" />
+                            <Label
+                                IsVisible="{Binding UseSupabase}"
+                                Grid.Column="1" 
+                                Style="{StaticResource MutedLabel}"
+                                Text="Connected"
+                                TextColor="{StaticResource GreenMid}"/>
                         </Grid>
-                        <VerticalStackLayout IsVisible="{Binding UseSupabase}">
+                        <VerticalStackLayout IsVisible="{Binding UseSupabase, Converter={StaticResource InverseBooleanConverter}}">
                             <material:TextField
                         Title="Project URL"
                         Keyboard="Url"
@@ -134,7 +145,12 @@
                         Title="Anon key"
                         Text="{Binding SupabaseAnonKey}" />
                         </VerticalStackLayout>
-                        <Button IsVisible="{Binding UseSupabase}" Text="Connect" Margin="0,10,0,0" Command="{Binding ApplyDataSourceCommand}" Style="{StaticResource PrimaryButton}" />
+                        <Button
+                            Margin="0,10,0,0"
+                            Command="{Binding ApplyDataSourceCommand}"
+                            Style="{StaticResource PrimaryButton}"
+                            Text="{Binding SupabaseActionText}"
+                            BackgroundColor="{Binding SupabaseActionColor}"/>
                     </VerticalStackLayout>
                 </Border>
                 <Label Text="DATA" Style="{StaticResource MutedLabel}" />

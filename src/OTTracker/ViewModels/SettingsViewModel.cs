@@ -23,6 +23,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private string _userId = string.Empty;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(SupabaseActionText))]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(SupabaseStatusText))]
     private bool useSupabase;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
@@ -137,6 +139,19 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     public string FormulaText => $"{BaseMonthlySalary:N0} / ({WorkingDaysPerMonth} x {HoursPerDay:0.##}) = {_calculator.GetHourlyRate(ToSettings()):N2}";
 
+    public string SupabaseActionText => UseSupabase ? "Disconnect" : "Connect";
+
+    public Color SupabaseActionColor => UseSupabase ? GetColor("GreenMid") : GetColor("Red");
+
+    public string SupabaseStatusText => UseSupabase ? "Connected to Supabase" : "Using local SQLite data";
+
+    private static Color GetColor(string resourceKey)
+    {
+        return Application.Current?.Resources.TryGetValue(resourceKey, out var value) == true && value is Color color
+            ? color
+            : Colors.Transparent;
+    }
+
     public async Task LoadAsync()
     {
         IsBusy = true;
@@ -213,7 +228,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         try
         {
             var settings = ToSettings();
-            if (UseSupabase)
+            if (!_modeService.UseSupabase)
             {
                 if (string.IsNullOrWhiteSpace(SupabaseUrl) || string.IsNullOrWhiteSpace(SupabaseAnonKey))
                 {
@@ -223,12 +238,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
                 await _configService.SaveCredentialsAsync(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
                 _clientProvider.RecreateClient(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
-
-                if (_modeService.UseSupabase)
-                {
-                    await CurrentPage?.DisplayAlert("Supabase enabled", "Supabase is already the active data source.", "OK");
-                    return;
-                }
 
                 var email = await CurrentPage?.DisplayPromptAsync(
                     "Activate Supabase",
@@ -240,7 +249,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
                 if (string.IsNullOrWhiteSpace(email))
                 {
-                    UseSupabase = false;
                     return;
                 }
 
@@ -253,7 +261,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
                 if (string.IsNullOrWhiteSpace(password))
                 {
-                    UseSupabase = false;
                     return;
                 }
 
@@ -274,21 +281,13 @@ public sealed partial class SettingsViewModel : BaseViewModel
                 return;
             }
 
-            if (!_modeService.UseSupabase)
-            {
-                await _modeService.SetUseSupabaseAsync(false);
-                await CurrentPage?.DisplayAlert("SQLite enabled", "SQLite is already the active data source.", "OK");
-                return;
-            }
-
             var confirmDisable = await CurrentPage?.DisplayAlert(
-                "Disable Supabase?",
+                "Disconnect Supabase?",
                 "Supabase data will be copied to local SQLite before switching.",
-                "Disable",
+                "Disconnect",
                 "Cancel");
             if (!confirmDisable)
             {
-                UseSupabase = true;
                 return;
             }
 
@@ -496,12 +495,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
         {
             BiometricUnlockEnabled = false;
         }
-    }
-
-    public async Task CheckUseSupabase()
-    {
-        if (_modeService.UseSupabase)
-            await ApplyDataSourceAsync();
     }
 
     public async Task CheckPinLock()

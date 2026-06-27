@@ -19,12 +19,6 @@ public partial class SettingsPage : ContentPage
         await _viewModel.LoadAsync();
     }
 
-    private async void Switch_UseSupabase_Toggled(object sender, ToggledEventArgs e)
-    {
-        if (!e.Value)
-            await _viewModel.CheckUseSupabase();
-    }
-
     private async void Switch_PinLock_Toggled(object sender, ToggledEventArgs e)
     {
         await _viewModel.CheckPinLock();
