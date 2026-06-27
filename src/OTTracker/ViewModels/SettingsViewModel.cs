@@ -3,7 +3,6 @@ using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
 using OTTracker.Infrastructure.Services;
 using OTTracker.Services;
-using OTTracker.Views;
 
 namespace OTTracker.ViewModels;
 
@@ -19,7 +18,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private readonly ISupabaseClientProvider _clientProvider;
     private readonly IDataSourceModeService _modeService;
     private readonly IDataSyncService _syncService;
-    private readonly IServiceProvider _services;
     private bool _maskEarnings;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
@@ -29,7 +27,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private string supabaseUrl = string.Empty;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private string supabaseAnonKey = "sb_secret_3tIOiTck6mxgeAuULk0x_Q_3TTNZt5e";
+    private string supabaseAnonKey = string.Empty;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string userName = "Username";
@@ -89,8 +87,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         ISupabaseConfigService configService,
         ISupabaseClientProvider clientProvider,
         IDataSourceModeService modeService,
-        IDataSyncService syncService,
-        IServiceProvider services)
+        IDataSyncService syncService)
     {
         IsBusy = true;
         _settingsService = settingsService;
@@ -103,12 +100,10 @@ public sealed partial class SettingsViewModel : BaseViewModel
         _clientProvider = clientProvider;
         _modeService = modeService;
         _syncService = syncService;
-        _services = services;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         SaveSupabaseConfigCommand = new AsyncRelayCommand(SaveSupabaseConfigAsync);
         ApplyDataSourceCommand = new AsyncRelayCommand(ApplyDataSourceAsync);
-        SignOutCommand = new AsyncRelayCommand(SignOutAsync);
         ChangePinCommand = new AsyncRelayCommand(ChangePinAsync);
         ExportCommand = new AsyncRelayCommand(ExportAsync);
         ImportCommand = new AsyncRelayCommand(ImportAsync);
@@ -122,8 +117,6 @@ public sealed partial class SettingsViewModel : BaseViewModel
     public IAsyncRelayCommand SaveSupabaseConfigCommand { get; }
 
     public IAsyncRelayCommand ApplyDataSourceCommand { get; }
-
-    public IAsyncRelayCommand SignOutCommand { get; }
 
     public IAsyncRelayCommand ChangePinCommand { get; }
 
@@ -191,7 +184,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         {
             await _configService.SaveCredentialsAsync(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
             _clientProvider.RecreateClient(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
-            await Shell.Current.DisplayAlert("Connection saved", "Supabase connection settings are updated.", "OK");
+            await CurrentPage?.DisplayAlert("Connection saved", "Supabase connection settings are updated.", "OK");
         }
         catch (Exception ex)
         {
@@ -210,8 +203,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
         try
         {
-            await _settingsService.SaveAsync(ToSettings());
-
+            var settings = ToSettings();
             if (UseSupabase)
             {
                 if (string.IsNullOrWhiteSpace(SupabaseUrl) || string.IsNullOrWhiteSpace(SupabaseAnonKey))
@@ -225,40 +217,81 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
                 if (_modeService.UseSupabase)
                 {
-                    await Shell.Current.DisplayAlert("Supabase enabled", "Supabase is already the active data source.", "OK");
+                    await CurrentPage?.DisplayAlert("Supabase enabled", "Supabase is already the active data source.", "OK");
                     return;
                 }
 
-                if (_clientProvider.Client.Auth.CurrentUser is null)
+                var email = await CurrentPage?.DisplayPromptAsync(
+                    "Activate Supabase",
+                    "Enter your Supabase email",
+                    "Continue",
+                    "Cancel",
+                    "email@example.com",
+                    keyboard: Keyboard.Email,
+                    initialValue: "rang7754@gmail.com");
+
+                if (string.IsNullOrWhiteSpace(email))
                 {
-                    await _modeService.SetUseSupabaseAsync(true);
-                    await _modeService.SetPendingSupabaseSyncAsync(true);
-                    Application.Current!.MainPage = _services.GetRequiredService<LoginPage>();
+                    UseSupabase = false;
                     return;
                 }
 
-                var synced = await _syncService.EnableSupabaseAsync();
-                _events.NotifySettingsChanged();
-                _events.NotifyEntriesChanged();
-                await Shell.Current.DisplayAlert("Supabase enabled", $"{synced} local OT record(s) synced to Supabase.", "OK");
+                var password = await CurrentPage?.DisplayPromptAsync(
+                    "Activate Supabase",
+                    "Enter your Supabase password",
+                    "Activate",
+                    "Cancel",
+                    keyboard: Keyboard.Password,
+                    initialValue: "Sarawut7754*");
+
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    UseSupabase = false;
+                    return;
+                }
+
+                await _clientProvider.Client.Auth.SignIn(email.Trim(), password);
+                settings.UserId = _clientProvider.Client?.Auth?.CurrentUser?.Id ?? null;
+
+                if (UseSupabase)
+                {
+                    int synced = await _syncService.EnableSupabaseAsync(settings);
+                    await LoadAsync();
+                    await CurrentPage?.DisplayAlert("Supabase enabled", $"{synced} local OT record(s) synced to Supabase.", "OK");
+                }
                 return;
             }
 
             if (!_modeService.UseSupabase)
             {
                 await _modeService.SetUseSupabaseAsync(false);
-                await Shell.Current.DisplayAlert("SQLite enabled", "SQLite is already the active data source.", "OK");
+                await CurrentPage?.DisplayAlert("SQLite enabled", "SQLite is already the active data source.", "OK");
                 return;
             }
 
-            var copied = await _syncService.DisableSupabaseAsync();
+            var confirmDisable = await CurrentPage?.DisplayAlert(
+                "Disable Supabase?",
+                "Supabase data will be copied to local SQLite before switching.",
+                "Disable",
+                "Cancel");
+            if (!confirmDisable)
+            {
+                UseSupabase = true;
+                return;
+            }
+
+            SupabaseUrl = null;
+            SupabaseAnonKey = null;
+            await _clientProvider.Client?.Auth.SignOut();
+            await _configService.SaveCredentialsAsync(SupabaseUrl, SupabaseAnonKey);
+            await _syncService.DisableSupabaseAsync();
             _events.NotifySettingsChanged();
             _events.NotifyEntriesChanged();
-            await Shell.Current.DisplayAlert("SQLite enabled", $"{copied} Supabase OT record(s) copied to local SQLite.", "OK");
         }
         catch (Exception ex)
         {
             ErrorMessage = ex.Message;
+            CurrentPage?.DisplayAlert("Error Message", ErrorMessage, "OK");
         }
         finally
         {
@@ -266,70 +299,58 @@ public sealed partial class SettingsViewModel : BaseViewModel
         }
     }
 
-    private async Task SignOutAsync()
-    {
-        var confirm = await Shell.Current.DisplayAlert("Sign Out", "Are you sure you want to sign out?", "Yes", "No");
-        if (!confirm)
-        {
-            return;
-        }
-
-        try
-        {
-            await _clientProvider.Client.Auth.SignOut();
-        }
-        catch
-        {
-            // The session listener also clears local session storage when sign out succeeds.
-        }
-
-        Application.Current!.MainPage = _services.GetRequiredService<LoginPage>();
-    }
-
     private async Task SaveAsync()
     {
-        ErrorMessage = string.Empty;
-        UserName = string.IsNullOrWhiteSpace(UserName) ? "Username" : UserName.Trim();
-
-        if (BaseMonthlySalary <= 0 || WorkingDaysPerMonth <= 0 || HoursPerDay <= 0 ||
-            RegularMultiplier <= 0 || WeekendMultiplier <= 0 || HolidayMultiplier <= 0)
+        try
         {
-            ErrorMessage = "Salary, work time, and multipliers must be greater than 0.";
-            return;
-        }
+            ErrorMessage = string.Empty;
+            UserName = string.IsNullOrWhiteSpace(UserName) ? "Username" : UserName.Trim();
 
-        if (DefaultBreakMinutes < 0)
+            if (BaseMonthlySalary <= 0 || WorkingDaysPerMonth <= 0 || HoursPerDay <= 0 ||
+                RegularMultiplier <= 0 || WeekendMultiplier <= 0 || HolidayMultiplier <= 0)
+            {
+                ErrorMessage = "Salary, work time, and multipliers must be greater than 0.";
+                return;
+            }
+
+            if (DefaultBreakMinutes < 0)
+            {
+                ErrorMessage = "Default break minutes must be 0 or greater.";
+                return;
+            }
+
+            if (PeriodStartDay is < 1 or > 31 || PeriodEndDay is < 1 or > 31)
+            {
+                ErrorMessage = "OT period start and end days must be between 1 and 31.";
+                return;
+            }
+
+            if (DefaultEndTime <= DefaultStartTime)
+            {
+                ErrorMessage = "Default end time must be later than default start time.";
+                return;
+            }
+
+            if (BiometricUnlockEnabled && (!PinLockEnabled || !await _auth.HasPinAsync()))
+            {
+                ErrorMessage = "Set a 4-digit PIN before enabling fingerprint unlock.";
+                return;
+            }
+
+            await _settingsService.SaveAsync(ToSettings());
+            _events.NotifySettingsChanged();
+            await CurrentPage?.DisplayAlert("Settings saved", "Your OT settings are updated.", "OK");
+        }
+        catch (Exception ex)
         {
-            ErrorMessage = "Default break minutes must be 0 or greater.";
-            return;
+            ErrorMessage = ex.Message;
+            await CurrentPage?.DisplayAlert("Error Message", ErrorMessage, "OK");
         }
-
-        if (PeriodStartDay is < 1 or > 31 || PeriodEndDay is < 1 or > 31)
-        {
-            ErrorMessage = "OT period start and end days must be between 1 and 31.";
-            return;
-        }
-
-        if (DefaultEndTime <= DefaultStartTime)
-        {
-            ErrorMessage = "Default end time must be later than default start time.";
-            return;
-        }
-
-        if (BiometricUnlockEnabled && (!PinLockEnabled || !await _auth.HasPinAsync()))
-        {
-            ErrorMessage = "Set a 4-digit PIN before enabling fingerprint unlock.";
-            return;
-        }
-
-        await _settingsService.SaveAsync(ToSettings());
-        _events.NotifySettingsChanged();
-        await Shell.Current.DisplayAlert("Settings saved", "Your OT settings are updated.", "OK");
     }
 
     private async Task ChangePinAsync()
     {
-        var pin = await Shell.Current.DisplayPromptAsync("Change PIN", "Enter a new 4-digit PIN", "Save", "Cancel", "1234", 4, Keyboard.Numeric);
+        var pin = await CurrentPage?.DisplayPromptAsync("Change PIN", "Enter a new 4-digit PIN", "Save", "Cancel", "1234", 4, Keyboard.Numeric);
         if (pin is null)
         {
             return;
@@ -337,7 +358,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
         if (pin.Length != 4 || pin.Any(c => !char.IsDigit(c)))
         {
-            await Shell.Current.DisplayAlert("Invalid PIN", "PIN must be exactly 4 digits.", "OK");
+            await CurrentPage?.DisplayAlert("Invalid PIN", "PIN must be exactly 4 digits.", "OK");
             return;
         }
 
@@ -345,7 +366,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         PinLockEnabled = true;
         await _settingsService.SaveAsync(ToSettings());
         _events.NotifySettingsChanged();
-        await Shell.Current.DisplayAlert("PIN updated", "PIN lock is ready.", "OK");
+        await CurrentPage?.DisplayAlert("PIN updated", "PIN lock is ready.", "OK");
     }
 
     private async Task ExportAsync()
@@ -353,7 +374,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         var all = await _entries.GetAllAsync();
         if (all.Count == 0)
         {
-            await Shell.Current.DisplayAlert("Nothing to export", "Add OT entries before exporting.", "OK");
+            await CurrentPage?.DisplayAlert("Nothing to export", "Add OT entries before exporting.", "OK");
             return;
         }
 
@@ -362,7 +383,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     private async Task ImportAsync()
     {
-        var confirm = await Shell.Current.DisplayAlert("Import CSV", "Import OT records from a CSV file and add them to this device?", "Import", "Cancel");
+        var confirm = await CurrentPage?.DisplayAlert("Import CSV", "Import OT records from a CSV file and add them to this device?", "Import", "Cancel");
         if (!confirm)
         {
             return;
@@ -378,7 +399,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
             if (imported.Count == 0)
             {
-                await Shell.Current.DisplayAlert("No records imported", "No CSV records were imported.", "OK");
+                await CurrentPage?.DisplayAlert("No records imported", "No CSV records were imported.", "OK");
                 return;
             }
 
@@ -388,17 +409,17 @@ public sealed partial class SettingsViewModel : BaseViewModel
             }
 
             _events.NotifyEntriesChanged();
-            await Shell.Current.DisplayAlert("Import complete", $"{imported.Count} OT record(s) imported.", "OK");
+            await CurrentPage?.DisplayAlert("Import complete", $"{imported.Count} OT record(s) imported.", "OK");
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Import failed", ex.Message, "OK");
+            await CurrentPage?.DisplayAlert("Import failed", ex.Message, "OK");
         }
     }
 
     private async Task ClearDataAsync()
     {
-        var confirm = await Shell.Current.DisplayAlert("Clear all data", "Delete every OT entry from this device?", "Clear", "Cancel");
+        var confirm = await CurrentPage?.DisplayAlert("Clear all data", "Delete every OT entry from this device?", "Clear", "Cancel");
         if (!confirm)
         {
             return;
@@ -439,5 +460,11 @@ public sealed partial class SettingsViewModel : BaseViewModel
         {
             BiometricUnlockEnabled = false;
         }
+    }
+
+    public async Task CheckUseSupabase()
+    {
+        if (_modeService.UseSupabase)
+            await ApplyDataSourceAsync();
     }
 }
