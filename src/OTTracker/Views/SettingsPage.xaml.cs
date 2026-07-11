@@ -1,3 +1,4 @@
+using OTTracker.Services.GlobalExceptions;
 using OTTracker.ViewModels;
 
 namespace OTTracker.Views;
@@ -13,14 +14,20 @@ public partial class SettingsPage : ContentPage
         BindingContext = viewModel;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.LoadAsync();
+        _viewModel.LoadAsync().SafeFireAndForget(ex =>
+        {
+            DisplayAlert("Error", ex.Message, "OK");
+        });
     }
 
-    private async void Switch_PinLock_Toggled(object sender, ToggledEventArgs e)
+    private void Switch_PinLock_Toggled(object sender, ToggledEventArgs e)
     {
-        await _viewModel.CheckPinLock();
+        _viewModel.CheckPinLock().SafeFireAndForget(ex =>
+        {
+            DisplayAlert("Error", ex.Message, "OK");
+        });
     }
 }

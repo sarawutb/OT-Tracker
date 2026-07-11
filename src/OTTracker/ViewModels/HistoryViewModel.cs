@@ -39,6 +39,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
         NextMonthCommand = new AsyncRelayCommand(NextMonthAsync);
         EditCommand = new AsyncRelayCommand<EntryDisplay>(EditAsync);
         DeleteCommand = new AsyncRelayCommand<EntryDisplay>(DeleteAsync);
+        ClickDayCommand = new AsyncRelayCommand<CalendarDay>(ClickDayAsync);
         _events.EntriesChanged += async (_, _) => await LoadAsync();
         _events.SettingsChanged += async (_, _) => await LoadAsync();
     }
@@ -52,6 +53,8 @@ public sealed partial class HistoryViewModel : BaseViewModel
     public IAsyncRelayCommand<EntryDisplay> EditCommand { get; }
 
     public IAsyncRelayCommand<EntryDisplay> DeleteCommand { get; }
+
+    public IAsyncRelayCommand<CalendarDay> ClickDayCommand { get; }
 
     public ObservableCollection<CalendarDay> CalendarDays { get; } = [];
 
@@ -137,6 +140,25 @@ public sealed partial class HistoryViewModel : BaseViewModel
         if (display is not null)
         {
             await Shell.Current.GoToAsync($"//Log?id={display.Entry.Id}");
+        }
+    }
+
+    private async Task ClickDayAsync(CalendarDay? day)
+    {
+        if (day is null || day.Date is null)
+        {
+            return;
+        }
+
+        var date = day.Date.Value.Date;
+        var existing = MonthEntries.FirstOrDefault(e => e.Entry.EntryDate.Date == date);
+        if (existing is not null)
+        {
+            await Shell.Current.GoToAsync($"//Log?id={existing.Entry.Id}");
+        }
+        else
+        {
+            await Shell.Current.GoToAsync($"//Log?date={date:yyyy-MM-dd}");
         }
     }
 

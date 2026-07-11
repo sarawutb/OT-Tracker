@@ -1,3 +1,4 @@
+using OTTracker.Services.GlobalExceptions;
 using OTTracker.ViewModels;
 
 namespace OTTracker.Views;
@@ -13,9 +14,12 @@ public partial class HistoryPage : ContentPage
         BindingContext = viewModel;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.LoadAsync();
+        _viewModel.LoadAsync().SafeFireAndForget(ex =>
+        {
+            DisplayAlert("Error", ex.Message, "OK");
+        });
     }
 }

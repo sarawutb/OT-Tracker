@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Input;
+using OTTracker.Services.GlobalExceptions;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Enums;
 using OTTracker.Domain.Interfaces;
@@ -72,6 +73,8 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
 
     public string EarningsText => $"฿{EstimatedEarnings:N2}";
 
+    public string PageTitle => _entryId > 0 ? "Edit OT" : "Add OT";
+
     public async Task LoadAsync()
     {
         if (_entryId == 0)
@@ -94,10 +97,20 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
         }
     }
 
-    public async void ApplyQueryAttributes(IDictionary<string, object> query)
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        ApplyQueryAttributesAsync(query).SafeFireAndForget(ex =>
+        {
+            CurrentPage?.DisplayAlert("Error", ex.Message, "OK");
+        });
+    }
+
+    private async Task ApplyQueryAttributesAsync(IDictionary<string, object> query)
     {
         if (query.TryGetValue("id", out var value) && int.TryParse(value?.ToString(), out var id))
         {
+            _entryId = id;
+            OnPropertyChanged(nameof(PageTitle));
             var entry = await _entries.GetByIdAsync(id);
             if (entry is not null)
             {
@@ -109,6 +122,23 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
                 BreakMinutes = entry.BreakMinutes;
                 Note = entry.Note;
             }
+            else
+            {
+                _entryId = 0;
+            }
+            OnPropertyChanged(nameof(PageTitle));
+        }
+        else
+        {
+            _entryId = 0;
+            Note = string.Empty;
+            SelectedDayType = DayType.Regular;
+            await ApplyDefaultEntrySettingsAsync();
+            if (query.TryGetValue("date", out var dateVal) && DateTime.TryParse(dateVal?.ToString(), out var parsedDate))
+            {
+                EntryDate = parsedDate;
+            }
+            OnPropertyChanged(nameof(PageTitle));
         }
         await RecalculateAsync();
     }
@@ -152,6 +182,7 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
 
             await _entries.SaveAsync(entry);
             _entryId = 0;
+            OnPropertyChanged(nameof(PageTitle));
             await Shell.Current.GoToAsync("//Dashboard");
             _events.NotifyEntriesChanged();
             await ResetForNewEntryAsync();

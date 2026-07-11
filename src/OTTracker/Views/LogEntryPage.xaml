@@ -13,7 +13,7 @@
         <ScrollView>
             <VerticalStackLayout Padding="18" Spacing="10">
                 <Grid ColumnDefinitions="*,Auto">
-                    <Label Style="{StaticResource PageTitle}" Text="Add OT" />
+                    <Label Style="{StaticResource PageTitle}" Text="{Binding PageTitle}" />
                     <Label
                         Grid.Column="1"
                         Style="{StaticResource MutedLabel}"

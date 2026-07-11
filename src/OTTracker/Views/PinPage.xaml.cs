@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+using OTTracker.Services.GlobalExceptions;
+using System.Reflection;
 using OTTracker.ViewModels;
 
 namespace OTTracker.Views;
@@ -20,11 +21,14 @@ public partial class PinPage : ContentPage
         _viewModel.AnimeDot4 = Dot4;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
         SetVersionText();
-        await _viewModel.LoadAsync();
+        _viewModel.LoadAsync().SafeFireAndForget(ex =>
+        {
+            DisplayAlert("Error", ex.Message, "OK");
+        });
     }
 
     private void SetVersionText()
