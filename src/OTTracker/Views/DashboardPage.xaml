@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
     xmlns:controls="clr-namespace:OTTracker.Controls"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     Title="OT Dashboard"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
@@ -137,6 +138,7 @@
                                     FontAttributes="Bold"
                                     TextColor="{StaticResource Accent}"
                                     BackgroundColor="{StaticResource AccentLight}"
+                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.History}, Color={StaticResource Accent}, Size=16}"
                                     Command="{Binding GoHistoryCommand}"/>
                             </Grid>
                             <CollectionView

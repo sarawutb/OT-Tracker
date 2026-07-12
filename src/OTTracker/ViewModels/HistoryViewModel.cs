@@ -29,6 +29,15 @@ public sealed partial class HistoryViewModel : BaseViewModel
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(MonthEarningsText))]
     private decimal monthEarnings;
 
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool isCalendarView = true;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool hasSelectedDayEntries;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string selectedDayText = string.Empty;
+
     public HistoryViewModel(IOtEntryRepository entries, ISettingsService settings, AppEvents events)
     {
         _entries = entries;
@@ -40,6 +49,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
         EditCommand = new AsyncRelayCommand<EntryDisplay>(EditAsync);
         DeleteCommand = new AsyncRelayCommand<EntryDisplay>(DeleteAsync);
         ClickDayCommand = new AsyncRelayCommand<CalendarDay>(ClickDayAsync);
+        LogSelectedDayCommand = new AsyncRelayCommand(LogSelectedDayAsync);
         _events.EntriesChanged += async (_, _) => await LoadAsync();
         _events.SettingsChanged += async (_, _) => await LoadAsync();
     }
@@ -56,9 +66,13 @@ public sealed partial class HistoryViewModel : BaseViewModel
 
     public IAsyncRelayCommand<CalendarDay> ClickDayCommand { get; }
 
+    public IAsyncRelayCommand LogSelectedDayCommand { get; }
+
     public ObservableCollection<CalendarDay> CalendarDays { get; } = [];
 
     public ObservableCollection<EntryDisplay> MonthEntries { get; } = [];
+
+    public ObservableCollection<EntryDisplay> SelectedDayEntries { get; } = [];
 
     public string MonthText
     {
@@ -107,17 +121,26 @@ public sealed partial class HistoryViewModel : BaseViewModel
             CalendarDays.Add(new CalendarDay());
         }
 
-        var entryDates = monthEntries.Select(e => e.EntryDate.Date).ToHashSet();
+        var entryGroups = monthEntries.GroupBy(e => e.EntryDate.Date)
+                                      .ToDictionary(g => g.Key, g => g.ToList());
+
         for (var date = period.Start; date <= period.End; date = date.AddDays(1))
         {
+            var hasEntries = entryGroups.TryGetValue(date.Date, out var dayEntries);
+            var totalHours = hasEntries ? dayEntries.Sum(e => e.NetHours) : 0m;
+            var dominantDayType = hasEntries ? dayEntries.First().DayType : (OTTracker.Domain.Enums.DayType?)null;
+
             CalendarDays.Add(new CalendarDay
             {
                 Date = date,
-                HasEntries = entryDates.Contains(date),
-                IsSelected = date == SelectedDate.Date,
-                IsToday = date == DateTime.Today
+                HasEntries = hasEntries,
+                TotalHours = totalHours,
+                DayType = dominantDayType,
+                IsSelected = date.Date == SelectedDate.Date,
+                IsToday = date.Date == DateTime.Today
             });
         }
+        UpdateSelectedDayEntries();
         IsBusy = false;
     }
 
@@ -150,16 +173,52 @@ public sealed partial class HistoryViewModel : BaseViewModel
             return;
         }
 
-        var date = day.Date.Value.Date;
-        var existing = MonthEntries.FirstOrDefault(e => e.Entry.EntryDate.Date == date);
-        if (existing is not null)
+        SelectedDate = day.Date.Value.Date;
+        UpdateSelectedDayEntries();
+        RefreshCalendarSelection();
+        await Task.CompletedTask;
+    }
+
+    private void UpdateSelectedDayEntries()
+    {
+        SelectedDayEntries.Clear();
+        var dayEntries = MonthEntries.Where(e => e.Entry.EntryDate.Date == SelectedDate.Date).ToList();
+        foreach (var entry in dayEntries)
         {
-            await Shell.Current.GoToAsync($"Log?id={existing.Entry.Id}");
+            SelectedDayEntries.Add(entry);
         }
-        else
+        HasSelectedDayEntries = SelectedDayEntries.Count > 0;
+        SelectedDayText = SelectedDate.ToString("d MMM yyyy");
+    }
+
+    private void RefreshCalendarSelection()
+    {
+        var currentDays = CalendarDays.ToList();
+        CalendarDays.Clear();
+        foreach (var d in currentDays)
         {
-            await Shell.Current.GoToAsync($"Log?date={date:yyyy-MM-dd}");
+            if (d.IsBlank)
+            {
+                CalendarDays.Add(d);
+            }
+            else
+            {
+                CalendarDays.Add(new CalendarDay
+                {
+                    Date = d.Date,
+                    HasEntries = d.HasEntries,
+                    TotalHours = d.TotalHours,
+                    DayType = d.DayType,
+                    IsSelected = d.Date.Value.Date == SelectedDate.Date,
+                    IsToday = d.IsToday
+                });
+            }
         }
+    }
+
+    private async Task LogSelectedDayAsync()
+    {
+        await Shell.Current.GoToAsync($"Log?date={SelectedDate:yyyy-MM-dd}");
     }
 
     private async Task DeleteAsync(EntryDisplay? display)
@@ -185,4 +244,10 @@ public sealed partial class HistoryViewModel : BaseViewModel
         var offset = ((date.Year - _settingsPeriod.Start.Year) * 12) + date.Month - _settingsPeriod.Start.Month;
         return _settingsPeriod.AddMonths(offset);
     }
+
+    [CommunityToolkit.Mvvm.Input.RelayCommand]
+    private void ShowCalendarView() => IsCalendarView = true;
+
+    [CommunityToolkit.Mvvm.Input.RelayCommand]
+    private void ShowListView() => IsCalendarView = false;
 }
