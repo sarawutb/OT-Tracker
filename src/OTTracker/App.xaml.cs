@@ -74,10 +74,25 @@ public partial class App : Application
         if (settings.PinLockEnabled && await _auth.HasPinAsync())
         {
             MainPage = _services.GetRequiredService<PinPage>();
+            _ = ApplyRemindersOnStartupAsync(settings);
             return;
         }
 
         MainPage = new AppShell();
+        _ = ApplyRemindersOnStartupAsync(settings);
+    }
+
+    private async Task ApplyRemindersOnStartupAsync(AppSettings settings)
+    {
+        try
+        {
+            var reminderService = _services.GetRequiredService<IReminderService>();
+            await reminderService.ApplyRemindersAsync(settings.RemindersEnabled, settings.ReminderTime);
+        }
+        catch
+        {
+            // Ignore notification scheduling failures during startup.
+        }
     }
 
     private async Task<bool> RestoreSessionAsync()

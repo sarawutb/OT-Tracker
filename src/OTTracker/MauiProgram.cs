@@ -14,6 +14,7 @@ using OTTracker.Views;
 using UraniumUI;
 using MauiCsvExportService = OTTracker.Services.CsvExportService;
 using SupabaseSettingsService = OTTracker.Infrastructure.Services.SettingsService;
+using Plugin.LocalNotification;
 
 namespace OTTracker;
 
@@ -37,7 +38,8 @@ public static class MauiProgram
                 fonts.AddMaterialIconFonts();
                 fonts.AddMaterialSymbolsFonts();
             })
-            .UseMauiCommunityToolkit();
+            .UseMauiCommunityToolkit()
+            .UseLocalNotification();
 
         builder.Services.AddSingleton<ISupabaseConfigService, SupabaseConfigService>();
         builder.Services.AddSingleton<ISupabaseSessionService, SupabaseSessionService>();
@@ -59,6 +61,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IAuthService, AuthService>();
         builder.Services.AddSingleton<Services.IBiometricService, Services.BiometricService>();
         builder.Services.AddSingleton<ICsvExportService, MauiCsvExportService>();
+        builder.Services.AddSingleton<IReminderService, ReminderService>();
         builder.Services.AddSingleton<IExceptionLogger, ExceptionLogger>();
         builder.Services.AddSingleton<IUserExceptionNotifier, MauiUserExceptionNotifier>();
         builder.Services.AddSingleton<GlobalExceptionHandler>();

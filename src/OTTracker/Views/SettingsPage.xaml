@@ -115,6 +115,24 @@
                     </VerticalStackLayout>
                 </Border>
 
+                <Label Text="NOTIFICATIONS" Style="{StaticResource MutedLabel}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout>
+                                <Label Text="Daily reminders" TextColor="{StaticResource Ink}" />
+                                <Label Text="Remind me to log OT daily" Style="{StaticResource MutedLabel}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding RemindersEnabled}" />
+                        </Grid>
+                        <material:TimePickerField
+                            Title="Reminder time"
+                            AllowClear="False"
+                            Time="{Binding ReminderTime}"
+                            IsVisible="{Binding RemindersEnabled}" />
+                    </VerticalStackLayout>
+                </Border>
+
                 <Label Text="SUPABASE" Style="{StaticResource MutedLabel}" />
                 <Border Style="{StaticResource Card}">
                     <VerticalStackLayout Spacing="10">

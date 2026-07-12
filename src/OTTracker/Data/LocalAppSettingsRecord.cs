@@ -42,6 +42,10 @@ public sealed class LocalAppSettingsRecord
 
     public string UserName { get; set; } = "Say HI";
 
+    public bool RemindersEnabled { get; set; }
+
+    public string ReminderTimeString { get; set; } = "20:00:00";
+
     public DateTime ReviseDate { get; set; } = DateTime.Now;
 
     public static LocalAppSettingsRecord FromDomain(AppSettings settings) => new()
@@ -64,6 +68,8 @@ public sealed class LocalAppSettingsRecord
         MaskEarnings = settings.MaskEarnings,
         CurrencyCode = settings.CurrencyCode,
         UserName = settings.UserName,
+        RemindersEnabled = settings.RemindersEnabled,
+        ReminderTimeString = settings.ReminderTimeString,
         ReviseDate = settings.ReviseDate
     };
 
@@ -86,6 +92,8 @@ public sealed class LocalAppSettingsRecord
         MaskEarnings = MaskEarnings,
         CurrencyCode = CurrencyCode,
         UserName = UserName,
+        RemindersEnabled = RemindersEnabled,
+        ReminderTimeString = ReminderTimeString,
         ReviseDate = ReviseDate
     };
 }

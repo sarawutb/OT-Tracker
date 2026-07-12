@@ -77,4 +77,17 @@ public sealed class AppSettings : BaseModel
         get => TimeSpan.TryParse(DefaultEndTimeString, out var ts) ? ts : new TimeSpan(21, 0, 0);
         set => DefaultEndTimeString = value.ToString(@"hh\:mm\:ss");
     }
+
+    [Column("reminders_enabled")]
+    public bool RemindersEnabled { get; set; }
+
+    [Column("reminder_time")]
+    public string ReminderTimeString { get; set; } = "20:00:00";
+
+    [Newtonsoft.Json.JsonIgnore]
+    public TimeSpan ReminderTime
+    {
+        get => TimeSpan.TryParse(ReminderTimeString, out var ts) ? ts : new TimeSpan(20, 0, 0);
+        set => ReminderTimeString = value.ToString(@"hh\:mm\:ss");
+    }
 }

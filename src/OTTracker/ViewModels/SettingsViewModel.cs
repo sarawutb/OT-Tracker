@@ -92,7 +92,15 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private bool biometricUnlockEnabled;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool remindersEnabled;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private TimeSpan reminderTime = new(20, 0, 0);
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private AppSettings appSetting = new();
+
+    private readonly IReminderService _reminderService;
 
     public SettingsViewModel(
         ISettingsService settingsService,
@@ -105,7 +113,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         ISupabaseConfigService configService,
         ISupabaseClientProvider clientProvider,
         IDataSourceModeService modeService,
-        IDataSyncService syncService)
+        IDataSyncService syncService,
+        IReminderService reminderService)
     {
         IsBusy = true;
         _settingsService = settingsService;
@@ -119,6 +128,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         _clientProvider = clientProvider;
         _modeService = modeService;
         _syncService = syncService;
+        _reminderService = reminderService;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         SaveSupabaseConfigCommand = new AsyncRelayCommand(SaveSupabaseConfigAsync);
@@ -210,6 +220,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         HolidayMultiplier = AppSetting.HolidayMultiplier;
         PinLockEnabled = deviceSettings.PinLockEnabled;
         BiometricUnlockEnabled = deviceSettings.BiometricUnlockEnabled;
+        RemindersEnabled = deviceSettings.RemindersEnabled;
+        ReminderTime = deviceSettings.ReminderTime;
         _maskEarnings = AppSetting.MaskEarnings;
         RefreshCalculated();
         IsBusy = false;
@@ -376,8 +388,19 @@ public sealed partial class SettingsViewModel : BaseViewModel
                 return;
             }
 
+            if (RemindersEnabled)
+            {
+                var granted = await _reminderService.RequestPermissionAsync();
+                if (!granted)
+                {
+                    await CurrentPage?.DisplayAlert("Permission Denied", "Notification permission was denied. Reminders will not be scheduled.", "OK");
+                    RemindersEnabled = false;
+                }
+            }
+
             await _settingsService.SaveAsync(ToSettings());
             await SaveDeviceSecurityAsync();
+            await _reminderService.ApplyRemindersAsync(RemindersEnabled, ReminderTime);
             _events.NotifySettingsChanged();
             await CurrentPage?.DisplayAlert("Settings saved", "Your OT settings are updated.", "OK");
         }
@@ -488,6 +511,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         HolidayMultiplier = HolidayMultiplier,
         PinLockEnabled = PinLockEnabled,
         BiometricUnlockEnabled = BiometricUnlockEnabled,
+        RemindersEnabled = RemindersEnabled,
+        ReminderTime = ReminderTime,
         MaskEarnings = _maskEarnings
     };
 
@@ -496,6 +521,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         var settings = await _localSettings.GetAsync();
         settings.PinLockEnabled = PinLockEnabled;
         settings.BiometricUnlockEnabled = BiometricUnlockEnabled;
+        settings.RemindersEnabled = RemindersEnabled;
+        settings.ReminderTime = ReminderTime;
         await _auth.SetPinLockEnabledAsync(PinLockEnabled);
         await _localSettings.SaveAsync(settings);
     }
