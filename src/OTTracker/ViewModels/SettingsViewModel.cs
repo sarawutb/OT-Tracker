@@ -222,7 +222,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         BiometricUnlockEnabled = deviceSettings.BiometricUnlockEnabled;
         RemindersEnabled = deviceSettings.RemindersEnabled;
         ReminderTime = deviceSettings.ReminderTime;
-        _maskEarnings = AppSetting.MaskEarnings;
+        _maskEarnings = deviceSettings.MaskEarnings;
         RefreshCalculated();
         IsBusy = false;
     }
@@ -523,6 +523,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         settings.BiometricUnlockEnabled = BiometricUnlockEnabled;
         settings.RemindersEnabled = RemindersEnabled;
         settings.ReminderTime = ReminderTime;
+        settings.MaskEarnings = _maskEarnings;
         await _auth.SetPinLockEnabledAsync(PinLockEnabled);
         await _localSettings.SaveAsync(settings);
     }

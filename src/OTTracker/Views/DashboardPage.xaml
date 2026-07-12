@@ -152,36 +152,37 @@
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <VerticalStackLayout
-                                    HorizontalOptions="Fill"
-                                    Spacing="4"
-                                    VerticalOptions="End">
+                                        <Grid RowDefinitions="*,Auto" HeightRequest="120" HorizontalOptions="Fill">
+                                            <VerticalStackLayout Grid.Row="0" VerticalOptions="End" HorizontalOptions="Fill" Spacing="4">
+                                                <Label
+                                                    FontSize="10"
+                                                    HorizontalTextAlignment="Center"
+                                                    Text="{Binding Hours, StringFormat='{0:0.#}'}"
+                                                    TextColor="{StaticResource Ink2}" />
+                                                <BoxView
+                                                    HorizontalOptions="Center"
+                                                    HeightRequest="{Binding BarHeight}"
+                                                    VerticalOptions="End"
+                                                    WidthRequest="26"
+                                                    Color="{StaticResource GreenMid}">
+                                                    <BoxView.Triggers>
+                                                        <DataTrigger
+                                                            Binding="{Binding IsWeekend}"
+                                                            TargetType="BoxView"
+                                                            Value="True">
+                                                            <Setter Property="Color" Value="{StaticResource AmberMid}" />
+                                                        </DataTrigger>
+                                                    </BoxView.Triggers>
+                                                </BoxView>
+                                            </VerticalStackLayout>
                                             <Label
-                                        FontSize="10"
-                                        HorizontalTextAlignment="Center"
-                                        Text="{Binding Hours, StringFormat='{0:0.#}'}"
-                                        TextColor="{StaticResource Ink2}" />
-                                            <BoxView
-                                        HorizontalOptions="Center"
-                                        HeightRequest="{Binding Hours}"
-                                        VerticalOptions="End"
-                                        WidthRequest="26"
-                                        Color="{StaticResource GreenMid}">
-                                                <BoxView.Triggers>
-                                                    <DataTrigger
-                                                Binding="{Binding IsWeekend}"
-                                                TargetType="BoxView"
-                                                Value="True">
-                                                        <Setter Property="Color" Value="{StaticResource AmberMid}" />
-                                                    </DataTrigger>
-                                                </BoxView.Triggers>
-                                            </BoxView>
-                                            <Label
-                                        FontSize="10"
-                                        HorizontalTextAlignment="Center"
-                                        Text="{Binding Day}"
-                                        TextColor="{StaticResource MutedText}" />
-                                        </VerticalStackLayout>
+                                                Grid.Row="1"
+                                                Margin="0,4,0,0"
+                                                FontSize="10"
+                                                HorizontalTextAlignment="Center"
+                                                Text="{Binding Day}"
+                                                TextColor="{StaticResource MutedText}" />
+                                        </Grid>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
@@ -195,6 +196,127 @@
                             Text="Weekend"
                             TextColor="{StaticResource AmberMid}" />
                             </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Day Type Distribution Card -->
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="12">
+                            <Label Style="{StaticResource SectionTitle}" Text="OT Distribution by Day Type" />
+                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="14" Margin="0,4,0,0">
+                                <!-- Weekday (x1.5) -->
+                                <VerticalStackLayout Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="Regular Workday (x1.5)" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                        <Label Grid.Column="1" Text="{Binding RegularHours, StringFormat='{0:0.##} hrs'}" FontSize="12" TextColor="{StaticResource Ink2}" />
+                                    </Grid>
+                                    <ProgressBar Progress="{Binding RegularPercentage}" ProgressColor="{StaticResource GreenMid}" HeightRequest="8" ScaleY="2.0" HorizontalOptions="FillAndExpand" />
+                                </VerticalStackLayout>
+                                
+                                <!-- Weekend (x2.0) -->
+                                <VerticalStackLayout Grid.Row="1" Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="Weekend (x2.0)" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                        <Label Grid.Column="1" Text="{Binding WeekendHours, StringFormat='{0:0.##} hrs'}" FontSize="12" TextColor="{StaticResource Ink2}" />
+                                    </Grid>
+                                    <ProgressBar Progress="{Binding WeekendPercentage}" ProgressColor="{StaticResource AmberMid}" HeightRequest="8" ScaleY="2.0" HorizontalOptions="FillAndExpand" />
+                                </VerticalStackLayout>
+                                
+                                <!-- Public Holiday (x3.0) -->
+                                <VerticalStackLayout Grid.Row="2" Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="Public Holiday (x3.0)" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                        <Label Grid.Column="1" Text="{Binding HolidayHours, StringFormat='{0:0.##} hrs'}" FontSize="12" TextColor="{StaticResource Ink2}" />
+                                    </Grid>
+                                    <ProgressBar Progress="{Binding HolidayPercentage}" ProgressColor="#E04F5F" HeightRequest="8" ScaleY="2.0" HorizontalOptions="FillAndExpand" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- 6-Month Trend Chart Card -->
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="16">
+                            <Label Style="{StaticResource SectionTitle}" Text="6-Month Trend" />
+                            <CollectionView
+                                HorizontalOptions="Fill"
+                                HorizontalScrollBarVisibility="Never"
+                                ItemsSource="{Binding MonthlyTrendSummaries}">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout
+                                        HorizontalItemSpacing="4"
+                                        Orientation="Vertical"
+                                        Span="6"
+                                        VerticalItemSpacing="0" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid RowDefinitions="*,Auto" HeightRequest="140" HorizontalOptions="Fill">
+                                            <VerticalStackLayout Grid.Row="0" VerticalOptions="End" HorizontalOptions="Fill" Spacing="6">
+                                                <Label
+                                                    FontSize="9"
+                                                    HorizontalTextAlignment="Center"
+                                                    Text="{Binding Hours, StringFormat='{0:0.#}h'}"
+                                                    TextColor="{StaticResource Ink2}" />
+                                                <BoxView
+                                                    HorizontalOptions="Center"
+                                                    HeightRequest="{Binding BarHeight}"
+                                                    VerticalOptions="End"
+                                                    WidthRequest="28"
+                                                    Color="{StaticResource Accent}"
+                                                    CornerRadius="4" />
+                                            </VerticalStackLayout>
+                                            <Label
+                                                Grid.Row="1"
+                                                Margin="0,6,0,0"
+                                                FontSize="10"
+                                                HorizontalTextAlignment="Center"
+                                                Text="{Binding MonthName}"
+                                                TextColor="{StaticResource MutedText}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Key Metrics Card -->
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="12">
+                            <Label Style="{StaticResource SectionTitle}" Text="Key Productivity Metrics" />
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12" Margin="0,4,0,0">
+                                <!-- Col 0 Row 0: Average OT Hours/Log -->
+                                <Border StrokeThickness="0" BackgroundColor="{StaticResource AccentLight}" StrokeShape="RoundRectangle 12" Padding="12">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="Average OT/Entry" FontSize="10" TextColor="{StaticResource Accent}" FontFamily="OpenSansSemibold" />
+                                        <Label Text="{Binding AverageHoursPerEntry, StringFormat='{0:0.##} hrs'}" FontSize="18" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                    </VerticalStackLayout>
+                                </Border>
+                                
+                                <!-- Col 1 Row 0: Max OT Hours Single Day -->
+                                <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="{StaticResource AccentLight}" StrokeShape="RoundRectangle 12" Padding="12">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="Max Single Log" FontSize="10" TextColor="{StaticResource Accent}" FontFamily="OpenSansSemibold" />
+                                        <Label Text="{Binding MaxHoursSingleEntry, StringFormat='{0:0.##} hrs'}" FontSize="18" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- Col 0 Row 1: Regular Workday Ratio -->
+                                <Border Grid.Row="1" StrokeThickness="0" BackgroundColor="{StaticResource AccentLight}" StrokeShape="RoundRectangle 12" Padding="12">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="Workday Ratio" FontSize="10" TextColor="{StaticResource Accent}" FontFamily="OpenSansSemibold" />
+                                        <Label Text="{Binding RegularRatioText}" FontSize="18" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!-- Col 1 Row 1: Projected OT Hours -->
+                                <Border Grid.Row="1" Grid.Column="1" StrokeThickness="0" BackgroundColor="{StaticResource GreenLight}" StrokeShape="RoundRectangle 12" Padding="12">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="Projected Period" FontSize="10" TextColor="{StaticResource Green}" FontFamily="OpenSansSemibold" />
+                                        <Label Text="{Binding ProjectedHours, StringFormat='{0:0.##} hrs'}" FontSize="18" FontFamily="OpenSansSemibold" TextColor="{StaticResource Green}" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
                         </VerticalStackLayout>
                     </Border>
 

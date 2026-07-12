@@ -95,9 +95,6 @@ public sealed class SettingsService(ISupabaseClientProvider clientProvider) : IS
         [Column("holiday_multiplier")]
         public decimal HolidayMultiplier { get; init; }
 
-        [Column("mask_earnings")]
-        public bool MaskEarnings { get; init; }
-
         [Column("currency_code")]
         public string CurrencyCode { get; init; } = "THB";
 
@@ -122,7 +119,6 @@ public sealed class SettingsService(ISupabaseClientProvider clientProvider) : IS
             RegularMultiplier = settings.RegularMultiplier,
             WeekendMultiplier = settings.WeekendMultiplier,
             HolidayMultiplier = settings.HolidayMultiplier,
-            MaskEarnings = settings.MaskEarnings,
             CurrencyCode = settings.CurrencyCode,
             UserName = settings.UserName,
             ReviseDate = settings.ReviseDate

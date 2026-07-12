@@ -70,7 +70,7 @@ public partial class AppTabBar : ContentView
 
     private async void LogTapped(object sender, TappedEventArgs e)
     {
-        await Shell.Current.GoToAsync("//Log");
+        await Shell.Current.GoToAsync("Log", true);
     }
 
     private async void SettingsTapped(object sender, TappedEventArgs e)

@@ -57,6 +57,7 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SelectDayTypeCommand = new AsyncRelayCommand<string>(SelectDayTypeAsync);
         SaveCommand = new AsyncRelayCommand(SaveAsync);
+        BackCommand = new AsyncRelayCommand(OnBackAsync);
     }
 
     public IAsyncRelayCommand LoadCommand { get; }
@@ -64,6 +65,8 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
     public IAsyncRelayCommand<string> SelectDayTypeCommand { get; }
 
     public IAsyncRelayCommand SaveCommand { get; }
+
+    public IAsyncRelayCommand BackCommand { get; }
 
     public string NetHoursText => $"{NetHours:0.##} hrs";
 
@@ -87,14 +90,7 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
 
     public async Task OnBackAsync()
     {
-        if (_entryId == 0)
-        {
-            await Shell.Current.GoToAsync("//Dashboard");
-        }
-        else
-        {
-            await Shell.Current.GoToAsync("//History");
-        }
+        await Shell.Current.GoToAsync("..");
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -137,6 +133,11 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
             if (query.TryGetValue("date", out var dateVal) && DateTime.TryParse(dateVal?.ToString(), out var parsedDate))
             {
                 EntryDate = parsedDate;
+            }
+            else
+            {
+                ResetEntryDate();
+
             }
             OnPropertyChanged(nameof(PageTitle));
         }
@@ -183,7 +184,7 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
             await _entries.SaveAsync(entry);
             _entryId = 0;
             OnPropertyChanged(nameof(PageTitle));
-            await Shell.Current.GoToAsync("//Dashboard");
+            await Shell.Current.GoToAsync("..");
             _events.NotifyEntriesChanged();
             await ResetForNewEntryAsync();
         }
@@ -218,7 +219,6 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
         StartTime = settings.DefaultStartTime;
         EndTime = settings.DefaultEndTime;
         BreakMinutes = settings.DefaultBreakMinutes;
-        ResetEntryDate();
     }
 
     private void ResetEntryDate()

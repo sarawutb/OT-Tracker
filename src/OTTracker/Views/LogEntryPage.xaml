@@ -8,17 +8,26 @@
     xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     Title="Log OT"
     Shell.NavBarIsVisible="False"
-    Shell.TabBarIsVisible="False">
+    Shell.TabBarIsVisible="False"
+    Shell.PresentationMode="ModalAnimated">
     <Grid RowDefinitions="*,Auto,Auto">
         <ScrollView>
             <VerticalStackLayout Padding="18" Spacing="10">
-                <Grid ColumnDefinitions="*,Auto">
-                    <Label Style="{StaticResource PageTitle}" Text="{Binding PageTitle}" />
-                    <Label
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                    <Label Style="{StaticResource PageTitle}" Text="{Binding PageTitle}" VerticalOptions="Center" />
+                    <!-- <Label
                         Grid.Column="1"
                         Style="{StaticResource MutedLabel}"
                         Text="Draft"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center" /> -->
+                    <Button
+                        Grid.Column="2"
+                        Text="Cancel"
+                        BackgroundColor="{StaticResource Red}"
+                        Padding="12,0"
+                        HeightRequest="36"
+                        VerticalOptions="Center"
+                        Command="{Binding BackCommand}" />
                 </Grid>
 
                 <Label Style="{StaticResource MutedLabel}" Text="Date" />

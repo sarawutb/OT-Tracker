@@ -40,3 +40,35 @@ public sealed partial class EntryDisplay : ObservableObject
         _ => Color.FromArgb("#5B4FE8")
     };
 }
+
+public sealed class WeeklyDayDisplayModel
+{
+    public string Day { get; }
+    public decimal Hours { get; }
+    public bool IsWeekend { get; }
+    public double BarHeight { get; }
+
+    public WeeklyDayDisplayModel(string day, decimal hours, bool isWeekend, double barHeight)
+    {
+        Day = day;
+        Hours = hours;
+        IsWeekend = isWeekend;
+        BarHeight = barHeight;
+    }
+}
+
+public sealed class MonthlyTrendSummary
+{
+    public string MonthName { get; }
+    public decimal Hours { get; }
+    public decimal Earnings { get; }
+    public double BarHeight { get; }
+
+    public MonthlyTrendSummary(string monthName, decimal hours, decimal earnings, double barHeight)
+    {
+        MonthName = monthName;
+        Hours = hours;
+        Earnings = earnings;
+        BarHeight = barHeight;
+    }
+}

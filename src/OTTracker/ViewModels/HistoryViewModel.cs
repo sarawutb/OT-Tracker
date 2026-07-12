@@ -139,7 +139,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
     {
         if (display is not null)
         {
-            await Shell.Current.GoToAsync($"//Log?id={display.Entry.Id}");
+            await Shell.Current.GoToAsync($"Log?id={display.Entry.Id}");
         }
     }
 
@@ -154,11 +154,11 @@ public sealed partial class HistoryViewModel : BaseViewModel
         var existing = MonthEntries.FirstOrDefault(e => e.Entry.EntryDate.Date == date);
         if (existing is not null)
         {
-            await Shell.Current.GoToAsync($"//Log?id={existing.Entry.Id}");
+            await Shell.Current.GoToAsync($"Log?id={existing.Entry.Id}");
         }
         else
         {
-            await Shell.Current.GoToAsync($"//Log?date={date:yyyy-MM-dd}");
+            await Shell.Current.GoToAsync($"Log?date={date:yyyy-MM-dd}");
         }
     }
 

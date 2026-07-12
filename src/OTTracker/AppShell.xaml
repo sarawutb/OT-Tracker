@@ -17,10 +17,6 @@
         Route="Dashboard"
         ContentTemplate="{DataTemplate views:DashboardPage}" />
     <ShellContent
-        Title="Log OT"
-        Route="Log"
-        ContentTemplate="{DataTemplate views:LogEntryPage}" />
-    <ShellContent
         Title="History"
         Route="History"
         ContentTemplate="{DataTemplate views:HistoryPage}" />

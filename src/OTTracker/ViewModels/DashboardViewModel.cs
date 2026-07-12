@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
 using OTTracker.Infrastructure.Services;
+using OTTracker.Services;
 
 namespace OTTracker.ViewModels;
 
@@ -10,6 +11,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
 {
     private readonly IOtEntryRepository _entries;
     private readonly ISettingsService _settings;
+    private readonly LocalSettingsService _localSettings;
     private readonly SemaphoreSlim _loadGate = new(1, 1);
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
@@ -40,13 +42,48 @@ public sealed partial class DashboardViewModel : BaseViewModel
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(EarningsText))]
-    private bool maskEarnings = true;
+    private bool maskEarnings = Microsoft.Maui.Storage.Preferences.Default.Get("mask_earnings", true);
     private bool _suppressMaskSave;
 
-    public DashboardViewModel(IOtEntryRepository entries, ISettingsService settings, AppEvents events)
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal regularHours;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private double regularPercentage;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal weekendHours;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private double weekendPercentage;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal holidayHours;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private double holidayPercentage;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal averageHoursPerEntry;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal maxHoursSingleEntry;
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string regularRatioText = "0%";
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private decimal projectedHours;
+
+    public DashboardViewModel(
+        IOtEntryRepository entries,
+        ISettingsService settings,
+        LocalSettingsService localSettings,
+        AppEvents events)
     {
         _entries = entries;
         _settings = settings;
+        _localSettings = localSettings;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         GoLogTodayCommand = new AsyncRelayCommand(GoLogTodayAsync);
@@ -65,7 +102,9 @@ public sealed partial class DashboardViewModel : BaseViewModel
 
     public ObservableCollection<EntryDisplay> RecentEntries { get; } = [];
 
-    public ObservableCollection<WeeklyDaySummary> WeeklySummaries { get; } = [];
+    public ObservableCollection<WeeklyDayDisplayModel> WeeklySummaries { get; } = [];
+
+    public ObservableCollection<MonthlyTrendSummary> MonthlyTrendSummaries { get; } = [];
 
     public string EarningsText => MaskEarnings ? "\u0E3F *,***" : $"\u0E3F {EstimatedEarnings:N2}";
 
@@ -89,10 +128,12 @@ public sealed partial class DashboardViewModel : BaseViewModel
         try
         {
             var settings = await _settings.GetAsync();
+            var deviceSettings = await _localSettings.GetAsync();
             GreetingText = GetGreeting(DateTime.Now);
             UserName = string.IsNullOrWhiteSpace(settings.UserName) ? "Username" : settings.UserName.Trim();
             _suppressMaskSave = true;
-            MaskEarnings = settings.MaskEarnings;
+            MaskEarnings = deviceSettings.MaskEarnings;
+            Microsoft.Maui.Storage.Preferences.Default.Set("mask_earnings", deviceSettings.MaskEarnings);
             _suppressMaskSave = false;
 
             var today = DateTime.Today;
@@ -103,7 +144,13 @@ public sealed partial class DashboardViewModel : BaseViewModel
             MonthText = period.DisplayText;
             var monthTask = _entries.GetPeriodAsync(period.Start, period.End);
             var weekTask = _entries.GetPeriodAsync(weekStart, weekEnd.AddDays(-1));
-            await Task.WhenAll(monthTask, weekTask);
+            
+            // Query 6 months of data for trend chart
+            var sixMonthsAgoStart = new DateTime(today.Year, today.Month, 1).AddMonths(-5);
+            var lastDayOfCurrentMonth = new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month));
+            var trendTask = _entries.GetPeriodAsync(sixMonthsAgoStart, lastDayOfCurrentMonth);
+
+            await Task.WhenAll(monthTask, weekTask, trendTask);
 
             var month = await monthTask;
             TotalHours = month.Sum(e => e.NetHours);
@@ -121,7 +168,9 @@ public sealed partial class DashboardViewModel : BaseViewModel
                 RecentEntries.Add(entry);
             }
 
+            // 1. Scaled Weekly Summaries
             WeeklySummaries.Clear();
+            var weeklyDays = new List<(string DayLabel, decimal Hours, bool IsWeekend)>();
             for (var i = 0; i < 7; i++)
             {
                 var day = weekStart.AddDays(i);
@@ -129,8 +178,77 @@ public sealed partial class DashboardViewModel : BaseViewModel
                 string dayTH = day.DayOfWeek == DayOfWeek.Sunday
                             ? "อา."
                             : day.ToString("ddd");
-                WeeklySummaries.Add(new WeeklyDaySummary(dayTH, hours, day.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday));
+                weeklyDays.Add((dayTH, hours, day.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday));
             }
+            var maxWeeklyHours = weeklyDays.Max(d => d.Hours);
+            double weeklyScaleFactor = maxWeeklyHours > 0 ? 80.0 / (double)maxWeeklyHours : 0.0;
+            foreach (var w in weeklyDays)
+            {
+                double barHeight = (double)w.Hours * weeklyScaleFactor;
+                if (w.Hours > 0 && barHeight < 4) barHeight = 4; // Ensure visible
+                WeeklySummaries.Add(new WeeklyDayDisplayModel(w.DayLabel, w.Hours, w.IsWeekend, barHeight));
+            }
+
+            // 2. Day Type Distribution
+            var regHours = month.Where(e => e.DayType == Domain.Enums.DayType.Regular).Sum(e => e.NetHours);
+            var wkHours = month.Where(e => e.DayType == Domain.Enums.DayType.Weekend).Sum(e => e.NetHours);
+            var holHours = month.Where(e => e.DayType == Domain.Enums.DayType.Holiday).Sum(e => e.NetHours);
+
+            RegularHours = regHours;
+            WeekendHours = wkHours;
+            HolidayHours = holHours;
+
+            decimal totalPeriodHours = regHours + wkHours + holHours;
+            if (totalPeriodHours > 0)
+            {
+                RegularPercentage = (double)(regHours / totalPeriodHours);
+                WeekendPercentage = (double)(wkHours / totalPeriodHours);
+                HolidayPercentage = (double)(holHours / totalPeriodHours);
+            }
+            else
+            {
+                RegularPercentage = 0;
+                WeekendPercentage = 0;
+                HolidayPercentage = 0;
+            }
+
+            // 3. 6-Month Trend Chart
+            var trendEntries = await trendTask;
+            MonthlyTrendSummaries.Clear();
+            var monthlyGroups = new List<(string MonthName, decimal Hours, decimal Earnings)>();
+            for (var i = 5; i >= 0; i--)
+            {
+                var targetMonth = today.AddMonths(-i);
+                var monthStart = new DateTime(targetMonth.Year, targetMonth.Month, 1);
+                var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+
+                var periodEntries = trendEntries.Where(e => e.EntryDate.Date >= monthStart && e.EntryDate.Date <= monthEnd).ToList();
+                decimal hours = periodEntries.Sum(e => e.NetHours);
+                decimal earnings = periodEntries.Sum(e => e.EstimatedEarnings);
+
+                string monthName = targetMonth.ToString("MMM");
+                monthlyGroups.Add((monthName, hours, earnings));
+            }
+
+            var maxMonthlyHours = monthlyGroups.Max(m => m.Hours);
+            double monthlyScaleFactor = maxMonthlyHours > 0 ? 100.0 / (double)maxMonthlyHours : 0.0;
+            foreach (var m in monthlyGroups)
+            {
+                double barHeight = (double)m.Hours * monthlyScaleFactor;
+                if (m.Hours > 0 && barHeight < 5) barHeight = 5; // Ensure visible
+                MonthlyTrendSummaries.Add(new MonthlyTrendSummary(m.MonthName, m.Hours, m.Earnings, barHeight));
+            }
+
+            // 4. Key Metrics
+            AverageHoursPerEntry = month.Count > 0 ? TotalHours / month.Count : 0m;
+            MaxHoursSingleEntry = month.Count > 0 ? month.Max(e => e.NetHours) : 0m;
+            RegularRatioText = TotalHours > 0 ? $"{regHours / TotalHours:P0}" : "0%";
+
+            var totalDaysInPeriod = (period.End - period.Start).Days + 1;
+            var elapsedDays = (today - period.Start).Days + 1;
+            if (elapsedDays < 1) elapsedDays = 1;
+            if (elapsedDays > totalDaysInPeriod) elapsedDays = totalDaysInPeriod;
+            ProjectedHours = (TotalHours / elapsedDays) * totalDaysInPeriod;
         }
         finally
         {
@@ -140,7 +258,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
 
     private static async Task GoLogTodayAsync()
     {
-        await Shell.Current.GoToAsync("//Log");
+        await Shell.Current.GoToAsync("Log");
     }
 
     private static async Task GoHistoryAsync()
@@ -169,9 +287,10 @@ public sealed partial class DashboardViewModel : BaseViewModel
     {
         try
         {
-            var settings = await _settings.GetAsync();
+            Microsoft.Maui.Storage.Preferences.Default.Set("mask_earnings", maskEarnings);
+            var settings = await _localSettings.GetAsync();
             settings.MaskEarnings = maskEarnings;
-            await _settings.SaveAsync(settings);
+            await _localSettings.SaveAsync(settings);
         }
         catch (Exception ex)
         {
