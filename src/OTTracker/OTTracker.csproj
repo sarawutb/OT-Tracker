@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<!-- <TargetFrame
 		 works>net10.0-android36.1;</TargetFrameworks> -->
@@ -7,33 +6,26 @@
 		<!--<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>-->
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net10.0-tizen</TargetFrameworks> -->
-
 		<!-- Note for MacCatalyst:
 		The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
 		When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
 		The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
 		either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
 		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
-
 		<OutputType>Exe</OutputType>
 		<RootNamespace>OTTracker</RootNamespace>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
 		<!-- Display name -->
 		<ApplicationTitle>OT Tracker</ApplicationTitle>
-
 		<!-- App Identifier -->
 		<ApplicationId>com.company.ottracker</ApplicationId>
-
 		<!-- Versions -->
-		<ApplicationDisplayVersion>2.2.9</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>3.2.9</ApplicationDisplayVersion>
 		<ApplicationVersion>10</ApplicationVersion>
-
 		<UseMaterial3>true</UseMaterial3>
-
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">12.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -41,62 +33,45 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
 		<DebugSymbols>true</DebugSymbols>
 		<DebugType>portable</DebugType>
 		<AndroidIncludeDebugSymbols>true</AndroidIncludeDebugSymbols>
 	</PropertyGroup>
-	
 	<PropertyGroup Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
 		<DebugSymbols>false</DebugSymbols>
 		<DebugType>none</DebugType>
 		<AndroidLinkMode>SdkOnly</AndroidLinkMode>
 		<RunAOTCompilation>false</RunAOTCompilation>
 	</PropertyGroup>
-
-	<!--<PropertyGroup Condition="'$(Configuration)'=='Release'">
-		<AndroidLinkMode>SdkOnly</AndroidLinkMode>
-		<DebugSymbols>false</DebugSymbols>
-	</PropertyGroup>-->
-	
+	<!--<PropertyGroup Condition="'$(Configuration)'=='Release'"><AndroidLinkMode>SdkOnly</AndroidLinkMode><DebugSymbols>false</DebugSymbols></PropertyGroup>-->
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android36.1|AnyCPU'">
-	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<Compile Remove="bin\**\*.cs" />
 		<Compile Remove="obj\**\*.cs" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\ot_tracker.svg" Color="White" />
-
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" BaseSize="128,128" Color="White" />
-
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
-
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<MauiXaml Remove="Resources\Styles\MyDatePickerDialogTheme.xaml" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<None Remove="Resources\Splash\splash.svg" />
 	</ItemGroup>
-
 	<ItemGroup>
-
 		<PackageReference Include="AathifMahir.Maui.MauiIcons.FontAwesome" Version="6.0.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="14.2.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
@@ -111,22 +86,18 @@
 		<PackageReference Include="DotNetMeteor.HotReload.Plugin" Version="3.*" />
 		<PackageReference Include="Plugin.LocalNotification" Version="11.1.4" />
 	</ItemGroup>
-
 	<ItemGroup>
-	  <ProjectReference Include="..\OTTracker-Domain\OTTracker-Domain.csproj" />
-	  <ProjectReference Include="..\OTTracker-Infrastructure\OTTracker-Infrastructure.csproj" />
+		<ProjectReference Include="..\OTTracker-Domain\OTTracker-Domain.csproj" />
+		<ProjectReference Include="..\OTTracker-Infrastructure\OTTracker-Infrastructure.csproj" />
 	</ItemGroup>
-
 	<ItemGroup>
-	  <MauiXaml Update="Controls\AnimatedPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
+		<MauiXaml Update="Controls\AnimatedPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 	</ItemGroup>
-
 	<Target Name="RemoveDuplicateCommunityToolkitMvvmAnalyzers" AfterTargets="ResolvePackageDependenciesForBuild;ResolveNuGetPackageAssets">
 		<ItemGroup>
 			<Analyzer Remove="@(Analyzer)" Condition="'%(Analyzer.NuGetPackageId)' == 'CommunityToolkit.Mvvm' and !$([System.String]::Concat('', '%(Analyzer.FullPath)').Contains('roslyn4.12'))" />
 		</ItemGroup>
 	</Target>
-
 </Project>
