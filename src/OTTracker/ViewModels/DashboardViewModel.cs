@@ -145,10 +145,9 @@ public sealed partial class DashboardViewModel : BaseViewModel
             var monthTask = _entries.GetPeriodAsync(period.Start, period.End);
             var weekTask = _entries.GetPeriodAsync(weekStart, weekEnd.AddDays(-1));
             
-            // Query 6 months of data for trend chart
-            var sixMonthsAgoStart = new DateTime(today.Year, today.Month, 1).AddMonths(-5);
-            var lastDayOfCurrentMonth = new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month));
-            var trendTask = _entries.GetPeriodAsync(sixMonthsAgoStart, lastDayOfCurrentMonth);
+            // Query 6 months of data for trend chart (based on custom cycle settings)
+            var sixMonthsAgoStart = period.AddMonths(-5).Start;
+            var trendTask = _entries.GetPeriodAsync(sixMonthsAgoStart, period.End);
 
             await Task.WhenAll(monthTask, weekTask, trendTask);
 
@@ -218,15 +217,12 @@ public sealed partial class DashboardViewModel : BaseViewModel
             var monthlyGroups = new List<(string MonthName, decimal Hours, decimal Earnings)>();
             for (var i = 5; i >= 0; i--)
             {
-                var targetMonth = today.AddMonths(-i);
-                var monthStart = new DateTime(targetMonth.Year, targetMonth.Month, 1);
-                var monthEnd = monthStart.AddMonths(1).AddDays(-1);
-
-                var periodEntries = trendEntries.Where(e => e.EntryDate.Date >= monthStart && e.EntryDate.Date <= monthEnd).ToList();
+                var targetPeriod = period.AddMonths(-i);
+                var periodEntries = trendEntries.Where(e => e.EntryDate.Date >= targetPeriod.Start && e.EntryDate.Date <= targetPeriod.End).ToList();
                 decimal hours = periodEntries.Sum(e => e.NetHours);
                 decimal earnings = periodEntries.Sum(e => e.EstimatedEarnings);
 
-                string monthName = targetMonth.ToString("MMM");
+                string monthName = targetPeriod.Start.ToString("MMM");
                 monthlyGroups.Add((monthName, hours, earnings));
             }
 

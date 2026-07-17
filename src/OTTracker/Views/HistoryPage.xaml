@@ -22,7 +22,7 @@
                 IsVisible="{Binding IsBusy,Converter={StaticResource InverseBooleanConverter}}">
                 
                 <!-- 1. View Mode Segment Switcher -->
-                <Border StrokeThickness="0" BackgroundColor="{StaticResource Surface2}" StrokeShape="RoundRectangle 20" HorizontalOptions="Center" Padding="3" HeightRequest="38">
+                <Border StrokeThickness="0" BackgroundColor="{StaticResource Surface2}" StrokeShape="RoundRectangle 50" HorizontalOptions="Center" Padding="0" HeightRequest="30">
                     <Grid ColumnDefinitions="*,*" WidthRequest="240">
                         <Button Text="Calendar" 
                                 Command="{Binding ShowCalendarViewCommand}" 
@@ -36,7 +36,7 @@
                                 <DataTrigger Binding="{Binding IsCalendarView}" TargetType="Button" Value="True">
                                     <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
                                     <Setter Property="TextColor" Value="White" />
-                                    <Setter Property="CornerRadius" Value="16" />
+                                    <Setter Property="CornerRadius" Value="0" />
                                 </DataTrigger>
                             </Button.Triggers>
                         </Button>
@@ -48,12 +48,13 @@
                                 BackgroundColor="Transparent" 
                                 TextColor="{StaticResource MutedText}" 
                                 Padding="0" 
+                                Margin="0"
                                 HeightRequest="32">
                             <Button.Triggers>
                                 <DataTrigger Binding="{Binding IsCalendarView}" TargetType="Button" Value="False">
                                     <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
                                     <Setter Property="TextColor" Value="White" />
-                                    <Setter Property="CornerRadius" Value="16" />
+                                    <Setter Property="CornerRadius" Value="0" />
                                 </DataTrigger>
                             </Button.Triggers>
                         </Button>
