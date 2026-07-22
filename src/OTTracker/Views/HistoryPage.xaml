@@ -62,61 +62,54 @@
                 </Border>
 
                 <!-- 2. Calendar Card (Visible only in Calendar View) -->
-                <CarouselView Grid.Row="1"
-                              ItemsSource="{Binding MonthPages}"
-                              Position="{Binding CurrentPagePosition, Mode=TwoWay}"
-                              IsSwipeEnabled="True"
-                              Loop="False"
-                              IsVisible="{Binding IsCalendarView}">
-                    <CarouselView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Style="{StaticResource Card}">
-                                <VerticalStackLayout Spacing="8">
-                                    <Grid ColumnDefinitions="*,*,*,*,*,*,*">
-                                        <Label Text="อา" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
-                                        <Label Grid.Column="1" Text="จ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
-                                        <Label Grid.Column="2" Text="อ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
-                                        <Label Grid.Column="3" Text="พ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
-                                        <Label Grid.Column="4" Text="พฤ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
-                                        <Label Grid.Column="5" Text="ศ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
-                                        <Label Grid.Column="6" Text="ส" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
-                                    </Grid>
-                                    <StackLayout>
-                                        <CollectionView ItemsSource="{Binding CalendarDays}" SelectionMode="None">
-                                            <CollectionView.ItemsLayout>
-                                                <GridItemsLayout Orientation="Vertical" Span="7" HorizontalItemSpacing="4" VerticalItemSpacing="4" />
-                                            </CollectionView.ItemsLayout>
-                                            <CollectionView.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Border HeightRequest="56" BackgroundColor="{Binding LightBgColorHex}" StrokeShape="RoundRectangle 8" StrokeThickness="0">
-                                                        <Border.GestureRecognizers>
-                                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ClickDayCommand}" CommandParameter="{Binding .}" />
-                                                        </Border.GestureRecognizers>
-                                                        <Border.Triggers>
-                                                            <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="True">
-                                                                <Setter Property="Stroke" Value="{StaticResource Primary}" />
-                                                                <Setter Property="StrokeThickness" Value="2" />
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding IsToday}" TargetType="Border" Value="True">
-                                                                <Setter Property="Stroke" Value="#BFA9F9" />
-                                                                <Setter Property="StrokeThickness" Value="1.5" />
-                                                            </DataTrigger>
-                                                        </Border.Triggers>
-                                                        <Grid Padding="4" RowDefinitions="*,Auto,Auto">
-                                                            <Label Grid.Row="0" Text="{Binding DayText}" FontSize="14" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" VerticalOptions="Start" HorizontalOptions="Start" />
-                                                            <Label Grid.Row="1" Text="{Binding HoursText}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="{Binding AccentColorHex}" VerticalOptions="Start" HorizontalOptions="Start" />
-                                                            <BoxView Grid.Row="2" Margin="0,5,0,0" HeightRequest="3.5" CornerRadius="1.5" Color="{Binding AccentColorHex}" HorizontalOptions="FillAndExpand" IsVisible="{Binding HasEntries}" />
-                                                        </Grid>
-                                                    </Border>
-                                                </DataTemplate>
-                                            </CollectionView.ItemTemplate>
-                                        </CollectionView>
-                                    </StackLayout>
-                                </VerticalStackLayout>
-                            </Border>
-                        </DataTemplate>
-                    </CarouselView.ItemTemplate>
-                </CarouselView>
+                <Border Grid.Row="1" Style="{StaticResource Card}" IsVisible="{Binding IsCalendarView}">
+                    <VerticalStackLayout Spacing="8">
+                        <Grid ColumnDefinitions="*,*,*,*,*,*,*">
+                            <Label Text="อา" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
+                            <Label Grid.Column="1" Text="จ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
+                            <Label Grid.Column="2" Text="อ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
+                            <Label Grid.Column="3" Text="พ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
+                            <Label Grid.Column="4" Text="พฤ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
+                            <Label Grid.Column="5" Text="ศ" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
+                            <Label Grid.Column="6" Text="ส" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
+                        </Grid>
+                        <StackLayout>
+                            <CollectionView ItemsSource="{Binding CalendarDays}" SelectionMode="None">
+                                <CollectionView.ItemsLayout>
+                                    <GridItemsLayout Orientation="Vertical" Span="7" HorizontalItemSpacing="4" VerticalItemSpacing="4" />
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border HeightRequest="56" BackgroundColor="{Binding LightBgColorHex}" StrokeShape="RoundRectangle 8" StrokeThickness="0">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ClickDayCommand}" CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Border.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="True">
+                                                    <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                                    <Setter Property="StrokeThickness" Value="2" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsToday}" TargetType="Border" Value="True">
+                                                    <Setter Property="Stroke" Value="#BFA9F9" />
+                                                    <Setter Property="StrokeThickness" Value="1.5" />
+                                                </DataTrigger>
+                                            </Border.Triggers>
+                                            <Grid Padding="4" RowDefinitions="*,Auto,Auto">
+                                                <Label Grid.Row="0" Text="{Binding DayText}" FontSize="14" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" VerticalOptions="Start" HorizontalOptions="Start" />
+                                                <Label Grid.Row="1" Text="{Binding HoursText}" FontSize="9" FontFamily="OpenSansSemibold" TextColor="{Binding AccentColorHex}" VerticalOptions="Start" HorizontalOptions="Start" />
+                                                <BoxView Grid.Row="2" Margin="0,5,0,0" HeightRequest="3.5" CornerRadius="1.5" Color="{Binding AccentColorHex}" HorizontalOptions="FillAndExpand" IsVisible="{Binding HasEntries}" />
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                            <StackLayout.GestureRecognizers>
+                                <SwipeGestureRecognizer Direction="Left" Command="{Binding NextMonthCommand}" />
+                                <SwipeGestureRecognizer Direction="Right" Command="{Binding PreviousMonthCommand}" />
+                            </StackLayout.GestureRecognizers>
+                        </StackLayout>
+                    </VerticalStackLayout>
+                </Border>
 
                 <!-- 3. Month Summaries (Visible only in List Feed View) -->
                 <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="8" IsVisible="{Binding IsCalendarView, Converter={StaticResource InverseBooleanConverter}}">
