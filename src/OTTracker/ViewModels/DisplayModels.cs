@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Enums;
@@ -63,12 +64,44 @@ public sealed class MonthlyTrendSummary
     public decimal Hours { get; }
     public decimal Earnings { get; }
     public double BarHeight { get; }
+    public bool IsCurrentMonth { get; }
 
-    public MonthlyTrendSummary(string monthName, decimal hours, decimal earnings, double barHeight)
+    public Color BarColor => IsCurrentMonth
+        ? Color.FromArgb("#5B4FE8")
+        : Color.FromArgb("#A5B4FC");
+
+    public Color TextColor => IsCurrentMonth
+        ? Color.FromArgb("#2A2859")
+        : Color.FromArgb("#8E8EA9");
+
+    public FontAttributes FontAttributes => IsCurrentMonth
+        ? FontAttributes.Bold
+        : FontAttributes.None;
+
+    public MonthlyTrendSummary(string monthName, decimal hours, decimal earnings, double barHeight, bool isCurrentMonth = false)
     {
         MonthName = monthName;
         Hours = hours;
         Earnings = earnings;
         BarHeight = barHeight;
+        IsCurrentMonth = isCurrentMonth;
+    }
+}
+
+public sealed partial class MonthPageModel : ObservableObject
+{
+    public DateTime MonthDate { get; }
+    public OtPeriod Period { get; }
+    public string MonthText => Period.DisplayText;
+    public ObservableCollection<CalendarDay> CalendarDays { get; } = [];
+
+    public MonthPageModel(DateTime monthDate, OtPeriod period, IEnumerable<CalendarDay> days)
+    {
+        MonthDate = monthDate;
+        Period = period;
+        foreach (var day in days)
+        {
+            CalendarDays.Add(day);
+        }
     }
 }

@@ -38,6 +38,11 @@ public sealed partial class HistoryViewModel : BaseViewModel
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string selectedDayText = string.Empty;
 
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private int currentPagePosition = 1;
+
+    private bool _isUpdatingPosition;
+
     public HistoryViewModel(IOtEntryRepository entries, ISettingsService settings, AppEvents events)
     {
         _entries = entries;
@@ -70,6 +75,8 @@ public sealed partial class HistoryViewModel : BaseViewModel
 
     public ObservableCollection<CalendarDay> CalendarDays { get; } = [];
 
+    public ObservableCollection<MonthPageModel> MonthPages { get; } = [];
+
     public ObservableCollection<EntryDisplay> MonthEntries { get; } = [];
 
     public ObservableCollection<EntryDisplay> SelectedDayEntries { get; } = [];
@@ -100,8 +107,23 @@ public sealed partial class HistoryViewModel : BaseViewModel
         }
         OnPropertyChanged(nameof(MonthText));
 
-        var period = GetOtPeriod(SelectedMonth);
-        var monthEntries = await _entries.GetPeriodAsync(period.Start, period.End);
+        var prevPeriod = GetOtPeriod(SelectedMonth.AddMonths(-1));
+        var currentPeriod = GetOtPeriod(SelectedMonth);
+        var nextPeriod = GetOtPeriod(SelectedMonth.AddMonths(1));
+
+        var prevPage = await BuildMonthPageAsync(SelectedMonth.AddMonths(-1), prevPeriod);
+        var currentPage = await BuildMonthPageAsync(SelectedMonth, currentPeriod);
+        var nextPage = await BuildMonthPageAsync(SelectedMonth.AddMonths(1), nextPeriod);
+
+        _isUpdatingPosition = true;
+        MonthPages.Clear();
+        MonthPages.Add(prevPage);
+        MonthPages.Add(currentPage);
+        MonthPages.Add(nextPage);
+        CurrentPagePosition = 1;
+        _isUpdatingPosition = false;
+
+        var monthEntries = await _entries.GetPeriodAsync(currentPeriod.Start, currentPeriod.End);
         MonthHours = monthEntries.Sum(e => e.NetHours);
         MonthEarnings = monthEntries.Sum(e => e.EstimatedEarnings);
 
@@ -114,15 +136,22 @@ public sealed partial class HistoryViewModel : BaseViewModel
             MonthEntries.Add(display);
         }
 
-        CalendarDays.Clear();
+        UpdateSelectedDayEntries();
+        IsBusy = false;
+    }
+
+    private async Task<MonthPageModel> BuildMonthPageAsync(DateTime monthDate, OtPeriod period)
+    {
+        var entries = await _entries.GetPeriodAsync(period.Start, period.End);
+        var entryGroups = entries.GroupBy(e => e.EntryDate.Date)
+                                 .ToDictionary(g => g.Key, g => g.ToList());
+
+        var days = new List<CalendarDay>();
         var blanks = (int)period.Start.DayOfWeek;
         for (var i = 0; i < blanks; i++)
         {
-            CalendarDays.Add(new CalendarDay());
+            days.Add(new CalendarDay());
         }
-
-        var entryGroups = monthEntries.GroupBy(e => e.EntryDate.Date)
-                                      .ToDictionary(g => g.Key, g => g.ToList());
 
         for (var date = period.Start; date <= period.End; date = date.AddDays(1))
         {
@@ -130,7 +159,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
             var totalHours = hasEntries ? dayEntries.Sum(e => e.NetHours) : 0m;
             var dominantDayType = hasEntries ? dayEntries.First().DayType : (OTTracker.Domain.Enums.DayType?)null;
 
-            CalendarDays.Add(new CalendarDay
+            days.Add(new CalendarDay
             {
                 Date = date,
                 HasEntries = hasEntries,
@@ -140,8 +169,22 @@ public sealed partial class HistoryViewModel : BaseViewModel
                 IsToday = date.Date == DateTime.Today
             });
         }
-        UpdateSelectedDayEntries();
-        IsBusy = false;
+
+        return new MonthPageModel(monthDate, period, days);
+    }
+
+    partial void OnCurrentPagePositionChanged(int value)
+    {
+        if (_isUpdatingPosition) return;
+
+        if (value == 0)
+        {
+            _ = PreviousMonthAsync();
+        }
+        else if (value == 2)
+        {
+            _ = NextMonthAsync();
+        }
     }
 
     private async Task PreviousMonthAsync()
@@ -193,25 +236,23 @@ public sealed partial class HistoryViewModel : BaseViewModel
 
     private void RefreshCalendarSelection()
     {
-        var currentDays = CalendarDays.ToList();
-        CalendarDays.Clear();
-        foreach (var d in currentDays)
+        if (MonthPages.Count > 1)
         {
-            if (d.IsBlank)
+            var currentMonthPage = MonthPages[1];
+            var updatedDays = currentMonthPage.CalendarDays.Select(d => d.IsBlank ? d : new CalendarDay
             {
-                CalendarDays.Add(d);
-            }
-            else
+                Date = d.Date,
+                HasEntries = d.HasEntries,
+                TotalHours = d.TotalHours,
+                DayType = d.DayType,
+                IsSelected = d.Date.Value.Date == SelectedDate.Date,
+                IsToday = d.IsToday
+            }).ToList();
+
+            currentMonthPage.CalendarDays.Clear();
+            foreach (var d in updatedDays)
             {
-                CalendarDays.Add(new CalendarDay
-                {
-                    Date = d.Date,
-                    HasEntries = d.HasEntries,
-                    TotalHours = d.TotalHours,
-                    DayType = d.DayType,
-                    IsSelected = d.Date.Value.Date == SelectedDate.Date,
-                    IsToday = d.IsToday
-                });
+                currentMonthPage.CalendarDays.Add(d);
             }
         }
     }

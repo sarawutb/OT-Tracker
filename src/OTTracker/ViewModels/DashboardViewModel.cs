@@ -214,7 +214,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
             // 3. 6-Month Trend Chart
             var trendEntries = await trendTask;
             MonthlyTrendSummaries.Clear();
-            var monthlyGroups = new List<(string MonthName, decimal Hours, decimal Earnings)>();
+            var monthlyGroups = new List<(string MonthName, decimal Hours, decimal Earnings, bool IsCurrentMonth)>();
             for (var i = 5; i >= 0; i--)
             {
                 var targetPeriod = period.AddMonths(-i);
@@ -223,7 +223,8 @@ public sealed partial class DashboardViewModel : BaseViewModel
                 decimal earnings = periodEntries.Sum(e => e.EstimatedEarnings);
 
                 string monthName = targetPeriod.Start.ToString("MMM");
-                monthlyGroups.Add((monthName, hours, earnings));
+                bool isCurrentMonth = i == 0;
+                monthlyGroups.Add((monthName, hours, earnings, isCurrentMonth));
             }
 
             var maxMonthlyHours = monthlyGroups.Max(m => m.Hours);
@@ -232,7 +233,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
             {
                 double barHeight = (double)m.Hours * monthlyScaleFactor;
                 if (m.Hours > 0 && barHeight < 5) barHeight = 5; // Ensure visible
-                MonthlyTrendSummaries.Add(new MonthlyTrendSummary(m.MonthName, m.Hours, m.Earnings, barHeight));
+                MonthlyTrendSummaries.Add(new MonthlyTrendSummary(m.MonthName, m.Hours, m.Earnings, barHeight, m.IsCurrentMonth));
             }
 
             // 4. Key Metrics

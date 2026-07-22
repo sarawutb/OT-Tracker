@@ -254,27 +254,40 @@
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid RowDefinitions="*,Auto" HeightRequest="140" HorizontalOptions="Fill">
-                                            <VerticalStackLayout Grid.Row="0" VerticalOptions="End" HorizontalOptions="Fill" Spacing="6">
+                                            <VerticalStackLayout Grid.Row="0" VerticalOptions="End" HorizontalOptions="Fill" Spacing="4">
                                                 <Label
                                                     FontSize="9"
+                                                    FontAttributes="{Binding FontAttributes}"
                                                     HorizontalTextAlignment="Center"
                                                     Text="{Binding Hours, StringFormat='{0:0.#}h'}"
-                                                    TextColor="{StaticResource Ink2}" />
-                                                <BoxView
+                                                    TextColor="{Binding TextColor}" />
+                                                <Border
                                                     HorizontalOptions="Center"
                                                     HeightRequest="{Binding BarHeight}"
                                                     VerticalOptions="End"
                                                     WidthRequest="28"
-                                                    Color="{StaticResource Accent}"
-                                                    CornerRadius="4" />
+                                                    BackgroundColor="{Binding BarColor}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 6,6,2,2">
+                                                    <Border.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCurrentMonth}" TargetType="Border" Value="True">
+                                                            <Setter Property="Shadow">
+                                                                <Setter.Value>
+                                                                    <Shadow Brush="#5B4FE8" Offset="0,3" Radius="8" Opacity="0.4" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </DataTrigger>
+                                                    </Border.Triggers>
+                                                </Border>
                                             </VerticalStackLayout>
                                             <Label
                                                 Grid.Row="1"
                                                 Margin="0,6,0,0"
                                                 FontSize="10"
+                                                FontAttributes="{Binding FontAttributes}"
                                                 HorizontalTextAlignment="Center"
                                                 Text="{Binding MonthName}"
-                                                TextColor="{StaticResource MutedText}" />
+                                                TextColor="{Binding TextColor}" />
                                         </Grid>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
