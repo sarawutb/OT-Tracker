@@ -1,6 +1,6 @@
 {
-  "versionCode": 13,
-  "versionName": "3.3.1",
-  "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v3.3.1/com.company.ottracker-Signed.apk",
-  "changeLog": "- แก้ไขระบบสไลด์เปลี่ยนเดือน PanGesture ให้ทำงานสมบูรณ์ 100% บน Android\n- ปรับปรุงการเลือกวันตอบสนองลื่นไหลแบบ 60fps (0ms delay)\n- เพิ่มขอบไฮไลท์ Selected Border บนวันที่ถูกเลือกในปฏิทิน"
+  "versionCode": 14,
+  "versionName": "3.3.2",
+  "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v3.3.2/com.company.ottracker-Signed.apk",
+  "changeLog": "- เพิ่มหน้าต่างแสดงเปอร์เซ็นต์ % และขนาด MB ขณะดาวน์โหลดไฟล์อัปเดตแอป\n- แก้ไขระบบสไลด์เปลี่ยนเดือน PanGesture ให้ทำงานสมบูรณ์ 100% บน Android\n- ปรับปรุงการเลือกวันตอบสนองลื่นไหลแบบ 60fps (0ms delay)"
 }

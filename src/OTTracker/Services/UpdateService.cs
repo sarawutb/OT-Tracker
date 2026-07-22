@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
+using OTTracker.Views;
 
 #if ANDROID
 using Android.Content;
@@ -69,8 +70,17 @@ public class UpdateService : IUpdateService
 
     private async Task DownloadAndInstallApkAsync(string apkUrl, Page page)
     {
+        UpdateProgressPage? progressPage = null;
+        INavigation? navigation = page.Navigation ?? Shell.Current?.Navigation;
+
         try
         {
+            progressPage = new UpdateProgressPage();
+            if (navigation != null)
+            {
+                await navigation.PushModalAsync(progressPage, false);
+            }
+
             string fileName = "app-update.apk";
             string filePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
 
@@ -79,8 +89,39 @@ public class UpdateService : IUpdateService
                 File.Delete(filePath);
             }
 
-            byte[] apkData = await _httpClient.GetByteArrayAsync(apkUrl);
-            await File.WriteAllBytesAsync(filePath, apkData);
+            using (var response = await _httpClient.GetAsync(apkUrl, HttpCompletionOption.ResponseHeadersRead))
+            {
+                response.EnsureSuccessStatusCode();
+
+                long totalBytes = response.Content.Headers.ContentLength ?? -1L;
+                using var contentStream = await response.Content.ReadAsStreamAsync();
+                using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+
+                byte[] buffer = new byte[8192];
+                long totalRead = 0;
+                int bytesRead;
+
+                while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    await fileStream.WriteAsync(buffer, 0, bytesRead);
+                    totalRead += bytesRead;
+
+                    if (totalBytes > 0)
+                    {
+                        double ratio = (double)totalRead / totalBytes;
+                        progressPage?.UpdateProgress(ratio, totalRead, totalBytes);
+                    }
+                    else
+                    {
+                        progressPage?.UpdateProgress(0, totalRead, -1);
+                    }
+                }
+            }
+
+            if (navigation != null && progressPage != null)
+            {
+                await navigation.PopModalAsync(false);
+            }
 
 #if ANDROID
             InstallApkAndroid(filePath);
@@ -90,6 +131,14 @@ public class UpdateService : IUpdateService
         }
         catch (Exception ex)
         {
+            if (navigation != null && progressPage != null)
+            {
+                try
+                {
+                    await navigation.PopModalAsync(false);
+                }
+                catch { }
+            }
             await page.DisplayAlert("เกิดข้อผิดพลาด", $"ไม่สามารถดาวน์โหลดไฟล์อัปเดตได้: {ex.Message}", "ตกลง");
         }
     }

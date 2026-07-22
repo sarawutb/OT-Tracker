@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OTTracker.Views.UpdateProgressPage"
+             BackgroundColor="#80000000"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
+    <Border HorizontalOptions="Center" 
+            VerticalOptions="Center" 
+            BackgroundColor="White" 
+            StrokeShape="RoundRectangle 16" 
+            Padding="24" 
+            WidthRequest="300"
+            Shadow="{Shadow Brush=Black, Offset='0,4', Radius=16, Opacity=0.25}">
+        <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+            <ActivityIndicator IsRunning="True" Color="#5B4FE8" WidthRequest="36" HeightRequest="36" />
+            
+            <Label Text="กำลังดาวน์โหลดเวอร์ชันใหม่..." 
+                   FontSize="16" 
+                   FontFamily="OpenSansSemibold" 
+                   TextColor="#1D192B" 
+                   HorizontalTextAlignment="Center" />
+
+            <ProgressBar x:Name="DownloadProgressBar" 
+                         ProgressColor="#5B4FE8" 
+                         Progress="0" 
+                         HeightRequest="8" 
+                         HorizontalOptions="FillAndExpand" />
+
+            <Grid ColumnDefinitions="*,*">
+                <Label x:Name="ProgressPercentLabel" 
+                       Text="0%" 
+                       FontSize="14" 
+                       FontFamily="OpenSansSemibold" 
+                       TextColor="#5B4FE8" 
+                       HorizontalTextAlignment="Start" />
+
+                <Label Grid.Column="1"
+                       x:Name="ProgressDetailLabel" 
+                       Text="0.0 / 0.0 MB" 
+                       FontSize="12" 
+                       TextColor="#6E6D7A" 
+                       HorizontalTextAlignment="End" 
+                       VerticalOptions="Center" />
+            </Grid>
+        </VerticalStackLayout>
+    </Border>
+</ContentPage>
