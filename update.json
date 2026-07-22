@@ -1,5 +1,5 @@
 {
-  "versionCode": 12,
+  "versionCode": 13,
   "versionName": "3.3.1",
   "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v3.3.0/com.company.ottracker-Signed.apk",
   "changeLog": "- เพิ่มขอบไฮไลท์ Selected Border บนวันที่ถูกเลือกในปฏิทิน\n- ปรับปรุงการสไลด์เปลี่ยนเดือน Swipe Gesture รวดเร็วและเสถียรยิ่งขึ้น\n- ปรับดีไซน์กราฟ 6-Month Trend มีมิติและแยกสีไฮไลท์เดือนปัจจุบัน\n- เพิ่มระบบ Auto Update เช็คและแจ้งเตือนเวอร์ชันใหม่อัตโนมัติ"
