@@ -1,17 +1,32 @@
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using OTTracker.Domain.Enums;
 
 namespace OTTracker.Domain.Entities;
 
-public sealed class CalendarDay
+public sealed class CalendarDay : INotifyPropertyChanged
 {
+    private bool _isSelected;
+
     public DateTime? Date { get; init; }
 
     public bool IsBlank => Date is null;
 
     public bool HasEntries { get; init; }
 
-    public bool IsSelected { get; init; }
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            if (_isSelected != value)
+            {
+                _isSelected = value;
+                OnPropertyChanged();
+            }
+        }
+    }
 
     public bool IsToday { get; init; }
 
@@ -33,9 +48,16 @@ public sealed class CalendarDay
 
     public string LightBgColorHex => DayType switch
     {
-        Enums.DayType.Weekend => "#FFF8ED", // Very soft amber
-        Enums.DayType.Holiday => "#FFF2F2", // Very soft red
-        Enums.DayType.Regular => "#F0EEFD", // Very soft blue
-        _ => "#F7F8FC" // Standard surface
+        Enums.DayType.Weekend => "#FFF8ED",
+        Enums.DayType.Holiday => "#FFF2F2",
+        Enums.DayType.Regular => "#F0EEFD",
+        _ => "#F7F8FC"
     };
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

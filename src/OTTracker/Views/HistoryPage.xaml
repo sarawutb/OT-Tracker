@@ -20,6 +20,11 @@
                 RowDefinitions="Auto,Auto,Auto,*"
                 RowSpacing="12"
                 IsVisible="{Binding IsBusy,Converter={StaticResource InverseBooleanConverter}}">
+                <Grid.GestureRecognizers>
+                    <PanGestureRecognizer PanUpdated="OnCalendarPanUpdated" />
+                    <SwipeGestureRecognizer Direction="Left" Command="{Binding NextMonthCommand}" />
+                    <SwipeGestureRecognizer Direction="Right" Command="{Binding PreviousMonthCommand}" />
+                </Grid.GestureRecognizers>
                 
                 <!-- 1. View Mode Segment Switcher -->
                 <Border StrokeThickness="0" BackgroundColor="{StaticResource Surface2}" StrokeShape="RoundRectangle 50" HorizontalOptions="Center" Padding="0" HeightRequest="30">
@@ -63,6 +68,11 @@
 
                 <!-- 2. Calendar Card (Visible only in Calendar View) -->
                 <Border Grid.Row="1" Style="{StaticResource Card}" IsVisible="{Binding IsCalendarView}">
+                    <Border.GestureRecognizers>
+                        <PanGestureRecognizer PanUpdated="OnCalendarPanUpdated" />
+                        <SwipeGestureRecognizer Direction="Left" Command="{Binding NextMonthCommand}" />
+                        <SwipeGestureRecognizer Direction="Right" Command="{Binding PreviousMonthCommand}" />
+                    </Border.GestureRecognizers>
                     <VerticalStackLayout Spacing="8">
                         <Grid ColumnDefinitions="*,*,*,*,*,*,*">
                             <Label Text="อา" TextColor="{StaticResource MutedText}" HorizontalTextAlignment="Center" FontSize="11" FontFamily="OpenSansSemibold" />
@@ -103,10 +113,6 @@
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
-                            <StackLayout.GestureRecognizers>
-                                <SwipeGestureRecognizer Direction="Left" Command="{Binding NextMonthCommand}" />
-                                <SwipeGestureRecognizer Direction="Right" Command="{Binding PreviousMonthCommand}" />
-                            </StackLayout.GestureRecognizers>
                         </StackLayout>
                     </VerticalStackLayout>
                 </Border>

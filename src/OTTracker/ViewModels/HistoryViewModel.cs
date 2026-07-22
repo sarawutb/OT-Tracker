@@ -196,22 +196,11 @@ public sealed partial class HistoryViewModel : BaseViewModel
 
     private void RefreshCalendarSelection()
     {
-        if (CalendarDays.Count > 0)
+        foreach (var day in CalendarDays)
         {
-            var updatedDays = CalendarDays.Select(d => d.IsBlank ? d : new CalendarDay
+            if (!day.IsBlank && day.Date.HasValue)
             {
-                Date = d.Date,
-                HasEntries = d.HasEntries,
-                TotalHours = d.TotalHours,
-                DayType = d.DayType,
-                IsSelected = d.Date.Value.Date == SelectedDate.Date,
-                IsToday = d.IsToday
-            }).ToList();
-
-            CalendarDays.Clear();
-            foreach (var d in updatedDays)
-            {
-                CalendarDays.Add(d);
+                day.IsSelected = (day.Date.Value.Date == SelectedDate.Date);
             }
         }
     }

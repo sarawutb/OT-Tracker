@@ -23,7 +23,7 @@
                     <Button
                         Grid.Column="2"
                         Text="Cancel"
-                        BackgroundColor="{StaticResource Red}"
+                        BackgroundColor="{StaticResource AmberMid}"
                         Padding="12,0"
                         HeightRequest="36"
                         VerticalOptions="Center"
