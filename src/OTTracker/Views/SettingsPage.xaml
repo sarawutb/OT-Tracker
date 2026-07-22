@@ -180,6 +180,13 @@
                     </VerticalStackLayout>
                 </Border>
 
+                <Label Text="APP UPDATE" Style="{StaticResource MutedLabel}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Button Text="Check for Updates" Command="{Binding CheckForUpdatesCommand}" Style="{StaticResource GhostButton}" />
+                    </VerticalStackLayout>
+                </Border>
+
                 <Button Text="Save settings" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" />
             </VerticalStackLayout>
         </ScrollView>

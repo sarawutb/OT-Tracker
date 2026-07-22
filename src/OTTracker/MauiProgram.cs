@@ -62,6 +62,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<Services.IBiometricService, Services.BiometricService>();
         builder.Services.AddSingleton<ICsvExportService, MauiCsvExportService>();
         builder.Services.AddSingleton<IReminderService, ReminderService>();
+        builder.Services.AddSingleton<IUpdateService, UpdateService>();
         builder.Services.AddSingleton<IExceptionLogger, ExceptionLogger>();
         builder.Services.AddSingleton<IUserExceptionNotifier, MauiUserExceptionNotifier>();
         builder.Services.AddSingleton<GlobalExceptionHandler>();

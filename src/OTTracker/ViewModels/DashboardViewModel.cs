@@ -12,6 +12,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
     private readonly IOtEntryRepository _entries;
     private readonly ISettingsService _settings;
     private readonly LocalSettingsService _localSettings;
+    private readonly IUpdateService _updateService;
     private readonly SemaphoreSlim _loadGate = new(1, 1);
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
@@ -79,11 +80,13 @@ public sealed partial class DashboardViewModel : BaseViewModel
         IOtEntryRepository entries,
         ISettingsService settings,
         LocalSettingsService localSettings,
+        IUpdateService updateService,
         AppEvents events)
     {
         _entries = entries;
         _settings = settings;
         _localSettings = localSettings;
+        _updateService = updateService;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         GoLogTodayCommand = new AsyncRelayCommand(GoLogTodayAsync);
@@ -135,6 +138,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
             MaskEarnings = deviceSettings.MaskEarnings;
             Microsoft.Maui.Storage.Preferences.Default.Set("mask_earnings", deviceSettings.MaskEarnings);
             _suppressMaskSave = false;
+            _ = _updateService.CheckAndPromptUpdateAsync();
 
             var today = DateTime.Today;
             var period = OtPeriod.FromDate(today, settings.PeriodStartDay, settings.PeriodEndDay);

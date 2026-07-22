@@ -19,6 +19,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private readonly ISupabaseClientProvider _clientProvider;
     private readonly IDataSourceModeService _modeService;
     private readonly IDataSyncService _syncService;
+    private readonly IUpdateService _updateService;
     private bool _maskEarnings;
     private string _userId = string.Empty;
 
@@ -114,7 +115,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         ISupabaseClientProvider clientProvider,
         IDataSourceModeService modeService,
         IDataSyncService syncService,
-        IReminderService reminderService)
+        IReminderService reminderService,
+        IUpdateService updateService)
     {
         IsBusy = true;
         _settingsService = settingsService;
@@ -129,6 +131,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         _modeService = modeService;
         _syncService = syncService;
         _reminderService = reminderService;
+        _updateService = updateService;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         SaveSupabaseConfigCommand = new AsyncRelayCommand(SaveSupabaseConfigAsync);
@@ -556,5 +559,11 @@ public sealed partial class SettingsViewModel : BaseViewModel
                 await CurrentPage?.DisplayAlert("PIN updated", "PIN lock is closed.", "OK");
             }
         }
+    }
+
+    [RelayCommand]
+    private async Task CheckForUpdatesAsync()
+    {
+        await _updateService.CheckAndPromptUpdateAsync(showNoUpdateAlert: true);
     }
 }

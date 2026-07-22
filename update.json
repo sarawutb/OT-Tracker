@@ -1,0 +1,6 @@
+{
+  "versionCode": 11,
+  "versionName": "3.2.9",
+  "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v3.2.9/com.company.ottracker-Signed.apk",
+  "changeLog": "- เพิ่มระบบ CarouselView ปฏิทินสไลด์เปลี่ยนเดือนลื่นตามนิ้วมือ\n- ปรับดีไซน์กราฟ 6-Month Trend มีมิติและแยกสีไฮไลท์เดือนปัจจุบัน\n- เพิ่มระบบ Auto Update เช็คและแจ้งเตือนเวอร์ชันใหม่อัตโนมัติ"
+}
