@@ -54,11 +54,7 @@ public partial class App : Application
     {
         if (_modeService.UseSupabase)
         {
-            var sessionRestored = await RestoreSessionAsync();
-            if (!sessionRestored)
-            {
-                await _modeService.SetUseSupabaseAsync(false);
-            }
+            await RestoreSessionAsync();
         }
 
         AppSettings settings;

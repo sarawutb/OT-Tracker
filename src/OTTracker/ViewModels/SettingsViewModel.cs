@@ -191,8 +191,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         ErrorMessage = string.Empty;
 
         var credentials = _configService.GetCredentials();
-        IsSupabaseConnected = _modeService.UseSupabase;
-        UseSupabase = IsSupabaseConnected;
+        UseSupabase = _modeService.UseSupabase;
+        IsSupabaseConnected = _modeService.UseSupabase && _clientProvider.Client?.Auth.CurrentUser != null;
         SupabaseUrl = credentials.Url;
         SupabaseAnonKey = credentials.AnonKey;
 

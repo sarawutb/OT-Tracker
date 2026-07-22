@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
 using SupabaseSettingsService = OTTracker.Infrastructure.Services.SettingsService;
@@ -9,18 +10,38 @@ public sealed class RoutedSettingsService(
     LocalSettingsService localSettings,
     SupabaseSettingsService supabaseSettings) : ISettingsService
 {
-    private ISettingsService Current => modeService.UseSupabase ? supabaseSettings : localSettings;
+    public async Task<AppSettings> GetAsync()
+    {
+        if (modeService.UseSupabase)
+        {
+            try
+            {
+                return await supabaseSettings.GetAsync();
+            }
+            catch
+            {
+                return await localSettings.GetAsync();
+            }
+        }
 
-    public Task<AppSettings> GetAsync() => Current.GetAsync();
+        return await localSettings.GetAsync();
+    }
 
     public async Task SaveAsync(AppSettings settings)
     {
-        if (!modeService.UseSupabase)
-        {
-            await localSettings.SaveAsync(settings);
-            return;
-        }
+        // Always persist to local SQLite storage as a reliable fallback cache
+        await localSettings.SaveAsync(settings);
 
-        await supabaseSettings.SaveSyncedSettingsAsync(settings);
+        if (modeService.UseSupabase)
+        {
+            try
+            {
+                await supabaseSettings.SaveSyncedSettingsAsync(settings);
+            }
+            catch
+            {
+                // Local save succeeded even if Supabase sync is temporarily offline
+            }
+        }
     }
 }
