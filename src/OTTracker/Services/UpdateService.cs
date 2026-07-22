@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
@@ -72,10 +73,20 @@ public class UpdateService : IUpdateService
     {
         UpdateProgressPage? progressPage = null;
         INavigation? navigation = page.Navigation ?? Shell.Current?.Navigation;
+        using var cts = new CancellationTokenSource();
 
         try
         {
             progressPage = new UpdateProgressPage();
+            progressPage.CancelRequested += (_, _) =>
+            {
+                try
+                {
+                    cts.Cancel();
+                }
+                catch { }
+            };
+
             if (navigation != null)
             {
                 await navigation.PushModalAsync(progressPage, false);
@@ -89,21 +100,21 @@ public class UpdateService : IUpdateService
                 File.Delete(filePath);
             }
 
-            using (var response = await _httpClient.GetAsync(apkUrl, HttpCompletionOption.ResponseHeadersRead))
+            using (var response = await _httpClient.GetAsync(apkUrl, HttpCompletionOption.ResponseHeadersRead, cts.Token))
             {
                 response.EnsureSuccessStatusCode();
 
                 long totalBytes = response.Content.Headers.ContentLength ?? -1L;
-                using var contentStream = await response.Content.ReadAsStreamAsync();
+                using var contentStream = await response.Content.ReadAsStreamAsync(cts.Token);
                 using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
 
                 byte[] buffer = new byte[8192];
                 long totalRead = 0;
                 int bytesRead;
 
-                while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length, cts.Token)) > 0)
                 {
-                    await fileStream.WriteAsync(buffer, 0, bytesRead);
+                    await fileStream.WriteAsync(buffer, 0, bytesRead, cts.Token);
                     totalRead += bytesRead;
 
                     if (totalBytes > 0)
@@ -128,6 +139,28 @@ public class UpdateService : IUpdateService
 #else
             await page.DisplayAlert("แจ้งเตือน", "ระบบอัปเดตอัตโนมัติรองรับเฉพาะระบบปฏิบัติการ Android", "ตกลง");
 #endif
+        }
+        catch (OperationCanceledException)
+        {
+            // Download was canceled by user
+            if (navigation != null && progressPage != null)
+            {
+                try
+                {
+                    await navigation.PopModalAsync(false);
+                }
+                catch { }
+            }
+
+            try
+            {
+                string filePath = Path.Combine(FileSystem.Current.CacheDirectory, "app-update.apk");
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+            catch { }
         }
         catch (Exception ex)
         {

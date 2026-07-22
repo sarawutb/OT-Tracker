@@ -43,6 +43,19 @@
                        HorizontalTextAlignment="End" 
                        VerticalOptions="Center" />
             </Grid>
+
+            <Button x:Name="CancelButton"
+                    Text="ยกเลิก"
+                    Clicked="OnCancelButtonClicked"
+                    BackgroundColor="#FFF2F2"
+                    TextColor="#A32D2D"
+                    FontFamily="OpenSansSemibold"
+                    FontSize="13"
+                    HeightRequest="36"
+                    CornerRadius="18"
+                    Padding="20,0"
+                    HorizontalOptions="Center"
+                    Margin="0,4,0,0" />
         </VerticalStackLayout>
     </Border>
 </ContentPage>

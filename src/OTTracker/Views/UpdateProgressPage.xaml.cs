@@ -6,6 +6,8 @@ namespace OTTracker.Views;
 
 public partial class UpdateProgressPage : ContentPage
 {
+    public event EventHandler? CancelRequested;
+
     public UpdateProgressPage()
     {
         InitializeComponent();
@@ -30,5 +32,15 @@ public partial class UpdateProgressPage : ContentPage
                 ProgressDetailLabel.Text = $"{readMb:F1} MB";
             }
         });
+    }
+
+    private void OnCancelButtonClicked(object? sender, EventArgs e)
+    {
+        CancelRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected override bool OnBackButtonPressed()
+    {
+        return true; // Disable hardware back button on Android during update download
     }
 }

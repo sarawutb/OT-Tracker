@@ -23,8 +23,8 @@
 		<!-- App Identifier -->
 		<ApplicationId>com.company.ottracker</ApplicationId>
 		<!-- Versions -->
-		<ApplicationDisplayVersion>3.3.2</ApplicationDisplayVersion>
-		<ApplicationVersion>14</ApplicationVersion>
+		<ApplicationDisplayVersion>3.3.4</ApplicationDisplayVersion>
+		<ApplicationVersion>15</ApplicationVersion>
 		<UseMaterial3>true</UseMaterial3>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">12.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
