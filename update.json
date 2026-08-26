@@ -1,6 +1,6 @@
 {
-  "versionCode": 15,
-  "versionName": "3.3.4",
-  "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v3.3.4/com.company.ottracker-Signed.apk",
-  "changeLog": "- เพิ่มปุ่มยกเลิก (Cancel) ขณะดาวน์โหลดไฟล์อัปเดตแอป\n- ป้องกันการกดย้อนกลับ (Back Button) ขณะกำลังดาวน์โหลดไฟล์อัปเดต\n- แก้ไขระบบบันทึกค่าตั้งค่า Supabase ไม่ให้หลุดหลังการอัปเดต\n- เพิ่มหน้าต่างแสดงเปอร์เซ็นต์ % และขนาด MB ขณะดาวน์โหลด"
+  "versionCode": 16,
+  "versionName": "3.3.5",
+  "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v3.3.5/com.company.ottracker-Signed.apk",
+  "changeLog": "- ปรับปรุงสไตล์กราฟแท่ง This Week ให้เป็น Capsule Bar มนขอบบน พร้อมไฮไลท์วันปัจจุบัน\n- แก้ไขระบบเชื่อมต่อ Supabase กรณี Session หมดอายุ/Offline ให้ Sign in หรือ Disconnect ได้ถูกต้อง\n- แก้ไข Bug ฟิลด์ Break minutes เมื่อกรอกค่าว่าง ให้บันทึกเป็น 0 อย่างถูกต้อง\n- เพิ่มปุ่มไอคอนรูปดวงตาสำหรับซ่อน/แสดงเงินเดือนในหน้า Settings"
 }
