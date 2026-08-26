@@ -16,6 +16,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private readonly ICsvExportService _csv;
     private readonly AppEvents _events;
     private readonly ISupabaseConfigService _configService;
+    private readonly ISupabaseSessionService _sessionService;
     private readonly ISupabaseClientProvider _clientProvider;
     private readonly IDataSourceModeService _modeService;
     private readonly IDataSyncService _syncService;
@@ -53,6 +54,15 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private decimal baseMonthlySalary = 10000m;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool hideSalary = true;
+
+    [CommunityToolkit.Mvvm.Input.RelayCommand]
+    private void ToggleSalaryVisibility()
+    {
+        HideSalary = !HideSalary;
+    }
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(HourlyRateText))]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(FormulaText))]
     private int workingDaysPerMonth = 30;
@@ -69,7 +79,14 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private TimeSpan defaultEndTime = new(21, 0, 0);
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private int defaultBreakMinutes = 30;
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(DefaultBreakMinutes))]
+    private string defaultBreakMinutesText = "30";
+
+    public int DefaultBreakMinutes
+    {
+        get => int.TryParse(DefaultBreakMinutesText, out var v) ? Math.Max(0, v) : 0;
+        set => DefaultBreakMinutesText = value.ToString();
+    }
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private int periodStartDay = 16;
@@ -112,6 +129,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         ICsvExportService csv,
         AppEvents events,
         ISupabaseConfigService configService,
+        ISupabaseSessionService sessionService,
         ISupabaseClientProvider clientProvider,
         IDataSourceModeService modeService,
         IDataSyncService syncService,
@@ -127,6 +145,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         _csv = csv;
         _events = events;
         _configService = configService;
+        _sessionService = sessionService;
         _clientProvider = clientProvider;
         _modeService = modeService;
         _syncService = syncService;
@@ -166,11 +185,22 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
     public Color SupabaseActionColor => IsSupabaseConnected ? GetColor("Red") : GetColor("GreenMid");
 
-    public string SupabaseStatusText => IsSupabaseConnected
-        ? "Connected to Supabase"
-        : UseSupabase
-            ? "Enter your Supabase connection details"
-            : "Using local SQLite data";
+    public string SupabaseStatusText
+    {
+        get
+        {
+            if (IsSupabaseConnected)
+                return "Connected to Supabase";
+
+            if (_modeService.UseSupabase)
+                return "Session expired / Offline. Tap Connect to sign in.";
+
+            if (UseSupabase)
+                return "Enter your Supabase connection details";
+
+            return "Using local SQLite data";
+        }
+    }
 
     public bool ShowSupabaseSwitch => !IsSupabaseConnected;
 
@@ -263,11 +293,12 @@ public sealed partial class SettingsViewModel : BaseViewModel
         try
         {
             var settings = ToSettings();
-            if (!_modeService.UseSupabase)
+            if (!IsSupabaseConnected)
             {
                 if (string.IsNullOrWhiteSpace(SupabaseUrl) || string.IsNullOrWhiteSpace(SupabaseAnonKey))
                 {
                     ErrorMessage = "Supabase URL and anon key are required.";
+                    await CurrentPage?.DisplayAlert("Configuration Required", ErrorMessage, "OK");
                     return;
                 }
 
@@ -329,11 +360,19 @@ public sealed partial class SettingsViewModel : BaseViewModel
             var copied = await _syncService.DisableSupabaseAsync();
             try
             {
-                await _clientProvider.Client.Auth.SignOut();
+                await _clientProvider.Client?.Auth?.SignOut();
             }
             catch
             {
                 // SQLite is already active and contains the latest Supabase snapshot.
+            }
+
+            try
+            {
+                await _sessionService.ClearSessionAsync();
+            }
+            catch
+            {
             }
 
             SupabaseUrl = string.Empty;
@@ -346,8 +385,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            IsSupabaseConnected = _modeService.UseSupabase;
-            UseSupabase = IsSupabaseConnected || UseSupabase;
+            IsSupabaseConnected = _modeService.UseSupabase && _clientProvider.Client?.Auth.CurrentUser != null;
+            UseSupabase = IsSupabaseConnected || _modeService.UseSupabase;
             ErrorMessage = ex.Message;
             await CurrentPage?.DisplayAlert("Error Message", ErrorMessage, "OK");
         }
@@ -542,6 +581,15 @@ public sealed partial class SettingsViewModel : BaseViewModel
         if (!value)
         {
             BiometricUnlockEnabled = false;
+        }
+    }
+
+    partial void OnUseSupabaseChanged(bool value)
+    {
+        if (!value && _modeService.UseSupabase && !IsSupabaseConnected)
+        {
+            _ = _modeService.SetUseSupabaseAsync(false);
+            OnPropertyChanged(nameof(SupabaseStatusText));
         }
     }
 

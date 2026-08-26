@@ -115,7 +115,7 @@
                         Title="Break minutes"
                         Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Clock_loader_10}}"
                         Keyboard="Numeric"
-                        Text="{Binding BreakMinutes}" />
+                        Text="{Binding BreakMinutesText}" />
 
                     <Label Style="{StaticResource MutedLabel}" Text="Note" />
                 <material:EditorField Title="Task or project name..." Text="{Binding Note}"/>

@@ -27,7 +27,14 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
     private TimeSpan endTime = new(21, 0, 0);
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private int breakMinutes = 30;
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(BreakMinutes))]
+    private string breakMinutesText = "30";
+
+    public int BreakMinutes
+    {
+        get => int.TryParse(BreakMinutesText, out var v) ? Math.Max(0, v) : 0;
+        set => BreakMinutesText = value.ToString();
+    }
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private string note = string.Empty;
@@ -248,7 +255,7 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
         _ = RecalculateAsync();
     }
 
-    partial void OnBreakMinutesChanged(int value)
+    partial void OnBreakMinutesTextChanged(string value)
     {
         _ = RecalculateAsync();
     }

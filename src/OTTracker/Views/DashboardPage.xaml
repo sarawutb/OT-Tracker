@@ -147,43 +147,48 @@
                                 ItemsSource="{Binding WeeklySummaries}">
                                 <CollectionView.ItemsLayout>
                                     <GridItemsLayout
-                                HorizontalItemSpacing="4"
-                                Orientation="Vertical"
-                                Span="7"
-                                VerticalItemSpacing="0" />
+                                        HorizontalItemSpacing="4"
+                                        Orientation="Vertical"
+                                        Span="7"
+                                        VerticalItemSpacing="0" />
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid RowDefinitions="*,Auto" HeightRequest="120" HorizontalOptions="Fill">
+                                        <Grid RowDefinitions="*,Auto" HeightRequest="140" HorizontalOptions="Fill">
                                             <VerticalStackLayout Grid.Row="0" VerticalOptions="End" HorizontalOptions="Fill" Spacing="4">
                                                 <Label
-                                                    FontSize="10"
+                                                    FontSize="9"
+                                                    FontAttributes="{Binding FontAttributes}"
                                                     HorizontalTextAlignment="Center"
-                                                    Text="{Binding Hours, StringFormat='{0:0.#}'}"
-                                                    TextColor="{StaticResource Ink2}" />
-                                                <BoxView
+                                                    Text="{Binding Hours, StringFormat='{0:0.#}h'}"
+                                                    TextColor="{Binding TextColor}" />
+                                                <Border
                                                     HorizontalOptions="Center"
                                                     HeightRequest="{Binding BarHeight}"
                                                     VerticalOptions="End"
                                                     WidthRequest="26"
-                                                    Color="{StaticResource GreenMid}">
-                                                    <BoxView.Triggers>
-                                                        <DataTrigger
-                                                            Binding="{Binding IsWeekend}"
-                                                            TargetType="BoxView"
-                                                            Value="True">
-                                                            <Setter Property="Color" Value="{StaticResource AmberMid}" />
+                                                    BackgroundColor="{Binding BarColor}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 6,6,2,2">
+                                                    <Border.Triggers>
+                                                        <DataTrigger Binding="{Binding IsToday}" TargetType="Border" Value="True">
+                                                            <Setter Property="Shadow">
+                                                                <Setter.Value>
+                                                                    <Shadow Brush="{Binding ShadowColor}" Offset="0,3" Radius="8" Opacity="0.4" />
+                                                                </Setter.Value>
+                                                            </Setter>
                                                         </DataTrigger>
-                                                    </BoxView.Triggers>
-                                                </BoxView>
+                                                    </Border.Triggers>
+                                                </Border>
                                             </VerticalStackLayout>
                                             <Label
                                                 Grid.Row="1"
-                                                Margin="0,4,0,0"
+                                                Margin="0,6,0,0"
                                                 FontSize="10"
+                                                FontAttributes="{Binding FontAttributes}"
                                                 HorizontalTextAlignment="Center"
                                                 Text="{Binding Day}"
-                                                TextColor="{StaticResource MutedText}" />
+                                                TextColor="{Binding TextColor}" />
                                         </Grid>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
@@ -203,36 +208,54 @@
 
                     <!-- Day Type Distribution Card -->
                     <Border Style="{StaticResource Card}">
-                        <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="14">
                             <Label Style="{StaticResource SectionTitle}" Text="OT Distribution by Day Type" />
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="14" Margin="0,4,0,0">
+                            <VerticalStackLayout Spacing="14" Margin="0,4,0,0">
                                 <!-- Weekday (x1.5) -->
-                                <VerticalStackLayout Spacing="4">
-                                    <Grid ColumnDefinitions="*,Auto">
-                                        <Label Text="Regular Workday (x1.5)" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
-                                        <Label Grid.Column="1" Text="{Binding RegularHours, StringFormat='{0:0.##} hrs'}" FontSize="12" TextColor="{StaticResource Ink2}" />
+                                <VerticalStackLayout Spacing="6">
+                                    <Grid ColumnDefinitions="*,Auto,Auto">
+                                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                            <Label Text="Regular Workday" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                            <Border BackgroundColor="{StaticResource GreenLight}" StrokeThickness="0" StrokeShape="RoundRectangle 4" Padding="5,1">
+                                                <Label Text="x1.5" FontSize="10" FontFamily="OpenSansSemibold" TextColor="{StaticResource GreenMid}" />
+                                            </Border>
+                                        </HorizontalStackLayout>
+                                        <Label Grid.Column="1" Text="{Binding RegularPercentage, StringFormat='{0:P0}'}" FontSize="12" TextColor="{StaticResource Ink2}" Margin="0,0,8,0" VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Text="{Binding RegularHours, StringFormat='{0:0.##} hrs'}" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" VerticalOptions="Center" />
                                     </Grid>
                                     <ProgressBar Progress="{Binding RegularPercentage}" ProgressColor="{StaticResource GreenMid}" HeightRequest="8" ScaleY="2.0" HorizontalOptions="FillAndExpand" />
                                 </VerticalStackLayout>
                                 
                                 <!-- Weekend (x2.0) -->
-                                <VerticalStackLayout Grid.Row="1" Spacing="4">
-                                    <Grid ColumnDefinitions="*,Auto">
-                                        <Label Text="Weekend (x2.0)" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
-                                        <Label Grid.Column="1" Text="{Binding WeekendHours, StringFormat='{0:0.##} hrs'}" FontSize="12" TextColor="{StaticResource Ink2}" />
+                                <VerticalStackLayout Spacing="6">
+                                    <Grid ColumnDefinitions="*,Auto,Auto">
+                                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                            <Label Text="Weekend" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                            <Border BackgroundColor="{StaticResource AmberLight}" StrokeThickness="0" StrokeShape="RoundRectangle 4" Padding="5,1">
+                                                <Label Text="x2.0" FontSize="10" FontFamily="OpenSansSemibold" TextColor="{StaticResource AmberMid}" />
+                                            </Border>
+                                        </HorizontalStackLayout>
+                                        <Label Grid.Column="1" Text="{Binding WeekendPercentage, StringFormat='{0:P0}'}" FontSize="12" TextColor="{StaticResource Ink2}" Margin="0,0,8,0" VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Text="{Binding WeekendHours, StringFormat='{0:0.##} hrs'}" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" VerticalOptions="Center" />
                                     </Grid>
                                     <ProgressBar Progress="{Binding WeekendPercentage}" ProgressColor="{StaticResource AmberMid}" HeightRequest="8" ScaleY="2.0" HorizontalOptions="FillAndExpand" />
                                 </VerticalStackLayout>
                                 
                                 <!-- Public Holiday (x3.0) -->
-                                <VerticalStackLayout Grid.Row="2" Spacing="4">
-                                    <Grid ColumnDefinitions="*,Auto">
-                                        <Label Text="Public Holiday (x3.0)" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
-                                        <Label Grid.Column="1" Text="{Binding HolidayHours, StringFormat='{0:0.##} hrs'}" FontSize="12" TextColor="{StaticResource Ink2}" />
+                                <VerticalStackLayout Spacing="6">
+                                    <Grid ColumnDefinitions="*,Auto,Auto">
+                                        <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                                            <Label Text="Public Holiday" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" />
+                                            <Border BackgroundColor="{StaticResource RedLight}" StrokeThickness="0" StrokeShape="RoundRectangle 4" Padding="5,1">
+                                                <Label Text="x3.0" FontSize="10" FontFamily="OpenSansSemibold" TextColor="{StaticResource Red}" />
+                                            </Border>
+                                        </HorizontalStackLayout>
+                                        <Label Grid.Column="1" Text="{Binding HolidayPercentage, StringFormat='{0:P0}'}" FontSize="12" TextColor="{StaticResource Ink2}" Margin="0,0,8,0" VerticalOptions="Center" />
+                                        <Label Grid.Column="2" Text="{Binding HolidayHours, StringFormat='{0:0.##} hrs'}" FontSize="12" FontFamily="OpenSansSemibold" TextColor="{StaticResource Ink}" VerticalOptions="Center" />
                                     </Grid>
-                                    <ProgressBar Progress="{Binding HolidayPercentage}" ProgressColor="#E04F5F" HeightRequest="8" ScaleY="2.0" HorizontalOptions="FillAndExpand" />
+                                    <ProgressBar Progress="{Binding HolidayPercentage}" ProgressColor="{StaticResource Red}"  HeightRequest="8" ScaleY="2.0" HorizontalOptions="FillAndExpand" />
                                 </VerticalStackLayout>
-                            </Grid>
+                            </VerticalStackLayout>
                         </VerticalStackLayout>
                     </Border>
 

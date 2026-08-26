@@ -107,6 +107,8 @@ public sealed partial class DashboardViewModel : BaseViewModel
 
     public ObservableCollection<WeeklyDayDisplayModel> WeeklySummaries { get; } = [];
 
+    public ObservableCollection<DayTypeDistributionSummary> DayTypeSummaries { get; } = [];
+
     public ObservableCollection<MonthlyTrendSummary> MonthlyTrendSummaries { get; } = [];
 
     public string EarningsText => MaskEarnings ? "\u0E3F *,***" : $"\u0E3F {EstimatedEarnings:N2}";
@@ -173,7 +175,7 @@ public sealed partial class DashboardViewModel : BaseViewModel
 
             // 1. Scaled Weekly Summaries
             WeeklySummaries.Clear();
-            var weeklyDays = new List<(string DayLabel, decimal Hours, bool IsWeekend)>();
+            var weeklyDays = new List<(string DayLabel, decimal Hours, bool IsWeekend, bool IsToday)>();
             for (var i = 0; i < 7; i++)
             {
                 var day = weekStart.AddDays(i);
@@ -181,15 +183,16 @@ public sealed partial class DashboardViewModel : BaseViewModel
                 string dayTH = day.DayOfWeek == DayOfWeek.Sunday
                             ? "อา."
                             : day.ToString("ddd");
-                weeklyDays.Add((dayTH, hours, day.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday));
+                bool isToday = day.Date == today;
+                weeklyDays.Add((dayTH, hours, day.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday, isToday));
             }
             var maxWeeklyHours = weeklyDays.Max(d => d.Hours);
-            double weeklyScaleFactor = maxWeeklyHours > 0 ? 80.0 / (double)maxWeeklyHours : 0.0;
+            double weeklyScaleFactor = maxWeeklyHours > 0 ? 100.0 / (double)maxWeeklyHours : 0.0;
             foreach (var w in weeklyDays)
             {
                 double barHeight = (double)w.Hours * weeklyScaleFactor;
-                if (w.Hours > 0 && barHeight < 4) barHeight = 4; // Ensure visible
-                WeeklySummaries.Add(new WeeklyDayDisplayModel(w.DayLabel, w.Hours, w.IsWeekend, barHeight));
+                if (w.Hours > 0 && barHeight < 5) barHeight = 5; // Ensure visible
+                WeeklySummaries.Add(new WeeklyDayDisplayModel(w.DayLabel, w.Hours, w.IsWeekend, barHeight, w.IsToday));
             }
 
             // 2. Day Type Distribution
@@ -213,6 +216,24 @@ public sealed partial class DashboardViewModel : BaseViewModel
                 RegularPercentage = 0;
                 WeekendPercentage = 0;
                 HolidayPercentage = 0;
+            }
+
+            DayTypeSummaries.Clear();
+            var dayTypeData = new (string Title, string Multiplier, decimal Hours, double Pct, Color Color)[]
+            {
+                ("Workday", "x1.5", regHours, RegularPercentage, Color.FromArgb("#1D9E75")),
+                ("Weekend", "x2.0", wkHours, WeekendPercentage, Color.FromArgb("#EF9F27")),
+                ("Holiday", "x3.0", holHours, HolidayPercentage, Color.FromArgb("#E04F5F"))
+            };
+
+            var maxDayTypeHours = dayTypeData.Max(d => d.Hours);
+            double dayTypeScaleFactor = maxDayTypeHours > 0 ? 100.0 / (double)maxDayTypeHours : 0.0;
+
+            foreach (var d in dayTypeData)
+            {
+                double barHeight = (double)d.Hours * dayTypeScaleFactor;
+                if (d.Hours > 0 && barHeight < 5) barHeight = 5;
+                DayTypeSummaries.Add(new DayTypeDistributionSummary(d.Title, d.Multiplier, d.Hours, d.Pct, barHeight, d.Color));
             }
 
             // 3. 6-Month Trend Chart

@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:OTTracker.Controls"
     xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
     Title="Settings"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
@@ -25,10 +26,44 @@
                 <Label Text="SALARY &amp; COMPENSATION" Style="{StaticResource MutedLabel}" />
                 <Border Style="{StaticResource Card}">
                     <VerticalStackLayout Spacing="10">
-                        <material:TextField
-                        Title="Base monthly salary"
-                        Keyboard="Numeric"
-                        Text="{Binding BaseMonthlySalary}" />
+                        <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                            <material:TextField
+                                Title="Base monthly salary"
+                                Keyboard="Numeric"
+                                IsPassword="{Binding HideSalary}"
+                                Text="{Binding BaseMonthlySalary}" />
+                            <ImageButton
+                                Grid.Column="1"
+                                Margin="8,0,0,0"
+                                Padding="5"
+                                HeightRequest="42"
+                                WidthRequest="42"
+                                VerticalOptions="Center"
+                                BackgroundColor="{StaticResource Surface2}"
+                                CornerRadius="12"
+                                Command="{Binding ToggleSalaryVisibilityCommand}">
+                                <ImageButton.Source>
+                                    <FontImageSource
+                                        FontFamily="MaterialOutlined"
+                                        Glyph="{x:Static m:MaterialOutlined.Visibility}"
+                                        Color="{StaticResource Ink2}"
+                                        Size="10" />
+                                </ImageButton.Source>
+                                <ImageButton.Triggers>
+                                    <DataTrigger TargetType="ImageButton" Binding="{Binding HideSalary}" Value="False">
+                                        <Setter Property="Source">
+                                            <Setter.Value>
+                                                <FontImageSource
+                                                    FontFamily="MaterialOutlined"
+                                                    Glyph="{x:Static m:MaterialOutlined.Visibility_off}"
+                                                    Color="{StaticResource Accent}"
+                                                    Size="10" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </ImageButton.Triggers>
+                            </ImageButton>
+                        </Grid>
                         <material:TextField
                         Title="Working days/month"
                         Keyboard="Numeric"
@@ -48,7 +83,7 @@
                         <material:TextField
                         Title="Default break minutes"
                         Keyboard="Numeric"
-                        Text="{Binding DefaultBreakMinutes}" />
+                        Text="{Binding DefaultBreakMinutesText}" />
                         <Border BackgroundColor="{StaticResource GreenLight}" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="12">
                             <VerticalStackLayout>
                                 <Label Text="HOURLY RATE" FontSize="10" TextColor="{StaticResource Green}" />

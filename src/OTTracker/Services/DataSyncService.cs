@@ -38,13 +38,28 @@ public sealed class DataSyncService(
 
     public async Task<int> DisableSupabaseAsync()
     {
-        GetSignedInUserId();
+        var count = 0;
+        try
+        {
+            var userId = clientProvider.Client?.Auth.CurrentUser?.Id;
+            if (Guid.TryParse(userId, out _))
+            {
+                var settings = await supabaseSettings.GetAsync();
+                var entries = await supabaseEntries.GetAllAsync();
+                await ReplaceLocalSnapshotAsync(settings, entries);
+                count = entries.Count;
+            }
+        }
+        catch
+        {
+            // If fetching Supabase data fails (e.g. offline or unauthenticated), keep current local data
+        }
+        finally
+        {
+            await modeService.SetUseSupabaseAsync(false);
+        }
 
-        var settings = await supabaseSettings.GetAsync();
-        var entries = await supabaseEntries.GetAllAsync();
-        await ReplaceLocalSnapshotAsync(settings, entries);
-        await modeService.SetUseSupabaseAsync(false);
-        return entries.Count;
+        return count;
     }
 
     public async Task<int> SyncToSupabaseAsync()

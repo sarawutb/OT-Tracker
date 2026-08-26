@@ -108,15 +108,7 @@ public partial class App : Application
         }
         catch
         {
-            try
-            {
-                await _sessionService.ClearSessionAsync();
-            }
-            catch
-            {
-                // Ignore cleanup errors during startup.
-            }
-
+            // Do not clear session on network or temporary startup failures.
             return false;
         }
     }
