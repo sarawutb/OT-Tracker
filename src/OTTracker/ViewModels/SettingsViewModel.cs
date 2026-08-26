@@ -593,6 +593,21 @@ public sealed partial class SettingsViewModel : BaseViewModel
         }
     }
 
+    partial void OnDefaultBreakMinutesTextChanged(string value)
+    {
+        if (!string.IsNullOrEmpty(value) && value.Length > 1 && value.StartsWith('0'))
+        {
+            if (int.TryParse(value, out var parsed))
+            {
+                var normalized = parsed.ToString();
+                if (normalized != value)
+                {
+                    DefaultBreakMinutesText = normalized;
+                }
+            }
+        }
+    }
+
     public async Task CheckPinLock()
     {
         bool _isPinLockEnabled = await _auth.IsPinLockEnabledAsync();

@@ -15,7 +15,7 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
     private readonly AppEvents _events;
     private int _entryId;
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
-    private DateTime entryDate = DateTime.Today;
+    private DateTime? entryDate;
 
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private DayType selectedDayType = DayType.Regular;
@@ -92,6 +92,7 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
             await ApplyDefaultEntrySettingsAsync();
         }
 
+        OnPropertyChanged(nameof(EntryDate));
         await RecalculateAsync();
     }
 
@@ -118,7 +119,7 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
             if (entry is not null)
             {
                 _entryId = entry.Id;
-                EntryDate = entry.EntryDate;
+                SetEntryDateWithForce(entry.EntryDate);
                 SelectedDayType = entry.DayType;
                 StartTime = entry.StartTime;
                 EndTime = entry.EndTime;
@@ -139,12 +140,11 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
             await ApplyDefaultEntrySettingsAsync();
             if (query.TryGetValue("date", out var dateVal) && DateTime.TryParse(dateVal?.ToString(), out var parsedDate))
             {
-                EntryDate = parsedDate;
+                SetEntryDateWithForce(parsedDate);
             }
             else
             {
                 ResetEntryDate();
-
             }
             OnPropertyChanged(nameof(PageTitle));
         }
@@ -180,7 +180,7 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
 
             var settings = await _settings.GetAsync();
             var entry = _entryId > 0 ? await _entries.GetByIdAsync(_entryId) ?? new OtEntry() : new OtEntry();
-            entry.EntryDate = EntryDate.Date;
+            entry.EntryDate = (EntryDate ?? DateTime.Today).Date;
             entry.DayType = SelectedDayType;
             entry.StartTime = StartTime;
             entry.EndTime = EndTime;
@@ -228,16 +228,19 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
         BreakMinutes = settings.DefaultBreakMinutes;
     }
 
+    private void SetEntryDateWithForce(DateTime date)
+    {
+        if (date.Date == DateTime.Today)
+        {
+            EntryDate = DateTime.Today.AddDays(1);
+        }
+        EntryDate = date.Date;
+        OnPropertyChanged(nameof(EntryDate));
+    }
+
     private void ResetEntryDate()
     {
-        var date = DateTime.Now.AddDays(-1);
-
-        if (date.DayOfWeek == DayOfWeek.Sunday)
-        {
-            date = date.AddDays(-1);
-        }
-
-        EntryDate = date;
+        SetEntryDateWithForce(DateTime.Today);
     }
 
     partial void OnSelectedDayTypeChanged(DayType value)
@@ -257,6 +260,19 @@ public sealed partial class LogEntryViewModel : BaseViewModel, IQueryAttributabl
 
     partial void OnBreakMinutesTextChanged(string value)
     {
+        if (!string.IsNullOrEmpty(value) && value.Length > 1 && value.StartsWith('0'))
+        {
+            if (int.TryParse(value, out var parsed))
+            {
+                var normalized = parsed.ToString();
+                if (normalized != value)
+                {
+                    BreakMinutesText = normalized;
+                    return;
+                }
+            }
+        }
+
         _ = RecalculateAsync();
     }
 }

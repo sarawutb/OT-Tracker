@@ -17,6 +17,12 @@ public partial class LogEntryPage : ContentPage
     {
         base.OnAppearing();
         _viewModel.LoadAsync();
+
+        if (DatePickerFieldControl.Date == DateTime.Today)
+        {
+            DatePickerFieldControl.Date = DateTime.Today.AddDays(1);
+            DatePickerFieldControl.Date = DateTime.Today;
+        }
     }
 
     protected override bool OnBackButtonPressed()

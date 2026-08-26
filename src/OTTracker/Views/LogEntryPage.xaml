@@ -32,10 +32,12 @@
 
                 <Label Style="{StaticResource MutedLabel}" Text="Date" />
                 <material:DatePickerField
+                    x:Name="DatePickerFieldControl"
                     Title="Date"
                     Icon="{FontImageSource FontFamily=MaterialOutlined,
                                            Glyph={x:Static m:MaterialOutlined.Calendar_month}}"
-                    Date="{Binding EntryDate, Mode=TwoWay}"
+                    Date="{Binding EntryDate}"
+                    Format="dd/MM/yyyy"
                     AllowClear="False" />
 
                 <Label Style="{StaticResource MutedLabel}" Text="Day type" />

@@ -73,7 +73,12 @@ public sealed class OtEntryRepository(ISupabaseClientProvider clientProvider) : 
         if (entry.Id == 0)
         {
             entry.CreateDate = DateTime.Now;
-            await client.From<OtEntry>().Insert(entry);
+            var response = await client.From<OtEntry>().Insert(entry);
+            var inserted = response.Models.FirstOrDefault();
+            if (inserted is not null)
+            {
+                entry.Id = inserted.Id;
+            }
         }
         else
         {

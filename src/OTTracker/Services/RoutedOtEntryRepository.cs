@@ -96,52 +96,34 @@ public sealed class RoutedOtEntryRepository(
 
     public async Task SaveAsync(OtEntry entry)
     {
-        await localRepository.SaveAsync(entry);
-
         if (modeService.UseSupabase)
         {
-            try
-            {
-                await supabaseRepository.SaveAsync(entry);
-            }
-            catch
-            {
-                // Local save succeeded even if remote sync failed
-            }
+            await supabaseRepository.SaveAsync(entry);
+            return;
         }
+
+        await localRepository.SaveAsync(entry);
     }
 
     public async Task DeleteAsync(OtEntry entry)
     {
-        await localRepository.DeleteAsync(entry);
-
         if (modeService.UseSupabase)
         {
-            try
-            {
-                await supabaseRepository.DeleteAsync(entry);
-            }
-            catch
-            {
-                // Local delete succeeded
-            }
+            await supabaseRepository.DeleteAsync(entry);
+            return;
         }
+
+        await localRepository.DeleteAsync(entry);
     }
 
     public async Task ClearAsync()
     {
-        await localRepository.ClearAsync();
-
         if (modeService.UseSupabase)
         {
-            try
-            {
-                await supabaseRepository.ClearAsync();
-            }
-            catch
-            {
-                // Local clear succeeded
-            }
+            await supabaseRepository.ClearAsync();
+            return;
         }
+
+        await localRepository.ClearAsync();
     }
 }
