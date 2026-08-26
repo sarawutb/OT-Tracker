@@ -87,7 +87,7 @@ public sealed partial class HistoryViewModel : BaseViewModel
 
     public string MonthHoursText => $"{MonthHours:0.##} hrs";
 
-    public string MonthEarningsText => $"฿{MonthEarnings:N0}";
+    public string MonthEarningsText => $"฿{MonthEarnings:N2}";
 
     public async Task LoadAsync()
     {
