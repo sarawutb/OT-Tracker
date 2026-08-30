@@ -1,3 +1,7 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
@@ -54,7 +58,29 @@ public partial class App : Application
     {
         if (_modeService.UseSupabase)
         {
-            await RestoreSessionAsync();
+            var isConnected = await VerifySupabaseConnectionAsync();
+            if (!isConnected)
+            {
+                var shouldDisable = await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    if (MainPage is null) return false;
+                    return await MainPage.DisplayAlert(
+                        "Supabase Connection Failed",
+                        "Unable to connect to Supabase at this time. Would you like to disable Supabase and switch to local SQLite data?\n\n(Selecting 'Exit App' will close the application.)",
+                        "Disable Supabase",
+                        "Exit App");
+                });
+
+                if (shouldDisable)
+                {
+                    await _modeService.SetUseSupabaseAsync(false);
+                }
+                else
+                {
+                    QuitApp();
+                    return;
+                }
+            }
         }
 
         AppSettings settings;
@@ -91,6 +117,44 @@ public partial class App : Application
         }
     }
 
+    private async Task<bool> VerifySupabaseConnectionAsync()
+    {
+        try
+        {
+            var sessionRestored = await RestoreSessionAsync();
+            if (!sessionRestored)
+            {
+                return false;
+            }
+
+            var supabase = _clientProvider.Client;
+            if (supabase?.Auth.CurrentUser is null)
+            {
+                return false;
+            }
+
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var queryTask = supabase.From<AppSettings>()
+                .Filter("user_id", Supabase.Postgrest.Constants.Operator.Equals, supabase.Auth.CurrentUser.Id)
+                .Limit(1)
+                .Get();
+
+            var delayTask = Task.Delay(5000, cts.Token);
+            var completedTask = await Task.WhenAny(queryTask, delayTask);
+            if (completedTask == queryTask)
+            {
+                await queryTask;
+                return true;
+            }
+
+            return false;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private async Task<bool> RestoreSessionAsync()
     {
         try
@@ -111,5 +175,26 @@ public partial class App : Application
             // Do not clear session on network or temporary startup failures.
             return false;
         }
+    }
+
+    private void QuitApp()
+    {
+        MainThread.BeginInvokeOnMainThread(() =>
+        {
+#if ANDROID
+            Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+#elif IOS
+            System.Environment.Exit(0);
+#elif MACCATALYST
+            Application.Current?.Quit();
+            System.Environment.Exit(0);
+#elif WINDOWS
+            Application.Current?.Quit();
+            System.Environment.Exit(0);
+#else
+            Application.Current?.Quit();
+            System.Environment.Exit(0);
+#endif
+        });
     }
 }
