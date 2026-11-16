@@ -2,7 +2,9 @@
 	<PropertyGroup>
 		<!-- <TargetFrame
 		 works>net10.0-android36.1;</TargetFrameworks> -->
-		<TargetFrameworks>net10.0-android36.1;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks>net10.0-android36.1</TargetFrameworks>
+		<!-- iOS/MacCatalyst workloads are not available on Linux (e.g. the GitHub Actions release runner). -->
+		<TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
 		<!--<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>-->
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net10.0-tizen</TargetFrameworks> -->
