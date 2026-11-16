@@ -40,7 +40,7 @@ The `net8.0-windows…` build command in README.md is out of date.
 ## Conventions and gotchas
 
 - Pay formulas:
-  - hourly rate = salary / (working days × hours per day), **truncated** to 2 decimals
+  - hourly rate = salary / (working days × hours per day), **rounded** (AwayFromZero) to 2 decimals (28144 / 240 = 117.2667 → 117.27)
   - net hours = (end − start − break minutes) / 60, never below 0, **rounded** to 2 decimals
   - earnings = net hours × hourly rate × multiplier (regular, weekend or holiday), **truncated** to 2 decimals (263.8575 → 263.85, not 263.86)
 - `tests/OTTracker.Tests/Program.cs` **copies** these formulas instead of referencing `OtCalculationService`. If you change one, update the other to match.

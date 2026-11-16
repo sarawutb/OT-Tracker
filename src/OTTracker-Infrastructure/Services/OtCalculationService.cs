@@ -14,10 +14,11 @@ public sealed class OtCalculationService : IOtCalculationService
             return 0;
         }
 
-        return Truncate2(settings.BaseMonthlySalary / (settings.WorkingDaysPerMonth * settings.HoursPerDay));
+        // Hourly rate is ROUNDED to 2 decimals (28144 / 240 = 117.2667 -> 117.27).
+        return Math.Round(settings.BaseMonthlySalary / (settings.WorkingDaysPerMonth * settings.HoursPerDay), 2, MidpointRounding.AwayFromZero);
     }
 
-    // Money values drop digits beyond 2 decimals instead of rounding (263.8575 -> 263.85).
+    // OT earnings drop digits beyond 2 decimals instead of rounding (263.8575 -> 263.85).
     private static decimal Truncate2(decimal value) => Math.Truncate(value * 100m) / 100m;
 
     public decimal GetMultiplier(AppSettings settings, DayType dayType) => dayType switch
