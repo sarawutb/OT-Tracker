@@ -21,6 +21,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
     private readonly IDataSourceModeService _modeService;
     private readonly IDataSyncService _syncService;
     private readonly IUpdateService _updateService;
+    private readonly LocalOtEntryRepository _localEntries;
     private bool _maskEarnings;
     private string _userId = string.Empty;
 
@@ -134,7 +135,8 @@ public sealed partial class SettingsViewModel : BaseViewModel
         IDataSourceModeService modeService,
         IDataSyncService syncService,
         IReminderService reminderService,
-        IUpdateService updateService)
+        IUpdateService updateService,
+        LocalOtEntryRepository localEntries)
     {
         IsBusy = true;
         _settingsService = settingsService;
@@ -151,6 +153,7 @@ public sealed partial class SettingsViewModel : BaseViewModel
         _syncService = syncService;
         _reminderService = reminderService;
         _updateService = updateService;
+        _localEntries = localEntries;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         SaveSupabaseConfigCommand = new AsyncRelayCommand(SaveSupabaseConfigAsync);
@@ -286,6 +289,61 @@ public sealed partial class SettingsViewModel : BaseViewModel
         }
     }
 
+    /// <summary>
+    /// Reuses the session saved on this device (kept when the app falls back to SQLite at startup),
+    /// so reconnecting does not require email and password. Forces a token refresh to confirm the
+    /// server is reachable. Never clears the saved session on failure.
+    /// </summary>
+    private async Task<bool> TryRestoreSessionAsync()
+    {
+        try
+        {
+            var saved = await _sessionService.LoadSessionAsync();
+            if (saved is null)
+            {
+                return false;
+            }
+
+            await _clientProvider.Client.Auth.SetSession(saved.Value.AccessToken, saved.Value.RefreshToken, true);
+            return Guid.TryParse(_clientProvider.Client.Auth.CurrentUser?.Id, out _);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private async Task<bool> SignInWithPromptAsync()
+    {
+        var email = await CurrentPage?.DisplayPromptAsync(
+            "Activate Supabase",
+            "Enter your Supabase email",
+            "Continue",
+            "Cancel",
+            "email@example.com",
+            keyboard: Keyboard.Email);
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return false;
+        }
+
+        var password = await CurrentPage?.DisplayPromptAsync(
+            "Activate Supabase",
+            "Enter your Supabase password",
+            "Activate",
+            "Cancel",
+            keyboard: Keyboard.Password);
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            return false;
+        }
+
+        await _clientProvider.Client.Auth.SignIn(email.Trim(), password);
+        return true;
+    }
+
     private async Task ApplyDataSourceAsync()
     {
         ErrorMessage = string.Empty;
@@ -304,32 +362,14 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
                 _clientProvider.RecreateClient(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
 
-                var email = await CurrentPage?.DisplayPromptAsync(
-                    "Activate Supabase",
-                    "Enter your Supabase email",
-                    "Continue",
-                    "Cancel",
-                    "email@example.com",
-                    keyboard: Keyboard.Email);
-
-                if (string.IsNullOrWhiteSpace(email))
+                if (!await TryRestoreSessionAsync())
                 {
-                    return;
+                    if (!await SignInWithPromptAsync())
+                    {
+                        return;
+                    }
                 }
 
-                var password = await CurrentPage?.DisplayPromptAsync(
-                    "Activate Supabase",
-                    "Enter your Supabase password",
-                    "Activate",
-                    "Cancel",
-                    keyboard: Keyboard.Password);
-
-                if (string.IsNullOrWhiteSpace(password))
-                {
-                    return;
-                }
-
-                await _clientProvider.Client.Auth.SignIn(email.Trim(), password);
                 var userId = _clientProvider.Client.Auth.CurrentUser?.Id;
                 if (!Guid.TryParse(userId, out var parsedUserId))
                 {
@@ -338,12 +378,41 @@ public sealed partial class SettingsViewModel : BaseViewModel
 
                 _userId = parsedUserId.ToString();
                 settings.UserId = _userId;
-                var loaded = await _syncService.EnableSupabaseAsync(settings);
+
+                var localData = await _localEntries.GetAllAsync();
+                var uploadLocal = false;
+                if (localData.Count > 0)
+                {
+                    const string useCloud = "Use Supabase data (replace this device)";
+                    const string useLocal = "Upload this device's data (replace Supabase)";
+                    var choice = await CurrentPage?.DisplayActionSheet(
+                        $"Which data do you want to keep? This device has {localData.Count} OT record(s).",
+                        "Cancel",
+                        null,
+                        useCloud,
+                        useLocal);
+
+                    if (choice == useLocal)
+                    {
+                        uploadLocal = true;
+                    }
+                    else if (choice != useCloud)
+                    {
+                        return;
+                    }
+                }
+
+                var count = uploadLocal
+                    ? await _syncService.EnableSupabaseWithLocalDataAsync(settings)
+                    : await _syncService.EnableSupabaseAsync(settings);
                 await _configService.SaveCredentialsAsync(SupabaseUrl.Trim(), SupabaseAnonKey.Trim());
                 await LoadAsync();
                 _events.NotifySettingsChanged();
                 _events.NotifyEntriesChanged();
-                await CurrentPage?.DisplayAlert("Supabase enabled", $"{loaded} OT record(s) loaded.", "OK");
+                await CurrentPage?.DisplayAlert(
+                    "Supabase enabled",
+                    uploadLocal ? $"{count} OT record(s) uploaded to Supabase." : $"{count} OT record(s) loaded.",
+                    "OK");
                 return;
             }
 

@@ -39,10 +39,10 @@ The `net8.0-windows…` build command in README.md is out of date.
 
 ## Conventions and gotchas
 
-- Pay formulas (all rounded to 2 decimal places):
-  - hourly rate = salary / (working days × hours per day)
-  - net hours = (end − start − break minutes) / 60, never below 0
-  - earnings = net hours × hourly rate × multiplier (regular, weekend or holiday)
+- Pay formulas:
+  - hourly rate = salary / (working days × hours per day), **truncated** to 2 decimals
+  - net hours = (end − start − break minutes) / 60, never below 0, **rounded** to 2 decimals
+  - earnings = net hours × hourly rate × multiplier (regular, weekend or holiday), **truncated** to 2 decimals (263.8575 → 263.85, not 263.86)
 - `tests/OTTracker.Tests/Program.cs` **copies** these formulas instead of referencing `OtCalculationService`. If you change one, update the other to match.
 - `OtEntry.EntryDate` always holds a date with no time part, marked as UTC. Start and end times are stored as `"HH:mm:ss"` strings.
 - Unhandled exceptions go through `GlobalExceptionHandler`. Run fire-and-forget tasks with `task.SafeFireAndForget(...)` (in `Services/GlobalExceptions/SafeExecutor.cs`).

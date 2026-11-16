@@ -58,28 +58,38 @@ public partial class App : Application
     {
         if (_modeService.UseSupabase)
         {
+            const string retry = "Retry";
+            const string useLocal = "Use local SQLite";
+            const string exitApp = "Exit App";
+
             var isConnected = await VerifySupabaseConnectionAsync();
-            if (!isConnected)
+            while (!isConnected)
             {
-                var shouldDisable = await MainThread.InvokeOnMainThreadAsync(async () =>
+                var choice = await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
-                    if (MainPage is null) return false;
-                    return await MainPage.DisplayAlert(
-                        "Supabase Connection Failed",
-                        "Unable to connect to Supabase at this time. Would you like to disable Supabase and switch to local SQLite data?\n\n(Selecting 'Exit App' will close the application.)",
-                        "Disable Supabase",
-                        "Exit App");
+                    if (MainPage is null) return exitApp;
+                    return await MainPage.DisplayActionSheet(
+                        "Supabase Connection Failed\nCheck your internet connection and tap Retry.",
+                        null,
+                        exitApp,
+                        retry,
+                        useLocal);
                 });
 
-                if (shouldDisable)
+                if (choice == useLocal)
                 {
                     await _modeService.SetUseSupabaseAsync(false);
+                    break;
                 }
-                else
+
+                if (choice == exitApp)
                 {
                     QuitApp();
                     return;
                 }
+
+                // Retry (or sheet dismissed with Back): the saved session is reused, so no email/password needed.
+                isConnected = await VerifySupabaseConnectionAsync();
             }
         }
 

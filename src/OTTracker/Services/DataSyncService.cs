@@ -62,6 +62,16 @@ public sealed class DataSyncService(
         return count;
     }
 
+    public async Task<int> EnableSupabaseWithLocalDataAsync(AppSettings settings)
+    {
+        settings.UserId = GetSignedInUserId();
+        await localSettings.SaveAsync(settings);
+
+        var uploaded = await SyncToSupabaseAsync(settings);
+        await modeService.SetUseSupabaseAsync(true);
+        return uploaded;
+    }
+
     public async Task<int> SyncToSupabaseAsync()
     {
         var userId = GetSignedInUserId();
