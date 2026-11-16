@@ -23,28 +23,7 @@ public sealed class SupabaseClientProvider : ISupabaseClientProvider
             if (_client == null)
             {
                 var creds = _config.GetCredentials();
-                var options = new Supabase.SupabaseOptions
-                {
-                    AutoRefreshToken = true,
-                    AutoConnectRealtime = true
-                };
-                _client = new Supabase.Client(creds.Url, creds.AnonKey, options);
-                
-                _client.Auth.AddStateChangedListener((sender, state) =>
-                {
-                    if (state == AuthState.SignedIn || state == AuthState.TokenRefreshed)
-                    {
-                        var session = _client.Auth.CurrentSession;
-                        if (session != null && !string.IsNullOrWhiteSpace(session.AccessToken))
-                        {
-                            _ = _sessionService.SaveSessionAsync(session.AccessToken, session.RefreshToken);
-                        }
-                    }
-                    else if (state == AuthState.SignedOut)
-                    {
-                        _ = _sessionService.ClearSessionAsync();
-                    }
-                });
+                _client = CreateClient(creds.Url, creds.AnonKey);
             }
             return _client;
         }
@@ -52,27 +31,33 @@ public sealed class SupabaseClientProvider : ISupabaseClientProvider
 
     public void RecreateClient(string url, string anonKey)
     {
+        _client = CreateClient(url, anonKey);
+    }
+
+    private Supabase.Client CreateClient(string url, string anonKey)
+    {
         var options = new Supabase.SupabaseOptions
         {
             AutoRefreshToken = true,
             AutoConnectRealtime = true
         };
-        _client = new Supabase.Client(url, anonKey, options);
-        
-        _client.Auth.AddStateChangedListener((sender, state) =>
+        var client = new Supabase.Client(url, anonKey, options);
+
+        client.Auth.AddStateChangedListener((sender, state) =>
         {
             if (state == AuthState.SignedIn || state == AuthState.TokenRefreshed)
             {
-                var session = _client.Auth.CurrentSession;
+                var session = client.Auth.CurrentSession;
                 if (session != null && !string.IsNullOrWhiteSpace(session.AccessToken))
                 {
                     _ = _sessionService.SaveSessionAsync(session.AccessToken, session.RefreshToken);
                 }
             }
-            else if (state == AuthState.SignedOut)
-            {
-                _ = _sessionService.ClearSessionAsync();
-            }
+            // SignedOut is deliberately NOT handled here: Gotrue can raise it when a token refresh
+            // fails while offline, which used to delete the saved session and break Retry.
+            // An explicit Disconnect in Settings clears the session itself.
         });
+
+        return client;
     }
 }

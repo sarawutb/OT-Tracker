@@ -1,6 +1,6 @@
 {
-  "versionCode": 19,
-  "versionName": "4.3.9",
-  "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v4.3.9/com.company.ottracker-Signed.apk",
-  "changeLog": "⚠️ เวอร์ชันนี้เปลี่ยนกุญแจ sign แอป ต้องลบแอปเดิมก่อนติดตั้ง ข้อมูลในเครื่องจะหาย กรุณา Export CSV หรือเชื่อม Supabase ก่อนอัปเดต\n- แก้การคำนวณค่า OT และค่าจ้างต่อชั่วโมงให้ตัดเศษทศนิยมเกิน 2 ตำแหน่ง (ไม่ปัดขึ้น) เช่น 263.8575 = 263.85\n- เพิ่มปุ่ม Retry เมื่อเชื่อมต่อ Supabase ไม่ได้ตอนเปิดแอป เชื่อมต่อใหม่ได้โดยไม่ต้องกรอก Email/Password\n- หน้า Settings: เชื่อมต่อ Supabase ใหม่โดยใช้ session เดิม และเลือกได้ว่าจะใช้ข้อมูลจาก Supabase หรืออัปโหลดข้อมูลในเครื่อง"
+  "versionCode": 20,
+  "versionName": "4.3.10",
+  "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v4.3.10/com.company.ottracker-Signed.apk",
+  "changeLog": "- แก้บั๊กกด Retry แล้วเชื่อมต่อ Supabase ไม่ได้ เมื่อเน็ตหลุดชั่วคราว (session ไม่ถูกลบอีกต่อไป)\n- แก้บั๊กกด Exit App แล้วเปิดแอปใหม่ หน้า Loading หมุนค้างไม่หยุด\n- ถ้า session หมดอายุ แอปจะแจ้งให้ใช้ local SQLite แล้วเชื่อมต่อใหม่ในหน้า Settings\n⚠️ ถ้าอัปเดตจากเวอร์ชัน 4.3.8 หรือเก่ากว่า ต้องลบแอปเดิมก่อนติดตั้ง (เปลี่ยนกุญแจ sign ตั้งแต่ 4.3.9)"
 }

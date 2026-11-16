@@ -6,18 +6,29 @@ using Microsoft.Maui.Controls;
 using OTTracker.Domain.Entities;
 using OTTracker.Domain.Interfaces;
 using OTTracker.Services;
+using OTTracker.Services.GlobalExceptions;
 using OTTracker.Views;
 
 namespace OTTracker;
 
 public partial class App : Application
 {
+    private const string RetryChoice = "Retry";
+    private const string UseLocalChoice = "Use local SQLite";
+    private const string ExitAppChoice = "Exit App";
+
+    // Covers session restore + the test query, so a hanging token refresh cannot freeze startup.
+    private static readonly TimeSpan ConnectionTimeout = TimeSpan.FromSeconds(8);
+
+    private enum ConnectionResult { Connected, Failed, NoSession }
+
     private readonly IServiceProvider _services;
     private readonly LocalSettingsService _localSettings;
     private readonly IAuthService _auth;
     private readonly ISupabaseClientProvider _clientProvider;
     private readonly ISupabaseSessionService _sessionService;
     private readonly IDataSourceModeService _modeService;
+    private readonly ISupabaseConfigService _configService;
 
     public App(
         IServiceProvider services,
@@ -25,7 +36,8 @@ public partial class App : Application
         IAuthService auth,
         ISupabaseClientProvider clientProvider,
         ISupabaseSessionService sessionService,
-        IDataSourceModeService modeService)
+        IDataSourceModeService modeService,
+        ISupabaseConfigService configService)
     {
         _services = services;
         _localSettings = localSettings;
@@ -33,6 +45,7 @@ public partial class App : Application
         _clientProvider = clientProvider;
         _sessionService = sessionService;
         _modeService = modeService;
+        _configService = configService;
         InitializeComponent();
         MainPage = new ContentPage
         {
@@ -45,7 +58,8 @@ public partial class App : Application
                 VerticalOptions = LayoutOptions.Center
             }
         };
-        _ = InitializeAsync();
+        InitializeAsync().SafeFireAndForget(_ =>
+            MainThread.BeginInvokeOnMainThread(() => MainPage = new AppShell()));
     }
 
     public static Task ShowMainAsync()
@@ -58,38 +72,17 @@ public partial class App : Application
     {
         if (_modeService.UseSupabase)
         {
-            const string retry = "Retry";
-            const string useLocal = "Use local SQLite";
-            const string exitApp = "Exit App";
-
-            var isConnected = await VerifySupabaseConnectionAsync();
-            while (!isConnected)
+            try
             {
-                var choice = await MainThread.InvokeOnMainThreadAsync(async () =>
+                if (!await EnsureSupabaseConnectedAsync())
                 {
-                    if (MainPage is null) return exitApp;
-                    return await MainPage.DisplayActionSheet(
-                        "Supabase Connection Failed\nCheck your internet connection and tap Retry.",
-                        null,
-                        exitApp,
-                        retry,
-                        useLocal);
-                });
-
-                if (choice == useLocal)
-                {
-                    await _modeService.SetUseSupabaseAsync(false);
-                    break;
+                    return; // user chose Exit App
                 }
-
-                if (choice == exitApp)
-                {
-                    QuitApp();
-                    return;
-                }
-
-                // Retry (or sheet dismissed with Back): the saved session is reused, so no email/password needed.
-                isConnected = await VerifySupabaseConnectionAsync();
+            }
+            catch
+            {
+                // Never leave the user stuck on the loading spinner.
+                await _modeService.SetUseSupabaseAsync(false);
             }
         }
 
@@ -114,6 +107,69 @@ public partial class App : Application
         _ = ApplyRemindersOnStartupAsync(settings);
     }
 
+    /// <returns>false if the user chose to exit the app.</returns>
+    private async Task<bool> EnsureSupabaseConnectedAsync()
+    {
+        var result = await VerifySupabaseConnectionAsync(recreateClient: false);
+        while (result != ConnectionResult.Connected)
+        {
+            var message = result == ConnectionResult.NoSession
+                ? "Supabase session expired\nUse local SQLite, then reconnect in Settings."
+                : "Supabase Connection Failed\nCheck your internet connection and tap Retry.";
+
+            var choice = await ShowStartupChoiceAsync(message);
+
+            if (choice == UseLocalChoice)
+            {
+                await _modeService.SetUseSupabaseAsync(false);
+                return true;
+            }
+
+            if (choice == ExitAppChoice)
+            {
+                QuitApp();
+                return false;
+            }
+
+            // Retry (or sheet dismissed with Back): fresh client + saved session, no email/password needed.
+            result = await VerifySupabaseConnectionAsync(recreateClient: true);
+        }
+
+        return true;
+    }
+
+    private Task<string> ShowStartupChoiceAsync(string message)
+    {
+        return MainThread.InvokeOnMainThreadAsync(async () =>
+        {
+            var page = MainPage;
+            // On a cold start the loading page may not be attached to a window yet; an action sheet
+            // requested before that never completes, which left the spinner running forever.
+            if (page is null || !await WaitForPageReadyAsync(page))
+            {
+                return UseLocalChoice;
+            }
+
+            return await page.DisplayActionSheet(message, null, ExitAppChoice, RetryChoice, UseLocalChoice)
+                ?? RetryChoice;
+        });
+    }
+
+    private static async Task<bool> WaitForPageReadyAsync(Page page)
+    {
+        for (var i = 0; i < 100; i++) // up to ~10 seconds
+        {
+            if (page.IsLoaded && page.Window is not null && page.Handler is not null)
+            {
+                return true;
+            }
+
+            await Task.Delay(100);
+        }
+
+        return false;
+    }
+
     private async Task ApplyRemindersOnStartupAsync(AppSettings settings)
     {
         try
@@ -127,64 +183,50 @@ public partial class App : Application
         }
     }
 
-    private async Task<bool> VerifySupabaseConnectionAsync()
+    private async Task<ConnectionResult> VerifySupabaseConnectionAsync(bool recreateClient)
     {
+        var savedSession = await _sessionService.LoadSessionAsync();
+        if (savedSession is null)
+        {
+            return ConnectionResult.NoSession;
+        }
+
         try
         {
-            var sessionRestored = await RestoreSessionAsync();
-            if (!sessionRestored)
+            if (recreateClient)
             {
-                return false;
+                // Drop any client left in an offline/refreshing state by the previous attempt.
+                var creds = _configService.GetCredentials();
+                if (!string.IsNullOrWhiteSpace(creds.Url) && !string.IsNullOrWhiteSpace(creds.AnonKey))
+                {
+                    _clientProvider.RecreateClient(creds.Url, creds.AnonKey);
+                }
             }
 
-            var supabase = _clientProvider.Client;
-            if (supabase?.Auth.CurrentUser is null)
-            {
-                return false;
-            }
-
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-            var queryTask = supabase.From<AppSettings>()
-                .Filter("user_id", Supabase.Postgrest.Constants.Operator.Equals, supabase.Auth.CurrentUser.Id)
-                .Limit(1)
-                .Get();
-
-            var delayTask = Task.Delay(5000, cts.Token);
-            var completedTask = await Task.WhenAny(queryTask, delayTask);
-            if (completedTask == queryTask)
-            {
-                await queryTask;
-                return true;
-            }
-
-            return false;
+            await CheckConnectionAsync(savedSession.Value.AccessToken, savedSession.Value.RefreshToken)
+                .WaitAsync(ConnectionTimeout);
+            return ConnectionResult.Connected;
         }
         catch
         {
-            return false;
+            // Network/timeout failures keep the saved session so Retry can reuse it.
+            return ConnectionResult.Failed;
         }
     }
 
-    private async Task<bool> RestoreSessionAsync()
+    private async Task CheckConnectionAsync(string accessToken, string refreshToken)
     {
-        try
-        {
-            var savedSession = await _sessionService.LoadSessionAsync();
-            if (savedSession is null)
-            {
-                return false;
-            }
+        var supabase = _clientProvider.Client
+            ?? throw new InvalidOperationException("Supabase client unavailable.");
+        await supabase.Auth.SetSession(accessToken, refreshToken);
 
-            var supabase = _clientProvider.Client;
-            if (supabase == null) return false;
-            await supabase.Auth.SetSession(savedSession.Value.AccessToken, savedSession.Value.RefreshToken);
-            return supabase.Auth.CurrentUser is not null;
-        }
-        catch
-        {
-            // Do not clear session on network or temporary startup failures.
-            return false;
-        }
+        var userId = supabase.Auth.CurrentUser?.Id
+            ?? throw new InvalidOperationException("Supabase session has no user.");
+
+        await supabase.From<AppSettings>()
+            .Filter("user_id", Supabase.Postgrest.Constants.Operator.Equals, userId)
+            .Limit(1)
+            .Get();
     }
 
     private void QuitApp()
