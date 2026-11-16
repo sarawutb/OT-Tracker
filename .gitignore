@@ -30,6 +30,11 @@ Desktop.ini
 *.msixbundle
 releases/
 
+# Signing keys (never commit)
+*.keystore
+*.jks
+keystore-base64.txt
+
 # Test results
 TestResults/
 coverage/
