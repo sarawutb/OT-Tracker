@@ -1,6 +1,6 @@
 {
-  "versionCode": 18,
-  "versionName": "4.3.8",
-  "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v4.3.8/com.company.ottracker-Signed.apk",
-  "changeLog": "- เพิ่มระบบตรวจสอบสถานะการเชื่อมต่อ Supabase ตอนเปิดแอป พร้อมหน้าต่างแจ้งเตือนเมื่อเชื่อมต่อไม่ได้\n- ให้ผู้ใช้สามารถเลือกยกเลิก Supabase เพื่อสลับไปใช้ SQLite ในเครื่อง หรือออกจากแอปพลิเคชัน"
+  "versionCode": 19,
+  "versionName": "4.3.9",
+  "apkUrl": "https://github.com/sarawutb/OT-Tracker/releases/download/v4.3.9/com.company.ottracker-Signed.apk",
+  "changeLog": "- แก้การคำนวณค่า OT และค่าจ้างต่อชั่วโมงให้ตัดเศษทศนิยมเกิน 2 ตำแหน่ง (ไม่ปัดขึ้น) เช่น 263.8575 = 263.85\n- เพิ่มปุ่ม Retry เมื่อเชื่อมต่อ Supabase ไม่ได้ตอนเปิดแอป เชื่อมต่อใหม่ได้โดยไม่ต้องกรอก Email/Password\n- หน้า Settings: เชื่อมต่อ Supabase ใหม่โดยใช้ session เดิม และเลือกได้ว่าจะใช้ข้อมูลจาก Supabase หรืออัปโหลดข้อมูลในเครื่อง"
 }
